@@ -1,0 +1,17 @@
+{
+  "name": "st-store",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^9.1.7",
+    "@angular/core": "^9.1.7"
+  },
+  "dependencies": {
+    "copy-anything": "^2.0.1",
+    "is-what": "^3.8.0",
+    "merge-anything": "^3.0.3",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.152"
+  }
+}
