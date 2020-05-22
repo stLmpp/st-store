@@ -3,46 +3,55 @@ import { EntityStore } from './entity/entity-store';
 import { catchError, finalize } from 'rxjs/operators';
 import { Store } from './store/store';
 
-export const setLoading = <T>(
+export function setLoading<T>(
   store: EntityStore<any> | Store<any>
-): OperatorFunction<T, T> => (source: Observable<T>) =>
-  defer(() => {
-    store.setLoading(true);
-    return source.pipe(
-      finalize(() => {
-        store.setLoading(false);
-      })
-    );
-  });
+): OperatorFunction<T, T> {
+  return (source: Observable<T>) =>
+    defer(() => {
+      store.setLoading(true);
+      return source.pipe(
+        finalize(() => {
+          store.setLoading(false);
+        })
+      );
+    });
+}
 
-export const setError = <T>(
+export function setError<T>(
   store: EntityStore<any> | Store<any>
-): OperatorFunction<T, T> =>
-  catchError(err => {
+): OperatorFunction<T, T> {
+  return catchError(err => {
     store.setError(err);
     return throwError(err);
   });
+}
 
-export const stCache = <T>(store: EntityStore<any>) => (
-  source: Observable<T>
-) =>
-  new Observable<T>(subscriber => {
-    if (store.hasCache()) {
-      subscriber.next(store.getState().entities.values() as any);
-      subscriber.complete();
-      store.setLoading(false);
-    } else {
-      source.subscribe({
-        next(value): void {
-          store.setHasCache(true);
-          subscriber.next(value);
-        },
-        error(err): void {
-          subscriber.error(err);
-        },
-        complete(): void {
-          subscriber.complete();
-        },
-      });
-    }
-  });
+export function useCache<T>(
+  store: EntityStore<any> | Store<any>
+): OperatorFunction<T, T> {
+  return (source: Observable<T>) =>
+    new Observable<T>(subscriber => {
+      if (store.hasCache()) {
+        const currentState =
+          store instanceof Store
+            ? store.getState()
+            : store.getState().entities.values();
+        subscriber.next(currentState);
+        subscriber.complete();
+        store.setLoading(false);
+      } else {
+        source.subscribe({
+          next(value): void {
+            store.setHasCache(true);
+            subscriber.next(value);
+          },
+          error(err): void {
+            subscriber.error(err);
+          },
+          complete(): void {
+            subscriber.complete();
+          },
+        });
+      }
+    });
+}

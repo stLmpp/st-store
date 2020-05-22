@@ -15,7 +15,7 @@ import {
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { debounceTime, delay, take, takeUntil } from 'rxjs/operators';
-import { setLoading, stCache } from '../../../st-store/src/lib/operators';
+import { setLoading, useCache } from '../../../st-store/src/lib/operators';
 
 let id = 1255;
 
@@ -193,7 +193,7 @@ export class AppComponent implements OnInit, OnDestroy {
         delay(5000),
         setLoading(this.appStore),
         take(1),
-        stCache(this.appStore)
+        useCache(this.appStore)
       )
       .subscribe(values => {
         this.appStore.set(values);

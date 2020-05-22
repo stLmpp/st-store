@@ -7,31 +7,31 @@ import { isArray, isFunction } from 'is-what';
 import { isEqual } from 'underscore';
 
 export class EntityQuery<T, S extends ID = number, E = any> {
-  constructor(private store: EntityStore<T, S, E>) {}
+  constructor(private __store: EntityStore<T, S, E>) {}
 
-  private __entities$ = this.store.selectState().pipe(pluck('entities'));
+  private __entities$ = this.__store.selectState().pipe(pluck('entities'));
   private get __getEntities(): StMap<T, S> {
-    return this.store.getState().entities;
+    return this.__store.getState().entities;
   }
   private get __getActive(): StMap<T, S> {
-    return this.store.getState().active;
+    return this.__store.getState().active;
   }
 
   all$: Observable<T[]> = this.__entities$.pipe(
     map(entities => entities.values())
   );
-  active$: Observable<T[]> = this.store.selectState().pipe(
+  active$: Observable<T[]> = this.__store.selectState().pipe(
     pluck('active'),
     map(active => active.values()),
     distinctUntilChanged(isEqual)
   );
   activeId$: Observable<S[]> = this.active$.pipe(
-    map(active => active.map(this.store.idGetter))
+    map(active => active.map(this.__store.idGetter))
   );
 
-  loading$ = this.store.selectState().pipe(pluck('loading'));
-  error$ = this.store.selectState().pipe(pluck('error'));
-  hasCache$ = this.store.cache$.asObservable();
+  loading$ = this.__store.selectState().pipe(pluck('loading'));
+  error$ = this.__store.selectState().pipe(pluck('error'));
+  hasCache$ = this.__store.selectCache();
 
   getAll(): T[] {
     return this.__getEntities.values();
@@ -42,15 +42,15 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   }
 
   getLoading(): boolean {
-    return this.store.getState().loading;
+    return this.__store.getState().loading;
   }
 
   getError(): E {
-    return this.store.getState().error;
+    return this.__store.getState().error;
   }
 
   getHasCache(): boolean {
-    return this.store.hasCache();
+    return this.__store.hasCache();
   }
 
   exists(id: S): boolean;

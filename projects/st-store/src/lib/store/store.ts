@@ -4,48 +4,69 @@ import { DeepPartial } from '../type';
 import { isFunction } from 'is-what';
 
 export class Store<T, E = any> {
-  constructor(private initialState?: T) {
-    this.state$ = new BehaviorSubject(initialState);
+  constructor(private initialState?: T, private cache?: number) {
+    this.__state$ = new BehaviorSubject(initialState);
   }
 
-  private state$: BehaviorSubject<T>;
-  private error$ = new BehaviorSubject<E>(null);
-  private loading$ = new BehaviorSubject<boolean>(false);
+  private __state$: BehaviorSubject<T>;
+  private __error$ = new BehaviorSubject<E>(null);
+  private __loading$ = new BehaviorSubject<boolean>(false);
+
+  private __timeout: any;
+  private __cache$ = new BehaviorSubject(false);
+
+  hasCache(): boolean {
+    return this.cache && this.__cache$.value;
+  }
+
+  setHasCache(hasCache: boolean): void {
+    if (this.cache) {
+      clearTimeout(this.__timeout);
+      this.__cache$.next(hasCache);
+      this.__timeout = setTimeout(() => {
+        this.setHasCache(false);
+      }, this.cache);
+    }
+  }
+
+  selectCache(): Observable<boolean> {
+    return this.__cache$.asObservable();
+  }
 
   selectState(): Observable<T> {
-    return this.state$.asObservable();
+    return this.__state$.asObservable();
   }
 
   selectError(): Observable<E> {
-    return this.error$.asObservable();
+    return this.__error$.asObservable();
   }
 
   selectLoading(): Observable<boolean> {
-    return this.loading$.asObservable();
+    return this.__loading$.asObservable();
   }
 
   getState(): T {
-    return this.state$.value;
+    return this.__state$.value;
   }
 
   getError(): E {
-    return this.error$.value;
+    return this.__error$.value;
   }
 
   getLoading(): boolean {
-    return this.loading$.value;
+    return this.__loading$.value;
   }
 
   setLoading(loading: boolean): void {
-    this.loading$.next(loading);
+    this.__loading$.next(loading);
   }
 
   setError(error: E): void {
-    this.error$.next(error);
+    this.__error$.next(error);
   }
 
   set(state: T): void {
-    this.state$.next(devCopy(state));
+    this.__state$.next(devCopy(state));
   }
 
   update(deepPartial: DeepPartial<T>): void;
@@ -60,7 +81,7 @@ export class Store<T, E = any> {
   }
 
   reset(): void {
-    this.state$.next(this.initialState);
+    this.__state$.next(this.initialState);
   }
 
   preUpdate(newState: T): T {

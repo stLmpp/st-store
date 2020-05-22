@@ -6,22 +6,22 @@ import { KeyValue } from '../type';
 import { isEqual } from 'underscore';
 
 export class Query<T, E = any> {
-  constructor(private store: Store<T, E>) {}
+  constructor(private __store: Store<T, E>) {}
 
-  state$: Observable<T> = this.store.selectState();
-  loading$: Observable<boolean> = this.store.selectLoading();
-  error$: Observable<E> = this.store.selectError();
+  state$: Observable<T> = this.__store.selectState();
+  loading$: Observable<boolean> = this.__store.selectLoading();
+  error$: Observable<E> = this.__store.selectError();
 
   getState(): T {
-    return this.store.getState();
+    return this.__store.getState();
   }
 
   getError(): E {
-    return this.store.getError();
+    return this.__store.getError();
   }
 
   getLoading(): boolean {
-    return this.store.getLoading();
+    return this.__store.getLoading();
   }
 
   select(): Observable<T>;

@@ -34,7 +34,7 @@ export class EntityStore<T, S extends ID = number, E = any> {
   options: EntityStoreOptions<T, S> = {};
 
   private __timeout: any;
-  cache$ = new BehaviorSubject(false);
+  private __cache$ = new BehaviorSubject(false);
 
   private state$: BehaviorSubject<EntityState<T, S, E>>;
 
@@ -71,14 +71,18 @@ export class EntityStore<T, S extends ID = number, E = any> {
     return this.state$.asObservable();
   }
 
+  selectCache(): Observable<boolean> {
+    return this.__cache$.asObservable();
+  }
+
   hasCache(): boolean {
-    return this.options.cache && this.cache$.value;
+    return this.options.cache && this.__cache$.value;
   }
 
   setHasCache(hasCache: boolean): void {
     if (this.options.cache) {
       clearTimeout(this.__timeout);
-      this.cache$.next(hasCache);
+      this.__cache$.next(hasCache);
       this.__timeout = setTimeout(() => {
         this.setHasCache(false);
       }, this.options.cache);
