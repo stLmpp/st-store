@@ -124,6 +124,8 @@ export class StStore<T, S extends ID = number, E = any> {
     this.postDelete();
   }
 
+  update(id: S, partial: DeepPartial<T>): void;
+  update(id: S, callback: (entity: T) => T): void;
   update(id: S, partialOrCallback: DeepPartial<T> | ((entity: T) => T)): void {
     const entityStored = this.getState().entities.get(id);
     if (!entityStored) return;
@@ -139,14 +141,6 @@ export class StStore<T, S extends ID = number, E = any> {
       };
     });
     this.postUpdate(newEntity);
-  }
-
-  updateProperty<K extends keyof T = keyof T>(
-    id: S,
-    property: K,
-    value: T[K]
-  ): void {
-    this.update(id, { [property]: value } as any);
   }
 
   upsert(entities: T[] | DeepPartial<T>[]): void;

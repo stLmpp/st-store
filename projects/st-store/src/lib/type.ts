@@ -17,12 +17,10 @@ export interface StStoreOptions<T, S extends ID = number> {
   cache?: number;
 }
 
-export type DeepPartial<T> = T extends (...args: unknown[]) => unknown
-  ? T
-  : T extends Array<infer U>
-  ? DeepPartialArray<U>
-  : T extends object
-  ? DeepPartialObject<T>
-  : T | undefined;
-export interface DeepPartialArray<T> extends Array<DeepPartial<T>> {}
-export type DeepPartialObject<T> = { [P in keyof T]?: DeepPartial<T[P]> };
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T[P] extends ReadonlyArray<infer U2>
+    ? ReadonlyArray<DeepPartial<U2>>
+    : DeepPartial<T[P]>;
+};
