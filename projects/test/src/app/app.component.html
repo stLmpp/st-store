@@ -1,3 +1,23 @@
+<div>
+  {{ appSimpleQuery.state$ | async | json }}
+</div>
+<hr />
+<div>Name: {{ simpleName$ | async }}</div>
+<hr />
+<div>callback: {{ simpleCallback$ | async }}</div>
+<hr />
+<div>keyValue: {{ simpleKeyValues$ | async | json }}</div>
+<hr />
+<div>keyValue2: {{ simpleKeyValuesNameSur$ | async | json }}</div>
+<div *ngIf="appSimpleQuery.state$ | async as state">
+  <input
+    [ngModel]="state.name"
+    (ngModelChange)="updateSimple('name', $event)"
+  />
+  <input [ngModel]="state.sur" (ngModelChange)="updateSimple('sur', $event)" />
+  <button (click)="updateSimple('id', state.id + 1)">ID++</button>
+</div>
+<hr />
 <ng-container
   *ngIf="{
     all: appQuery.all$ | async,

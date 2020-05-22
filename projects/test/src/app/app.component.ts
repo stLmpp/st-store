@@ -5,9 +5,15 @@ import {
   OnInit,
   TrackByFunction,
 } from '@angular/core';
-import { AppQuery, AppStore, AppTeste } from './app.service';
+import {
+  AppQuery,
+  AppSimpleQuery,
+  AppSimpleStore,
+  AppStore,
+  AppTeste,
+} from './app.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, of, Subject } from 'rxjs';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { debounceTime, delay, take, takeUntil } from 'rxjs/operators';
 import { setLoading, stCache } from '../../../st-store/src/lib/operators';
 
@@ -104,9 +110,22 @@ function randomInt(rightBound: number): number {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  constructor(private appStore: AppStore, public appQuery: AppQuery) {}
+  constructor(
+    private appStore: AppStore,
+    public appQuery: AppQuery,
+    public appSimpleQuery: AppSimpleQuery,
+    private appSimpleStore: AppSimpleStore
+  ) {}
 
   private _destroy$ = new Subject();
+
+  simpleName$ = this.appSimpleQuery.select('name');
+  simpleCallback$ = this.appSimpleQuery.select(state => state.id);
+  simpleKeyValues$ = this.appSimpleQuery.selectAsKeyValue();
+  simpleKeyValuesNameSur$ = this.appSimpleQuery.selectAsKeyValue([
+    'name',
+    'sur',
+  ]);
 
   title = 'test';
 
@@ -154,6 +173,7 @@ export class AppComponent implements OnInit, OnDestroy {
         Math.floor(Math.random() * this.appQuery.getAll().length)
       ].id
     );
+    this.random$.subscribe(console.log);
   }
 
   removeAndUpsert(): void {
@@ -180,6 +200,13 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  updateSimple<K extends keyof AppTeste>(
+    property: K,
+    value: AppTeste[K]
+  ): void {
+    this.appSimpleStore.update({ [property]: value });
+  }
+
   ngOnInit(): void {
     this.appStore.set(
       Array.from({
@@ -193,10 +220,18 @@ export class AppComponent implements OnInit, OnDestroy {
         };
       })
     );
-    this.appQuery.active$.subscribe(console.log);
-    this.search$
+    combineLatest([this.itemsPerPageControl.valueChanges, this.search$])
       .pipe(takeUntil(this._destroy$))
       .subscribe(() => (this.page = 1));
+    this.appSimpleStore.set({
+      name: 'Teste',
+      sur: 'Teste',
+      id: 1,
+    });
+    this.simpleName$.subscribe(o => console.log('name'));
+    this.simpleCallback$.subscribe(o => console.log('callback'));
+    this.simpleKeyValues$.subscribe(o => console.log('keyvalues'));
+    this.simpleKeyValuesNameSur$.subscribe(o => console.log('keyvalues2'));
   }
 
   ngOnDestroy(): void {

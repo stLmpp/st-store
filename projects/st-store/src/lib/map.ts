@@ -110,7 +110,7 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     if (isArray(entities)) {
       entities = toEntities(entities, this.idGetter)[0];
     }
-    this.fromObject(deepMerge(this.__state, entities as any));
+    this.fromObject(deepMerge(this.__state, entities));
     return this;
   }
 
@@ -166,7 +166,7 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     }
     const [newEntities, keys] = toEntities(entities as T[], this.idGetter);
     this.__keys = new Set([...this.__keys, ...keys]);
-    this.__state = deepMerge(this.__state, newEntities as any);
+    this.__state = deepMerge(this.__state, newEntities);
     return this;
   }
 

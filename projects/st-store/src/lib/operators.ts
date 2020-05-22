@@ -1,8 +1,10 @@
 import { defer, Observable, throwError } from 'rxjs';
-import { StStore } from './st-store';
+import { EntityStore } from './entity/entity-store';
 import { catchError, finalize } from 'rxjs/operators';
 
-export const setLoading = <T>(store: StStore<any>) => (source: Observable<T>) =>
+export const setLoading = <T>(store: EntityStore<any>) => (
+  source: Observable<T>
+) =>
   defer(() => {
     store.setLoading(true);
     return source.pipe(
@@ -12,13 +14,15 @@ export const setLoading = <T>(store: StStore<any>) => (source: Observable<T>) =>
     );
   });
 
-export const setError = <T>(store: StStore<any>) =>
+export const setError = <T>(store: EntityStore<any>) =>
   catchError(err => {
     store.setError(err);
     return throwError(err);
   });
 
-export const stCache = <T>(store: StStore<any>) => (source: Observable<T>) =>
+export const stCache = <T>(store: EntityStore<any>) => (
+  source: Observable<T>
+) =>
   new Observable<T>(subscriber => {
     if (store.hasCache()) {
       subscriber.next(store.getState().entities.values() as any);

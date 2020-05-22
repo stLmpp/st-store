@@ -10,7 +10,7 @@ export interface EntityState<T, S extends ID = number, E = any> {
   active?: StMap<T, S>;
 }
 
-export interface StStoreOptions<T, S extends ID = number> {
+export interface EntityStoreOptions<T, S extends ID = number> {
   idGetter?: IdGetter<T, S> | string | string[];
   initialState?: { [K in S]?: T } | T[];
   initialActive?: { [K in S]?: T } | T[];
@@ -24,3 +24,8 @@ export type DeepPartial<T> = {
     ? ReadonlyArray<DeepPartial<U2>>
     : DeepPartial<T[P]>;
 };
+
+export interface KeyValue<K, V> {
+  key: K;
+  value: V;
+}

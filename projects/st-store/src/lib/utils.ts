@@ -1,6 +1,5 @@
 import { DeepPartial, ID, IdGetter } from './type';
 import { merge } from 'merge-anything';
-import { map } from 'rxjs/operators';
 import { isDev } from './env';
 import { copy } from 'copy-anything';
 import { isAnyObject, isArray } from 'is-what';
@@ -27,13 +26,11 @@ export function toEntities<T, S extends ID = number>(
   );
 }
 
-export const devCopyOperator = <T>() => map<T, T>(devCopy);
-
 export const devCopy = <T>(value: T): T =>
   isDev ? deepFreeze(copy(value)) : value;
 
 export function deepFreeze<T>(object: T): T {
-  if (!isDev || !isArray(object) || !isAnyObject(object)) {
+  if (!isDev || (!isArray(object) && !isAnyObject(object))) {
     return object;
   }
   Object.freeze(object);
@@ -54,4 +51,13 @@ export function deepFreeze<T>(object: T): T {
     }
   });
   return object;
+}
+
+export function getDeep<T = any, R = any>(
+  obj: T,
+  path: string | string[],
+  defaultValue?: any
+): R {
+  if (!isArray(path)) path = path.split('.');
+  return path.reduce((acc, key) => acc?.[key], obj) ?? defaultValue;
 }

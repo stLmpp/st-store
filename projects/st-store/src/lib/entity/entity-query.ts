@@ -1,14 +1,13 @@
-import { ID } from './type';
-import { StStore } from './st-store';
+import { ID } from '../type';
+import { EntityStore } from './entity-store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
-import { StMap } from './map';
+import { StMap } from '../map';
 import { isArray, isFunction } from 'is-what';
-import { devCopy, devCopyOperator } from './utils';
-import { isEqual } from 'lodash';
+import { isEqual } from 'underscore';
 
-export class StQuery<T, S extends ID = number, E = any> {
-  constructor(private store: StStore<T, S, E>) {}
+export class EntityQuery<T, S extends ID = number, E = any> {
+  constructor(private store: EntityStore<T, S, E>) {}
 
   private __entities$ = this.store.selectState().pipe(pluck('entities'));
   private get __getEntities(): StMap<T, S> {
@@ -19,16 +18,12 @@ export class StQuery<T, S extends ID = number, E = any> {
   }
 
   all$: Observable<T[]> = this.__entities$.pipe(
-    map(entities => entities.values()),
-    devCopyOperator()
+    map(entities => entities.values())
   );
   active$: Observable<T[]> = this.store.selectState().pipe(
     pluck('active'),
     map(active => active.values()),
-    distinctUntilChanged((valueA, valueB) => {
-      return isEqual(valueA, valueB);
-    }),
-    devCopyOperator()
+    distinctUntilChanged(isEqual)
   );
   activeId$: Observable<S[]> = this.active$.pipe(
     map(active => active.map(this.store.idGetter))
@@ -39,11 +34,11 @@ export class StQuery<T, S extends ID = number, E = any> {
   hasCache$ = this.store.cache$.asObservable();
 
   getAll(): T[] {
-    return devCopy(this.__getEntities.values());
+    return this.__getEntities.values();
   }
 
   getActive(): T[] {
-    return devCopy(this.__getActive.values());
+    return this.__getActive.values();
   }
 
   getLoading(): boolean {
@@ -101,22 +96,20 @@ export class StQuery<T, S extends ID = number, E = any> {
     if (property) {
       entity$ = entity$.pipe(pluck(property as string));
     }
-    return entity$.pipe(distinctUntilChanged(), devCopyOperator());
+    return entity$.pipe(distinctUntilChanged(isEqual));
   }
 
   getEntity(id: S): T;
   getEntity(id: S, property: keyof T): T[keyof T];
   getEntity(id: S, property?: keyof T): T | T[keyof T] {
-    let entity = this.__getEntities.get(id);
-    entity = devCopy(entity);
+    const entity = this.__getEntities.get(id);
     return property ? entity?.[property] : entity;
   }
 
   selectMany(ids: S[]): Observable<T[]> {
     return this.__entities$.pipe(
       map(entities => entities.filter((_, id) => ids.includes(id))),
-      map(entities => entities.values()),
-      devCopyOperator()
+      map(entities => entities.values())
     );
   }
 }

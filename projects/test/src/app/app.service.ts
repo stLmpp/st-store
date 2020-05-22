@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { StStore } from '../../../st-store/src/lib/st-store';
-import { StQuery } from '../../../st-store/src/lib/st-query';
+import { EntityStore } from '../../../st-store/src/lib/entity/entity-store';
+import { EntityQuery } from '../../../st-store/src/lib/entity/entity-query';
 import { map } from 'rxjs/operators';
+import { Store } from '../../../st-store/src/lib/store/store';
+import { Query } from '../../../st-store/src/lib/store/query';
 
 export interface School {
   id: number;
@@ -18,14 +20,14 @@ export interface AppTeste {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AppStore extends StStore<AppTeste> {
+export class AppStore extends EntityStore<AppTeste> {
   constructor() {
     super({ cache: 5000 });
   }
 }
 
 @Injectable({ providedIn: 'root' })
-export class AppQuery extends StQuery<AppTeste> {
+export class AppQuery extends EntityQuery<AppTeste> {
   constructor(private appStore: AppStore) {
     super(appStore);
   }
@@ -33,4 +35,14 @@ export class AppQuery extends StQuery<AppTeste> {
   hasSelected$ = this.all$.pipe(
     map(entities => entities.some(entity => entity.selected))
   );
+}
+
+@Injectable({ providedIn: 'root' })
+export class AppSimpleStore extends Store<AppTeste> {}
+
+@Injectable({ providedIn: 'root' })
+export class AppSimpleQuery extends Query<AppTeste> {
+  constructor(private appSimpleStore: AppSimpleStore) {
+    super(appSimpleStore);
+  }
 }

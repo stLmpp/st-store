@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@types/lodash@^4.14.152":
-  version "4.14.152"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.152.tgz#7e7679250adce14e749304cdb570969f77ec997c"
-  integrity sha512-Vwf9YF2x1GE3WNeUMjT5bTHa2DqgUo87ocdgTScupY2JclZ5Nn7W2RLM/N0+oreexUk8uaVugR81NnTY/jNNXg==
+"@types/underscore@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.10.0.tgz#5cb0dff2a5f616fc8e0c61b482bf01fa20a03cec"
+  integrity sha512-ZAbqul7QAKpM2h1PFGa5ETN27ulmqtj0QviYHasw9LffvXZvVHuraOx/FOsIPPDNGZN0Qo1nASxxSfMYOtSoCw==
 
 copy-anything@^2.0.1:
   version "2.0.1"
@@ -19,11 +19,6 @@ is-what@^3.7.1, is-what@^3.8.0:
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.8.0.tgz#610bc46a524355f2424eb85eedc6ebbbf7e1ff8c"
   integrity sha512-UKeBoQfV8bjlM4pmx1FLDHdxslW/1mTksEs8ReVsilPmUv5cORd4+2/wFcviI3cUjrLybxCjzc8DnodAzJ/Wrg==
 
-lodash@^4.17.15:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
-
 merge-anything@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/merge-anything/-/merge-anything-3.0.3.tgz#1bab47eec001c31b4fcd599de8b29f58fe670acf"
@@ -36,3 +31,8 @@ ts-toolbelt@^6.3.6:
   version "6.8.9"
   resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.8.9.tgz#e290b433ffdaa7114345103bece34a49753e6978"
   integrity sha512-H0SkumcqG7uyoYYU/0dZYJIVGainU332XJFtXCIKx3uMBJ6/VlSjqTo1U0xs432D9PneUkWsXSX+BpfMD+R4IA==
+
+underscore@^1.10.2:
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.10.2.tgz#73d6aa3668f3188e4adb0f1943bd12cfd7efaaaf"
+  integrity sha512-N4P+Q/BuyuEKFJ43B9gYuOj4TQUHXX+j2FqguVOpjkssLUUrnJofCcBccJSCoeturDoZU6GorDTHSvUDlSQbTg==

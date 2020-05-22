@@ -1,31 +1,37 @@
-import { DeepPartial, EntityState, ID, IdGetter, StStoreOptions } from './type';
+import {
+  DeepPartial,
+  EntityState,
+  ID,
+  IdGetter,
+  EntityStoreOptions,
+} from '../type';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { StMap } from './map';
+import { StMap } from '../map';
 import { isArray, isFunction, isPrimitive, isString } from 'is-what';
-import { deepMerge } from './utils';
-import { get } from 'lodash';
+import { deepMerge, devCopy, getDeep } from '../utils';
+import { isDev } from '../env';
 
-const ST_STORE_DEFAULT_OPTIONS: StStoreOptions<any, any> = {
+const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   idGetter: entity => entity.id,
 };
 
-export class StStore<T, S extends ID = number, E = any> {
-  constructor(options: StStoreOptions<T, S> = {}) {
+export class EntityStore<T, S extends ID = number, E = any> {
+  constructor(options: EntityStoreOptions<T, S> = {}) {
     if (options.idGetter) {
       if (isString(options.idGetter) || isArray(options.idGetter)) {
-        this.idGetter = e => get(e, options.idGetter as any);
+        this.idGetter = e => getDeep(e, options.idGetter as any);
       } else if (isFunction(options.idGetter)) {
         this.idGetter = options.idGetter;
       }
     } else {
-      this.idGetter = ST_STORE_DEFAULT_OPTIONS.idGetter as any;
+      this.idGetter = ST_ENTITY_STORE_DEFAULTS.idGetter as any;
     }
-    this.options = { ...(ST_STORE_DEFAULT_OPTIONS as any), ...options };
+    this.options = { ...(ST_ENTITY_STORE_DEFAULTS as any), ...options };
     this.setInitialState();
   }
 
   idGetter: IdGetter<T, S>;
-  options: StStoreOptions<T, S> = {};
+  options: EntityStoreOptions<T, S> = {};
 
   private __timeout: any;
   cache$ = new BehaviorSubject(false);
@@ -80,6 +86,11 @@ export class StStore<T, S extends ID = number, E = any> {
   }
 
   private setState(state: EntityState<T, S, E>): void {
+    if (isDev) {
+      state.entities = state.entities.map(entity => devCopy(entity));
+      state.active = state.active.map(active => devCopy(active));
+      state.error = devCopy(state.error);
+    }
     this.state$.next(state);
   }
 
@@ -158,6 +169,7 @@ export class StStore<T, S extends ID = number, E = any> {
         entities: state.entities.upsert(keyOrEntities, entity),
       };
     });
+    this.postUpsert();
   }
 
   private formatActive(idOrEntity: S | T | Array<S | T>): StMap<T, S> {
