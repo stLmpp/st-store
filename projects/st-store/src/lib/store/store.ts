@@ -36,6 +36,14 @@ export class Store<T, E = any> {
     return this.loading$.value;
   }
 
+  setLoading(loading: boolean): void {
+    this.loading$.next(loading);
+  }
+
+  setError(error: E): void {
+    this.error$.next(error);
+  }
+
   set(state: T): void {
     this.state$.next(devCopy(state));
   }
