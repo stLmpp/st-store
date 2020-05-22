@@ -1,10 +1,9 @@
 import { DeepPartial, EntityState, ID, IdGetter, StStoreOptions } from './type';
-import { BehaviorSubject, Observable, Subject, timer } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { StMap } from './map';
 import { isArray, isFunction, isPrimitive, isString } from 'is-what';
 import { deepMerge } from './utils';
 import { get } from 'lodash';
-import { take, takeUntil } from 'rxjs/operators';
 
 const ST_STORE_DEFAULT_OPTIONS: StStoreOptions<any, any> = {
   idGetter: entity => entity.id,
@@ -28,7 +27,7 @@ export class StStore<T, S extends ID = number, E = any> {
   idGetter: IdGetter<T, S>;
   options: StStoreOptions<T, S> = {};
 
-  private timeout: any;
+  private __timeout: any;
   cache$ = new BehaviorSubject(false);
 
   private state$: BehaviorSubject<EntityState<T, S, E>>;
@@ -72,9 +71,9 @@ export class StStore<T, S extends ID = number, E = any> {
 
   setHasCache(hasCache: boolean): void {
     if (this.options.cache) {
-      clearTimeout(this.timeout);
+      clearTimeout(this.__timeout);
       this.cache$.next(hasCache);
-      this.timeout = setTimeout(() => {
+      this.__timeout = setTimeout(() => {
         this.setHasCache(false);
       }, this.options.cache);
     }
@@ -125,8 +124,12 @@ export class StStore<T, S extends ID = number, E = any> {
   }
 
   update(id: S, partial: DeepPartial<T>): void;
+  update(id: S, partial: Partial<T>): void;
   update(id: S, callback: (entity: T) => T): void;
-  update(id: S, partialOrCallback: DeepPartial<T> | ((entity: T) => T)): void {
+  update(
+    id: S,
+    partialOrCallback: Partial<T> | DeepPartial<T> | ((entity: T) => T)
+  ): void {
     const entityStored = this.getState().entities.get(id);
     if (!entityStored) return;
     const callback = isFunction(partialOrCallback)
@@ -143,11 +146,11 @@ export class StStore<T, S extends ID = number, E = any> {
     this.postUpdate(newEntity);
   }
 
-  upsert(entities: T[] | DeepPartial<T>[]): void;
-  upsert(key: S, entity: T | DeepPartial<T>): void;
+  upsert(entities: Array<T | Partial<T> | DeepPartial<T>>): void;
+  upsert(key: S, entity: T | Partial<T> | DeepPartial<T>): void;
   upsert(
-    keyOrEntities: T[] | DeepPartial<T>[] | S,
-    entity?: T | DeepPartial<T>
+    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
+    entity?: T | Partial<T> | DeepPartial<T>
   ): void {
     this.updateState(state => {
       return {

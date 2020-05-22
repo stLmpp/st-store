@@ -1,6 +1,6 @@
-import { defer, Observable, of, OperatorFunction, throwError } from 'rxjs';
+import { defer, Observable, throwError } from 'rxjs';
 import { StStore } from './st-store';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 
 export const setLoading = <T>(store: StStore<any>) => (source: Observable<T>) =>
   defer(() => {

@@ -131,24 +131,27 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     return this;
   }
 
-  upsert(entities: T[] | DeepPartial<T>[]): this;
-  upsert(key: S, entity: T | DeepPartial<T>): this;
+  upsert(entities: Array<T | Partial<T> | DeepPartial<T>>): this;
+  upsert(key: S, entity: T | Partial<T> | DeepPartial<T>): this;
   upsert(
-    keyOrEntities: T[] | DeepPartial<T>[] | S,
-    entity?: T | DeepPartial<T>
+    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
+    entity?: T | Partial<T> | DeepPartial<T>
   ): this;
   upsert(
-    keyOrEntities: T[] | DeepPartial<T>[] | S,
-    entity?: T | DeepPartial<T>
+    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
+    entity?: T | Partial<T> | DeepPartial<T>
   ): this {
-    if (isPrimitive(keyOrEntities) && entity) {
-      return this.upsertOne(keyOrEntities, entity);
+    if (entity && isPrimitive(keyOrEntities)) {
+      return this.upsertOne(keyOrEntities, entity as any);
     } else {
       return this.upsertMany(keyOrEntities as any[]);
     }
   }
 
-  private upsertOne(key: S, entity: T | DeepPartial<T>): this {
+  private upsertOne(key: S, entity: T): this;
+  private upsertOne(key: S, entity: Partial<T>): this;
+  private upsertOne(key: S, entity: DeepPartial<T>): this;
+  private upsertOne(key: S, entity: T | Partial<T> | DeepPartial<T>): this {
     if (this.has(key)) {
       return this.update(key, entity as DeepPartial<T>);
     } else {

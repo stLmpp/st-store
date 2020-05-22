@@ -5,7 +5,10 @@ import { isDev } from './env';
 import { copy } from 'copy-anything';
 import { isAnyObject, isArray } from 'is-what';
 
-export function deepMerge<T>(entity: T, ...partials: DeepPartial<T>[]): T {
+export function deepMerge<T>(
+  entity: T,
+  ...partials: Array<DeepPartial<T> | Partial<T>>
+): T {
   return merge(entity as any, ...(partials as any));
 }
 
