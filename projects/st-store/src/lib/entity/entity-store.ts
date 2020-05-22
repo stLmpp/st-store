@@ -117,16 +117,17 @@ export class EntityStore<T, S extends ID = number, E = any> {
   }
 
   add(entityOrEntities: T | T[]): void {
-    entityOrEntities = this.preAdd(entityOrEntities);
+    let entities = isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+    entities = entities.map(entity => this.preAdd(entity));
     this.updateState(state => {
       return {
         ...state,
-        entities: state.entities.merge(
-          isArray(entityOrEntities) ? entityOrEntities : [entityOrEntities]
-        ),
+        entities: state.entities.merge(entities),
       };
     });
-    this.postAdd(entityOrEntities);
+    this.postAdd();
   }
 
   remove(idOrIds: S | S[]): void;
@@ -158,7 +159,7 @@ export class EntityStore<T, S extends ID = number, E = any> {
         entities: state.entities.set(id, newEntity),
       };
     });
-    this.postUpdate(newEntity);
+    this.postUpdate();
   }
 
   upsert(entities: Array<T | Partial<T> | DeepPartial<T>>): void;
@@ -273,19 +274,19 @@ export class EntityStore<T, S extends ID = number, E = any> {
     this.setInitialState();
   }
 
-  preAdd(entityOrEntities: T | T[]): T | T[] {
-    return entityOrEntities;
+  preAdd(entity: T): T {
+    return entity;
   }
 
-  postAdd(entityOrEntities: T | T[]): void {
+  postAdd(): void {
     this.updateActive();
   }
 
-  preUpdate(entityOrEntities: T | T[]): T | T[] {
-    return entityOrEntities;
+  preUpdate(entity: T): T {
+    return entity;
   }
 
-  postUpdate(entityOrEntities: T | T[]): void {
+  postUpdate(): void {
     this.updateActive();
   }
 
