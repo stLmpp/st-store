@@ -24,6 +24,16 @@ export class AppStore extends EntityStore<AppTeste> {
   constructor() {
     super({ cache: 5000, name: 'app' });
   }
+
+  preAdd(entity: AppTeste): AppTeste {
+    console.log(entity);
+    return super.preAdd(entity);
+  }
+
+  preUpdate(entity: AppTeste): AppTeste {
+    console.log(entity);
+    return super.preUpdate(entity);
+  }
 }
 
 @Injectable({ providedIn: 'root' })

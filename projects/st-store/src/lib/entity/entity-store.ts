@@ -7,7 +7,13 @@ import {
 } from '../type';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { StMap } from '../map';
-import { isArray, isFunction, isPrimitive, isString } from 'is-what';
+import {
+  isArray,
+  isFunction,
+  isNullOrUndefined,
+  isPrimitive,
+  isString,
+} from 'is-what';
 import { deepMerge, devCopy, getDeep } from '../utils';
 import { isDev } from '../env';
 
@@ -168,13 +174,41 @@ export class EntityStore<T, S extends ID = number, E = any> {
     keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
     entity?: T | Partial<T> | DeepPartial<T>
   ): void {
+    const newEntities = this.preUpsert(keyOrEntities, entity);
     this.updateState(state => {
       return {
         ...state,
-        entities: state.entities.upsert(keyOrEntities, entity),
+        entities: state.entities.merge(newEntities),
       };
     });
     this.postUpsert();
+  }
+
+  private preUpsert(
+    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
+    entity?: T | Partial<T> | DeepPartial<T>
+  ): T[] {
+    if (isPrimitive(keyOrEntities)) {
+      const entityStored = this.getState().entities.get(keyOrEntities);
+      const newEntity = deepMerge(entityStored, entity);
+      return [this.preUpdate(newEntity)];
+    } else {
+      const currentEntities = this.getState().entities;
+      return keyOrEntities.reduce((acc, item) => {
+        const id = this.idGetter(item as T);
+        if (isNullOrUndefined(id)) {
+          return acc;
+        }
+        if (currentEntities.has(id)) {
+          const currentEntity = currentEntities.get(id);
+          const updated = this.preUpdate(deepMerge(currentEntity, item));
+          return [...acc, updated];
+        } else {
+          const newEntity = this.preAdd(item as T);
+          return [...acc, newEntity];
+        }
+      }, []);
+    }
   }
 
   private formatActive(idOrEntity: S | T | Array<S | T>): StMap<T, S> {

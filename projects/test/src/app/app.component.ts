@@ -13,9 +13,8 @@ import {
   AppTeste,
 } from './app.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, Observable, of, Subject } from 'rxjs';
-import { debounceTime, delay, take, takeUntil } from 'rxjs/operators';
-import { setLoading, useCache } from '../../../st-store/src/lib/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 let id = 1255;
 
@@ -177,27 +176,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   removeAndUpsert(): void {
-    of(
-      Array.from({
-        length: this.nroControl.value <= 0 ? 1 : this.nroControl.value,
-      }).map((o, i) => {
-        return {
-          id: id++,
-          name: makeid(5),
-          sur: makeid(5),
-          ...createRandomObj(randomInt(5), true),
-        };
-      }) as AppTeste[]
-    )
-      .pipe(
-        delay(5000),
-        setLoading(this.appStore),
-        take(1),
-        useCache(this.appStore)
-      )
-      .subscribe(values => {
-        this.appStore.set(values);
-      });
+    this.appStore.upsert([
+      {
+        id: 1000,
+        name: 'TESTE1255',
+      },
+      {
+        id: 1256,
+        name: 'TESTE1256',
+      },
+    ]);
   }
 
   updateSimple<K extends keyof AppTeste>(
