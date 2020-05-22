@@ -1,11 +1,11 @@
-import { defer, Observable, throwError } from 'rxjs';
+import { defer, Observable, OperatorFunction, throwError } from 'rxjs';
 import { EntityStore } from './entity/entity-store';
 import { catchError, finalize } from 'rxjs/operators';
 import { Store } from './store/store';
 
-export const setLoading = <T>(store: EntityStore<any> | Store<any>) => (
-  source: Observable<T>
-) =>
+export const setLoading = <T>(
+  store: EntityStore<any> | Store<any>
+): OperatorFunction<T, T> => (source: Observable<T>) =>
   defer(() => {
     store.setLoading(true);
     return source.pipe(
@@ -15,7 +15,9 @@ export const setLoading = <T>(store: EntityStore<any> | Store<any>) => (
     );
   });
 
-export const setError = <T>(store: EntityStore<any> | Store<any>) =>
+export const setError = <T>(
+  store: EntityStore<any> | Store<any>
+): OperatorFunction<T, T> =>
   catchError(err => {
     store.setError(err);
     return throwError(err);
