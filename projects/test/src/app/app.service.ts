@@ -22,7 +22,7 @@ export interface AppTeste {
 @Injectable({ providedIn: 'root' })
 export class AppStore extends EntityStore<AppTeste> {
   constructor() {
-    super({ cache: 5000 });
+    super({ cache: 5000, name: 'app' });
   }
 }
 
@@ -38,7 +38,11 @@ export class AppQuery extends EntityQuery<AppTeste> {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AppSimpleStore extends Store<AppTeste> {}
+export class AppSimpleStore extends Store<AppTeste> {
+  constructor() {
+    super({ persist: 'school.id', name: 'app-simple' });
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class AppSimpleQuery extends Query<AppTeste> {

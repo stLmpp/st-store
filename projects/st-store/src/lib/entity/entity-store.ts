@@ -13,10 +13,10 @@ import { isDev } from '../env';
 
 const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   idGetter: entity => entity.id,
-};
+} as any;
 
 export class EntityStore<T, S extends ID = number, E = any> {
-  constructor(options: EntityStoreOptions<T, S> = {}) {
+  constructor(options: EntityStoreOptions<T, S> = {} as any) {
     if (options.idGetter) {
       if (isString(options.idGetter) || isArray(options.idGetter)) {
         this.idGetter = e => getDeep(e, options.idGetter as any);
@@ -31,7 +31,7 @@ export class EntityStore<T, S extends ID = number, E = any> {
   }
 
   idGetter: IdGetter<T, S>;
-  options: EntityStoreOptions<T, S> = {};
+  options: EntityStoreOptions<T, S> = {} as any;
 
   private __timeout: any;
   private __cache$ = new BehaviorSubject(false);

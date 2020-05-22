@@ -223,15 +223,6 @@ export class AppComponent implements OnInit, OnDestroy {
     combineLatest([this.itemsPerPageControl.valueChanges, this.search$])
       .pipe(takeUntil(this._destroy$))
       .subscribe(() => (this.page = 1));
-    this.appSimpleStore.set({
-      name: 'Teste',
-      sur: 'Teste',
-      id: 1,
-    });
-    this.simpleName$.subscribe(o => console.log('name'));
-    this.simpleCallback$.subscribe(o => console.log('callback'));
-    this.simpleKeyValues$.subscribe(o => console.log('keyvalues'));
-    this.simpleKeyValuesNameSur$.subscribe(o => console.log('keyvalues2'));
   }
 
   ngOnDestroy(): void {

@@ -11,10 +11,20 @@ export interface EntityState<T, S extends ID = number, E = any> {
 }
 
 export interface EntityStoreOptions<T, S extends ID = number> {
+  name: string;
   idGetter?: IdGetter<T, S> | string | string[];
   initialState?: { [K in S]?: T } | T[];
   initialActive?: { [K in S]?: T } | T[];
   cache?: number;
+}
+
+export interface StoreOptions<T> {
+  name: string;
+  initialState?: T;
+  cache?: number;
+  persist?: string;
+  persistSerialize?: <V>(value: V) => string;
+  persistDeserialize?: <V>(value: string) => V;
 }
 
 export type DeepPartial<T> = {
