@@ -91,7 +91,7 @@ export class Store<T, E = any> {
       let newState = state;
       while (keys.length - 1) {
         const n = keys.shift();
-        if (!(n in newState)) {
+        if (!(n in newState) || isNullOrUndefined(newState[n])) {
           newState[n as string] = {};
         }
         newState = newState[n as string];
