@@ -139,10 +139,19 @@ export class EntityStore<T, S extends ID = number, E = any> {
   remove(idOrIds: S | S[]): void;
   remove(callback: (entity: T, key: S) => boolean): void;
   remove(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): void {
+    const callback = isFunction(idOrIdsOrCallback)
+      ? idOrIdsOrCallback
+      : (entity, key) => {
+          const ids = isArray(idOrIdsOrCallback)
+            ? idOrIdsOrCallback
+            : [idOrIdsOrCallback];
+          return ids.includes(key);
+        };
+    const entities = this.getState().entities.filter(callback);
     this.updateState(state => {
       return { ...state, entities: state.entities.remove(idOrIdsOrCallback) };
     });
-    this.postDelete();
+    this.postRemove(entities.values());
   }
 
   update(id: S, partial: DeepPartial<T>): void;
@@ -328,7 +337,7 @@ export class EntityStore<T, S extends ID = number, E = any> {
     this.updateActive();
   }
 
-  postDelete(): void {
+  postRemove(entitiesRemoved: T[]): void {
     this.updateActive();
   }
 }

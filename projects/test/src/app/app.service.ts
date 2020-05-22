@@ -34,6 +34,11 @@ export class AppStore extends EntityStore<AppTeste> {
     console.log(entity);
     return super.preUpdate(entity);
   }
+
+  postRemove(entitiesRemoved: AppTeste[]): void {
+    console.log(entitiesRemoved);
+    super.postRemove(entitiesRemoved);
+  }
 }
 
 @Injectable({ providedIn: 'root' })
