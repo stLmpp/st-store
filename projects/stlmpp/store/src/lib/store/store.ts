@@ -3,9 +3,18 @@ import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
 import { isFunction, isNullOrUndefined, isPrimitive } from 'is-what';
 import { copy } from 'copy-anything';
-import { deepMerge, DeepPartial, getDeep } from '@stlmpp/utils';
+import {
+  deepMerge,
+  DeepPartial,
+  getDeep,
+  removeArray,
+  updateArray,
+  upsertArray,
+} from '@stlmpp/utils';
+import { OnDestroy } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
-export class Store<T, E = any> {
+export class Store<T, E = any> implements OnDestroy {
   constructor(private __options?: StoreOptions<T>) {
     this.__options = {
       ...({
@@ -20,7 +29,12 @@ export class Store<T, E = any> {
     if (this.__options.persist) {
       this.setPersist(copy(this.getState()));
     }
+    this.listenToChildren();
   }
+
+  type = 'simple';
+
+  private _destroy$ = new Subject();
 
   private __state$: BehaviorSubject<T>;
   private __error$ = new BehaviorSubject<E>(null);
@@ -134,6 +148,72 @@ export class Store<T, E = any> {
     this.set(newState);
   }
 
+  private listenToChildren(): void {
+    if (this.__options.children?.length) {
+      for (const { store: _store, key } of this.__options.children) {
+        if (_store.type === 'entity') {
+          const store = _store as any;
+          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            this.update(state => {
+              return {
+                ...state,
+                [key]: upsertArray(
+                  state[key as string] ?? [],
+                  newEntity,
+                  store.idGetter
+                ),
+              };
+            });
+          });
+          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            this.update(state => {
+              return {
+                ...state,
+                [key]: updateArray(
+                  state[key as string] ?? [],
+                  store.idGetter(newEntity),
+                  newEntity,
+                  store.idGetter
+                ),
+              };
+            });
+          });
+          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            this.update(state => {
+              return {
+                ...state,
+                [key]: upsertArray(
+                  state[key as string] ?? [],
+                  newEntity,
+                  store.idGetter
+                ),
+              };
+            });
+          });
+          store.remove$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(removedEntities => {
+              this.update(state => {
+                return {
+                  ...state,
+                  [key]: removeArray(
+                    state[key as string] ?? [],
+                    removedEntities.map(store.idGetter),
+                    store.idGetter
+                  ),
+                };
+              });
+            });
+        } else if (_store.type === 'simple') {
+          const store = _store as any;
+          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            this.update({ [key]: newEntity } as any);
+          });
+        }
+      }
+    }
+  }
+
   reset(): void {
     this.__state$.next(this.__options.initialState);
   }
@@ -143,4 +223,14 @@ export class Store<T, E = any> {
   }
 
   postUpdate(): void {}
+
+  destroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+    this.reset();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
 }

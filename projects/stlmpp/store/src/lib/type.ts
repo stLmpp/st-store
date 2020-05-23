@@ -22,7 +22,7 @@ export interface EntityStoreOptions<T, S extends ID = number> {
   idGetter?: IdGetter<T, S> | string | string[];
   initialState?: { [K in S]?: T } | T[];
   initialActive?: { [K in S]?: T } | T[];
-  childs?: EntityStoreChild<T>[];
+  children?: EntityStoreChild<T>[];
   cache?: number;
 }
 
@@ -33,7 +33,7 @@ export interface StoreOptions<T> {
   persist?: string;
   persistSerialize?: <V>(value: V) => string;
   persistDeserialize?: <V>(value: string) => V;
-  childs?: EntityStoreChild<T>[];
+  children?: EntityStoreChild<T>[];
 }
 
 export interface KeyValue<K, V> {

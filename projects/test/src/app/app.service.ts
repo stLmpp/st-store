@@ -63,7 +63,7 @@ export class AppStore extends EntityStore<AppTeste> {
     super({
       cache: 5000,
       name: 'app',
-      childs: [
+      children: [
         {
           key: 'schools',
           store: schoolStore,

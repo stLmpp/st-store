@@ -11,8 +11,6 @@ import {
 import { devCopy } from '../utils';
 import { isDev } from '../env';
 import { OnDestroy } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
-import { Store } from '../store/store';
 import {
   deepMerge,
   DeepPartial,
@@ -24,6 +22,7 @@ import {
   updateArray,
   upsertArray,
 } from '@stlmpp/utils';
+import { takeUntil } from 'rxjs/operators';
 
 const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   idGetter: entity => entity.id,
@@ -43,18 +42,22 @@ export class EntityStore<T, S extends ID = number, E = any>
     }
     this.options = { ...(ST_ENTITY_STORE_DEFAULTS as any), ...options };
     this.setInitialState();
-    this.listenToChilds();
+    this.listenToChildren();
   }
+
+  type = 'entity';
 
   private _destroy$ = new Subject();
 
   private _add$ = new Subject<T>();
   private _update$ = new Subject<T>();
   private _remove$ = new Subject<T[]>();
+  private _upsert$ = new Subject<T>();
 
   add$ = this._add$.asObservable();
   update$ = this._update$.asObservable();
   remove$ = this._remove$.asObservable();
+  upsert$ = this._upsert$.asObservable();
 
   idGetter: IdGetter<T, S>;
   private options: EntityStoreOptions<T, S> = {} as any;
@@ -241,7 +244,7 @@ export class EntityStore<T, S extends ID = number, E = any>
     if (isPrimitive(keyOrEntities)) {
       const entityStored = this.getState().entities.get(keyOrEntities);
       const newEntity = this.preUpdate(deepMerge(entityStored, entity));
-      this._update$.next(newEntity);
+      this._upsert$.next(newEntity);
       return [newEntity];
     } else {
       const currentEntities = this.getState().entities;
@@ -253,11 +256,11 @@ export class EntityStore<T, S extends ID = number, E = any>
         if (currentEntities.has(id)) {
           const currentEntity = currentEntities.get(id);
           const updated = this.preUpdate(deepMerge(currentEntity, item));
-          this._update$.next(updated);
+          this._upsert$.next(updated);
           return [...acc, updated];
         } else {
           const newEntity = this.preAdd(item as T);
-          this._add$.next(newEntity);
+          this._upsert$.next(newEntity);
           return [...acc, newEntity];
         }
       }, []);
@@ -349,11 +352,25 @@ export class EntityStore<T, S extends ID = number, E = any>
     this.updateActive();
   }
 
-  private listenToChilds(): void {
-    if (this.options.childs?.length) {
-      for (const { store, key, relation, reverseRelation } of this.options
-        .childs) {
-        if (store instanceof EntityStore) {
+  private listenToChildren(): void {
+    if (this.options.children?.length) {
+      for (const { store: _store, key, relation, reverseRelation } of this
+        .options.children) {
+        if (_store.type === 'entity') {
+          const store = _store as any;
+          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            const idEntity = relation(newEntity);
+            this.update(idEntity, entity => {
+              return {
+                ...entity,
+                [key]: upsertArray(
+                  entity[key as string] ?? [],
+                  newEntity,
+                  store.idGetter
+                ),
+              };
+            });
+          });
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
             const idEntity = relation(newEntity);
             this.update(idEntity, entity => {
@@ -391,20 +408,22 @@ export class EntityStore<T, S extends ID = number, E = any>
                     ...entity,
                     [key]: removeArray(
                       entity[key as string] ?? [],
-                      entities.map(store.idGetter),
+                      entities.map(store.idGetter) as any[],
                       store.idGetter
                     ),
                   };
                 });
               }
             });
-        } else if (store instanceof Store) {
-          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            const idEntity = relation(newEntity);
-            this.update(entity => reverseRelation(entity) === idEntity, {
-              [key]: newEntity,
-            } as any);
-          });
+        } else if (_store.type === 'simple') {
+          _store.update$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(newEntity => {
+              const idEntity = relation(newEntity);
+              this.update(entity => reverseRelation(entity) === idEntity, {
+                [key]: newEntity,
+              } as any);
+            });
         }
       }
     }
@@ -449,6 +468,7 @@ export class EntityStore<T, S extends ID = number, E = any>
   destroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+    this.reset();
   }
 
   ngOnDestroy(): void {
