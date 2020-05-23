@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../../dist/stlmpp/store",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "copy-anything": "copy-anything",
+      "is-what": "is-what",
+      "merge-anything": "merge-anything",
+      "underscore": "underscore",
+      "@stlmpp/utils": "@stlmpp/utils"
+    }
+  },
+  "whitelistedNonPeerDependencies": ["."]
+}

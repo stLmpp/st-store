@@ -7,99 +7,23 @@ import {
 } from '@angular/core';
 import {
   AppQuery,
-  AppSimpleQuery,
-  AppSimpleStore,
   AppStore,
   AppTeste,
+  School,
+  SchoolQuery,
+  SchoolStore,
+  Simple,
+  SimpleQuery,
+  SimpleStore,
 } from './app.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
-let id = 1255;
-
-function makeid(length: number): string {
-  let result = '';
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+function randomInteger(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createRandomObj(
-  fieldCount: number,
-  allowNested: boolean,
-  isNested?: boolean
-): any {
-  const generatedObj = {};
-
-  for (let i = 0; i < fieldCount; i++) {
-    let generatedObjField;
-
-    switch (randomInt(7)) {
-      case 0:
-        generatedObjField = randomInt(1000);
-        break;
-
-      case 1:
-        generatedObjField = randomInt(10000) + Math.round(Math.random());
-        break;
-
-      case 2:
-        generatedObjField = Math.random() < 0.5;
-        break;
-
-      case 3:
-        generatedObjField = makeid(randomInt(4) + 4);
-        break;
-
-      case 4:
-        generatedObjField = null;
-        break;
-
-      case 5:
-        if (isNested) {
-          if (Math.random() < 0.5) {
-            generatedObjField = createRandomObj(
-              fieldCount - 1,
-              allowNested,
-              isNested
-            );
-          }
-        } else {
-          generatedObjField = createRandomObj(
-            fieldCount - 1,
-            allowNested,
-            isNested
-          );
-        }
-        break;
-      case 6:
-        if (isNested) {
-          if (Math.random() < 0.5) {
-            generatedObjField = Array.from({
-              length: randomInt(fieldCount),
-            }).map(() =>
-              createRandomObj(fieldCount - 1, allowNested, isNested)
-            );
-          }
-        } else {
-          generatedObjField = Array.from({
-            length: randomInt(fieldCount),
-          }).map(() => createRandomObj(fieldCount - 1, allowNested, isNested));
-        }
-        break;
-    }
-    generatedObj[makeid(8)] = generatedObjField;
-  }
-  return generatedObj;
-}
-
-function randomInt(rightBound: number): number {
-  return Math.floor(Math.random() * rightBound);
+function randomString(): string {
+  return Math.random().toString(36).substring(7);
 }
 
 @Component({
@@ -112,105 +36,88 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private appStore: AppStore,
     public appQuery: AppQuery,
-    public appSimpleQuery: AppSimpleQuery,
-    private appSimpleStore: AppSimpleStore
+    private schoolStore: SchoolStore,
+    public schoolQuery: SchoolQuery,
+    private simpleStore: SimpleStore,
+    public simpleQuery: SimpleQuery
   ) {}
 
   private _destroy$ = new Subject();
 
-  simpleName$ = this.appSimpleQuery.select('name');
-  simpleCallback$ = this.appSimpleQuery.select(state => state.id);
-  simpleKeyValues$ = this.appSimpleQuery.selectAsKeyValue();
-  simpleKeyValuesNameSur$ = this.appSimpleQuery.selectAsKeyValue([
-    'name',
-    'sur',
-  ]);
+  trackBySchool: TrackByFunction<School> = (_, element) => element.id;
+  trackByApp: TrackByFunction<AppTeste> = (_, element) => element.id;
 
-  title = 'test';
-
-  form = new FormGroup({
-    name: new FormControl(null, [Validators.required]),
-    sur: new FormControl(null, [Validators.required]),
-  });
-
-  searchControl = new FormControl();
-  search$ = this.searchControl.valueChanges.pipe(debounceTime(300));
-
-  nroControl = new FormControl(50);
-  itemsPerPageControl = new FormControl(15);
-
-  random$: Observable<any>;
-
-  page = 1;
-
-  trackBy: TrackByFunction<AppTeste> = (_, entity) => entity.id;
-
-  add(): void {
-    this.appStore.add({ ...this.form.value, id: id++ });
-    this.form.reset({});
+  updateSimple(property: keyof Simple, value: Simple[keyof Simple]): void {
+    this.simpleStore.update({ [property]: value });
   }
 
-  delete(item: AppTeste): void {
-    this.appStore.remove(item.id);
-  }
-
-  deleteSelected(): void {
-    this.appStore.remove(entity => entity.selected);
-  }
-
-  update(item: AppTeste, field: keyof AppTeste, newValue: any): void {
-    this.appStore.update(item.id, { [field]: newValue });
-  }
-
-  toggleActive(item: AppTeste): void {
-    this.appStore.toggleActive(item);
-  }
-
-  changeRandom(): void {
-    this.random$ = this.appQuery.selectEntity(
-      this.appQuery.getAll()[
-        Math.floor(Math.random() * this.appQuery.getAll().length)
-      ].id
-    );
-    this.random$.subscribe(console.log);
-  }
-
-  removeAndUpsert(): void {
-    this.appStore.upsert([
-      {
-        id: 1000,
-        name: 'TESTE1255',
-      },
-      {
-        id: 1256,
-        name: 'TESTE1256',
-      },
-    ]);
-  }
-
-  updateSimple<K extends keyof AppTeste>(
-    property: K,
-    value: AppTeste[K]
+  updateSchool(
+    id: number,
+    property: keyof School,
+    value: School[keyof School]
   ): void {
-    this.appSimpleStore.update({ [property]: value });
+    this.schoolStore.update(id, { [property]: value });
+  }
+
+  removeSchool(id: number): void {
+    this.schoolStore.remove(id);
+  }
+
+  addNew(): void {
+    this.appStore.add({
+      idSimple: 1,
+      simple: this.simpleQuery.getState(),
+      schools: [],
+      sur: randomString(),
+      name: randomString(),
+      id: randomInteger(1, 99999999999999999999),
+    });
+  }
+
+  addSchool(idApp: number): void {
+    this.schoolStore.add({
+      name: randomString(),
+      id: randomInteger(1, 9999999999999999999),
+      idApp,
+    });
   }
 
   ngOnInit(): void {
-    this.appStore.set(
-      Array.from({
-        length: 15 * 5,
-      }).map((o, i) => {
-        return {
-          id: id++,
-          name: makeid(5),
-          sur: makeid(5),
-          ...createRandomObj(randomInt(5), true),
-        };
-      })
-    );
-    combineLatest([this.itemsPerPageControl.valueChanges, this.search$])
-      .pipe(takeUntil(this._destroy$))
-      .subscribe(() => (this.page = 1));
+    this.appStore.set([
+      {
+        id: 1,
+        name: 'Teste',
+        sur: 'Teste2',
+        idSimple: 1,
+        simple: {
+          id: 1,
+          name: 'Not so simple',
+        },
+        schools: [
+          {
+            idApp: 1,
+            id: 1,
+            name: 'Teste',
+          },
+        ],
+      },
+    ]);
+    this.schoolStore.add([
+      {
+        idApp: 1,
+        id: 1,
+        name: 'Teste',
+      },
+      {
+        idApp: 1,
+        id: 2,
+        name: 'Teste2',
+      },
+    ]);
+    this.simpleStore.set({
+      id: 1,
+      name: 'Simple things',
+    });
   }
 
   ngOnDestroy(): void {

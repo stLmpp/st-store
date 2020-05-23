@@ -11,16 +11,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2015",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
-    "paths": {
-      "st-store": [
-        "dist/st-store/st-store",
-        "dist/st-store"
-      ]
-    }
+    "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

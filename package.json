@@ -7,7 +7,11 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build-utils": "ng build @stlmpp/utils",
+    "build-store": "ng build @stlmpp/store",
+    "build-utils:prod": "ng build @stlmpp/utils --prod",
+    "build-store:prod": "ng build @stlmpp/store --prod"
   },
   "private": true,
   "dependencies": {

@@ -3,46 +3,6 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "st-store": {
-      "projectType": "library",
-      "root": "projects/st-store",
-      "sourceRoot": "projects/st-store/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/st-store/tsconfig.lib.json",
-            "project": "projects/st-store/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/st-store/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/st-store/src/test.ts",
-            "tsConfig": "projects/st-store/tsconfig.spec.json",
-            "karmaConfig": "projects/st-store/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/st-store/tsconfig.lib.json",
-              "projects/st-store/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
     "test": {
       "projectType": "application",
       "schematics": {
@@ -163,10 +123,89 @@
           }
         }
       }
+    },
+    "@stlmpp/store": {
+      "projectType": "library",
+      "root": "projects/stlmpp/store",
+      "sourceRoot": "projects/stlmpp/store/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/stlmpp/store/tsconfig.lib.json",
+            "project": "projects/stlmpp/store/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/stlmpp/store/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/stlmpp/store/src/test.ts",
+            "tsConfig": "projects/stlmpp/store/tsconfig.spec.json",
+            "karmaConfig": "projects/stlmpp/store/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/stlmpp/store/tsconfig.lib.json",
+              "projects/stlmpp/store/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "@stlmpp/utils": {
+      "projectType": "library",
+      "root": "projects/stlmpp/utils",
+      "sourceRoot": "projects/stlmpp/utils/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/stlmpp/utils/tsconfig.lib.json",
+            "project": "projects/stlmpp/utils/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/stlmpp/utils/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/stlmpp/utils/src/test.ts",
+            "tsConfig": "projects/stlmpp/utils/tsconfig.spec.json",
+            "karmaConfig": "projects/stlmpp/utils/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/stlmpp/utils/tsconfig.lib.json",
+              "projects/stlmpp/utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
     "analytics": "ea86ae36-ac5a-4be3-b115-58058da40357"
-  },
-  "defaultProject": "st-store"
+  }
 }

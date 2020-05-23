@@ -4,6 +4,7 @@
     "codelyzer"
   ],
   "rules": {
+    "unified-signatures": false,
     "arrow-parens": [true, "ban-single-arg-parens"],
     "no-trailing-whitespace": [true, "ignore-blank-lines", "ignore-comments"],
     "typedef": [true, "call-signature", "property-declaration"],

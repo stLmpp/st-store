@@ -1,139 +1,31 @@
-<div>
-  {{ appSimpleQuery.state$ | async | json }}
+<h1>School</h1>
+{{ schoolQuery.all$ | async | json }}
+<div
+  *ngFor="let school of schoolQuery.all$ | async; trackBy: trackBySchool"
+  style="margin-bottom: 5px;"
+>
+  <input
+    placeholder="name"
+    [ngModel]="school.name"
+    (ngModelChange)="updateSchool(school.id, 'name', $event)"
+  />
+  <button (click)="removeSchool(school.id)">Remove</button>
 </div>
 <hr />
-<div>Name: {{ simpleName$ | async }}</div>
-<hr />
-<div>callback: {{ simpleCallback$ | async }}</div>
-<hr />
-<div>keyValue: {{ simpleKeyValues$ | async | json }}</div>
-<hr />
-<div>keyValue2: {{ simpleKeyValuesNameSur$ | async | json }}</div>
-<div *ngIf="appSimpleQuery.state$ | async as state">
+<ng-container *ngIf="simpleQuery.state$ | async as simpleState">
+  <h1>Simple</h1>
+  {{ simpleState | json }}
   <input
-    [ngModel]="state.name"
+    placeholder="Simple name"
+    [ngModel]="simpleState.name"
     (ngModelChange)="updateSimple('name', $event)"
   />
-  <input [ngModel]="state.sur" (ngModelChange)="updateSimple('sur', $event)" />
-  <button (click)="updateSimple('id', state.id + 1)">ID++</button>
-</div>
-<hr />
-<ng-container
-  *ngIf="{
-    all: appQuery.all$ | async,
-    activeId: appQuery.activeId$ | async,
-    hasSelected: appQuery.hasSelected$ | async,
-    search: search$ | async,
-    loading: appQuery.loading$ | async
-  } as state"
->
-  <ng-container
-    *ngIf="state.all | search: ['name', 'sur']:state.search as items"
-  >
-    <ng-container
-      *ngIf="
-        items
-          | slice
-            : (page - 1) * itemsPerPageControl.value
-            : page * itemsPerPageControl.value as itemsSliced
-      "
-    >
-      <div [formGroup]="form">
-        <input formControlName="name" placeholder="Name" />
-        <input formControlName="sur" placeholder="Sur" />
-        <button [disabled]="form.invalid" type="button" (click)="add()">
-          Add
-        </button>
-      </div>
-      <hr />
-      <button (click)="changeRandom()" type="button">Change</button>
-      Random: {{ random$ | async | json }}
-      <hr />
-      Active: {{ appQuery.active$ | async | json }}
-      <hr />
-      <button type="button" (click)="removeAndUpsert()">
-        Remove and Insert
-      </button>
-      <input placeholder="Number of items" [formControl]="nroControl" />
-      <hr />
-      <div class="pages">
-        <div>
-          Page: {{ page }} /
-          {{ items.length / itemsPerPageControl.value | ceil }}
-        </div>
-        <div>
-          Items:
-          {{ (page - 1) * itemsPerPageControl.value + itemsSliced.length }} /
-          {{ items.length }}
-        </div>
-        <button [disabled]="page === 1" (click)="page = page - 1">
-          Previous
-        </button>
-        <button
-          [disabled]="
-            itemsSliced.length % itemsPerPageControl.value !== 0 ||
-            items.length / itemsPerPageControl.value === page
-          "
-          (click)="page = page + 1"
-        >
-          Next
-        </button>
-        <select [formControl]="itemsPerPageControl">
-          <option [ngValue]="15">15</option>
-          <option [ngValue]="30">30</option>
-          <option [ngValue]="60">60</option>
-          <option [ngValue]="90">90</option>
-          <option [ngValue]="120">120</option>
-        </select>
-      </div>
-      <hr />
-      <input placeholder="Search" [formControl]="searchControl" />
-      <hr />
-      <ng-container *ngIf="state.loading">
-        <span class="loading">Loading</span>
-        <hr />
-      </ng-container>
-      <div class="list">
-        <div
-          class="item"
-          *ngFor="let item of itemsSliced; trackBy: trackBy"
-          [class.active]="state.activeId?.includes(item.id)"
-          (click)="toggleActive(item)"
-        >
-          <input
-            type="checkbox"
-            [ngModel]="item.selected"
-            (ngModelChange)="update(item, 'selected', $event)"
-            (click)="$event.stopPropagation()"
-          />
-          <div>
-            <input
-              [ngModel]="item.name"
-              (ngModelChange)="update(item, 'name', $event)"
-              (click)="$event.stopPropagation()"
-            />
-            <input
-              [ngModel]="item.sur"
-              (ngModelChange)="update(item, 'sur', $event)"
-              (click)="$event.stopPropagation()"
-            />
-          </div>
-          <span>{{ item.name }} - {{ item.sur }}</span>
-          <button
-            (click)="$event.stopPropagation(); delete(item)"
-            type="button"
-          >
-            Delete
-          </button>
-        </div>
-        <button
-          (click)="deleteSelected()"
-          type="button"
-          [disabled]="!state.hasSelected"
-        >
-          Delete Selected
-        </button>
-      </div>
-    </ng-container>
-  </ng-container>
 </ng-container>
+<hr />
+<h1>App</h1>
+<div *ngFor="let app of appQuery.all$ | async; trackBy: trackByApp">
+  {{ app | json }}
+  <hr />
+  <button (click)="addSchool(app.id)">Add school</button>
+</div>
+<button (click)="addNew()">Add new</button>
