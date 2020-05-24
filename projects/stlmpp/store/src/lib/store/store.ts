@@ -150,43 +150,42 @@ export class Store<T, E = any> implements OnDestroy {
 
   private listenToChildren(): void {
     if (this.__options.children?.length) {
-      for (const { store: _store, key } of this.__options.children) {
+      for (const { store: _store, key, isArray: _isArray } of this.__options
+        .children) {
         if (_store.type === 'entity') {
           const store = _store as any;
-          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+          const _upsert = newEntity => {
             this.update(state => {
               return {
                 ...state,
-                [key]: upsertArray(
-                  state[key as string] ?? [],
-                  newEntity,
-                  store.idGetter
-                ),
+                [key]: _isArray
+                  ? upsertArray(
+                      state[key as string] ?? [],
+                      newEntity,
+                      store.idGetter
+                    )
+                  : deepMerge(state[key], newEntity),
               };
             });
-          });
+          };
+          store.upsert$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(newEntity => _upsert(newEntity));
+          store.add$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
             this.update(state => {
               return {
                 ...state,
-                [key]: updateArray(
-                  state[key as string] ?? [],
-                  store.idGetter(newEntity),
-                  newEntity,
-                  store.idGetter
-                ),
-              };
-            });
-          });
-          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            this.update(state => {
-              return {
-                ...state,
-                [key]: upsertArray(
-                  state[key as string] ?? [],
-                  newEntity,
-                  store.idGetter
-                ),
+                [key]: _isArray
+                  ? updateArray(
+                      state[key as string] ?? [],
+                      store.idGetter(newEntity),
+                      newEntity,
+                      store.idGetter
+                    )
+                  : deepMerge(state[key], newEntity),
               };
             });
           });
@@ -196,11 +195,13 @@ export class Store<T, E = any> implements OnDestroy {
               this.update(state => {
                 return {
                   ...state,
-                  [key]: removeArray(
-                    state[key as string] ?? [],
-                    removedEntities.map(store.idGetter),
-                    store.idGetter
-                  ),
+                  [key]: _isArray
+                    ? removeArray(
+                        state[key as string] ?? [],
+                        removedEntities.map(store.idGetter),
+                        store.idGetter
+                      )
+                    : null,
                 };
               });
             });

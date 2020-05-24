@@ -1,5 +1,5 @@
 {
-  "name": "@stlmpp/utils",
+  "name": "@stlmpp/router",
   "version": "0.1.0",
   "peerDependencies": {
     "@angular/common": ">= 7 < 10",
@@ -8,6 +8,9 @@
   },
   "dependencies": {
     "is-what": "^3.8.0",
-    "merge-anything": "^3.0.3"
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {
+    "@types/underscore": "^1.10.0"
   }
 }

@@ -10,8 +10,12 @@
     "e2e": "ng e2e",
     "build-utils": "ng build @stlmpp/utils",
     "build-store": "ng build @stlmpp/store",
+    "build-router": "ng build @stlmpp/router",
     "build-utils:prod": "ng build @stlmpp/utils --prod",
-    "build-store:prod": "ng build @stlmpp/store --prod"
+    "build-store:prod": "ng build @stlmpp/store --prod",
+    "build-router:prod": "ng build @stlmpp/router --prod",
+    "build-all": "yarn build-utils && yarn build-store && yarn build-router",
+    "build-all:prod": "yarn build-utils:prod && yarn build-store:prod && yarn build-router:prod"
   },
   "private": true,
   "dependencies": {

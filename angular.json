@@ -203,6 +203,46 @@
           }
         }
       }
+    },
+    "@stlmpp/router": {
+      "projectType": "library",
+      "root": "projects/stlmpp/router",
+      "sourceRoot": "projects/stlmpp/router/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/stlmpp/router/tsconfig.lib.json",
+            "project": "projects/stlmpp/router/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/stlmpp/router/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/stlmpp/router/src/test.ts",
+            "tsConfig": "projects/stlmpp/router/tsconfig.spec.json",
+            "karmaConfig": "projects/stlmpp/router/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/stlmpp/router/tsconfig.lib.json",
+              "projects/stlmpp/router/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

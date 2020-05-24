@@ -22,6 +22,7 @@ export interface AppTeste {
   sur: string;
   schools?: School[];
   idSimple?: number;
+  school?: School;
   simple?: Simple;
   selected?: boolean;
 }
@@ -68,12 +69,18 @@ export class AppStore extends EntityStore<AppTeste> {
           key: 'schools',
           store: schoolStore,
           relation: (relation: School) => relation.idApp,
+          isArray: true,
         },
         {
           key: 'simple',
           store: simpleStore,
           relation: (relation: Simple) => relation.id,
           reverseRelation: entity => entity.idSimple,
+        },
+        {
+          key: 'school',
+          store: schoolStore,
+          relation: (relation: School) => relation.idApp,
         },
       ],
     });

@@ -5,10 +5,20 @@ import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchPipe } from './search.pipe';
 import { CeilPipe } from './ceil.pipe';
+import { StUtilsModule } from '../../../stlmpp/utils/src/lib/st-utils.module';
+import { StRouterModule } from '../../../stlmpp/router/src/lib/st-router.module';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [AppComponent, SearchPipe, CeilPipe],
-  imports: [BrowserModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forRoot([]),
+    StUtilsModule.forRoot(),
+    StRouterModule.forRoot(),
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

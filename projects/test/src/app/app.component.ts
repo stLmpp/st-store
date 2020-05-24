@@ -17,6 +17,8 @@ import {
   SimpleStore,
 } from './app.service';
 import { Subject } from 'rxjs';
+import { RouterQuery } from '../../../stlmpp/router/src/lib/router.query';
+import { ActivatedRoute, Router } from '@angular/router';
 
 function randomInteger(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -39,8 +41,14 @@ export class AppComponent implements OnInit, OnDestroy {
     private schoolStore: SchoolStore,
     public schoolQuery: SchoolQuery,
     private simpleStore: SimpleStore,
-    public simpleQuery: SimpleQuery
-  ) {}
+    public simpleQuery: SimpleQuery,
+    private routerQuery: RouterQuery,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
+    routerQuery.selectQueryParams('teste').subscribe(console.log);
+    routerQuery.selectQueryParams(['teste', 'teste1']).subscribe(console.log);
+  }
 
   private _destroy$ = new Subject();
 
@@ -64,13 +72,18 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addNew(): void {
+    const id = randomInteger(1, 99999999999999999999);
     this.appStore.add({
       idSimple: 1,
       simple: this.simpleQuery.getState(),
       schools: [],
       sur: randomString(),
       name: randomString(),
-      id: randomInteger(1, 99999999999999999999),
+      id,
+    });
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { teste: 'TESTE', teste1: id },
     });
   }
 
@@ -79,6 +92,10 @@ export class AppComponent implements OnInit, OnDestroy {
       name: randomString(),
       id: randomInteger(1, 9999999999999999999),
       idApp,
+    });
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { teste: 'TESTE123' },
     });
   }
 

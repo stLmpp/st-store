@@ -354,47 +354,49 @@ export class EntityStore<T, S extends ID = number, E = any>
 
   private listenToChildren(): void {
     if (this.options.children?.length) {
-      for (const { store: _store, key, relation, reverseRelation } of this
-        .options.children) {
+      for (const {
+        store: _store,
+        key,
+        relation,
+        reverseRelation,
+        isArray: _isArray,
+      } of this.options.children) {
         if (_store.type === 'entity') {
           const store = _store as any;
-          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+          const _upsert = newEntity => {
             const idEntity = relation(newEntity);
             this.update(idEntity, entity => {
               return {
                 ...entity,
-                [key]: upsertArray(
-                  entity[key as string] ?? [],
-                  newEntity,
-                  store.idGetter
-                ),
+                [key]: _isArray
+                  ? upsertArray(
+                      entity[key as string] ?? [],
+                      newEntity,
+                      store.idGetter
+                    )
+                  : deepMerge(entity[key], newEntity),
               };
             });
-          });
+          };
+          store.upsert$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(newEntity => _upsert(newEntity));
+          store.add$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
             const idEntity = relation(newEntity);
             this.update(idEntity, entity => {
               return {
                 ...entity,
-                [key]: updateArray(
-                  entity[key as string] ?? [],
-                  store.idGetter(newEntity),
-                  newEntity,
-                  store.idGetter
-                ),
-              };
-            });
-          });
-          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            const idEntity = relation(newEntity);
-            this.update(idEntity, entity => {
-              return {
-                ...entity,
-                [key]: upsertArray(
-                  entity[key as string] ?? [],
-                  newEntity,
-                  store.idGetter
-                ),
+                [key]: _isArray
+                  ? updateArray(
+                      entity[key as string] ?? [],
+                      store.idGetter(newEntity),
+                      newEntity,
+                      store.idGetter
+                    )
+                  : deepMerge(entity[key], newEntity),
               };
             });
           });
@@ -406,11 +408,13 @@ export class EntityStore<T, S extends ID = number, E = any>
                 this.update(idEntity, entity => {
                   return {
                     ...entity,
-                    [key]: removeArray(
-                      entity[key as string] ?? [],
-                      entities.map(store.idGetter) as any[],
-                      store.idGetter
-                    ),
+                    [key]: _isArray
+                      ? removeArray(
+                          entity[key as string] ?? [],
+                          entities.map(store.idGetter) as any[],
+                          store.idGetter
+                        )
+                      : null,
                   };
                 });
               }

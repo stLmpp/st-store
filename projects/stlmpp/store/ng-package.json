@@ -6,7 +6,6 @@
     "umdModuleIds": {
       "copy-anything": "copy-anything",
       "is-what": "is-what",
-      "merge-anything": "merge-anything",
       "underscore": "underscore",
       "@stlmpp/utils": "@stlmpp/utils"
     }
