@@ -189,22 +189,22 @@ export class Store<T, E = any> implements OnDestroy {
               };
             });
           });
-          store.remove$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(removedEntities => {
-              this.update(state => {
-                return {
-                  ...state,
-                  [key]: _isArray
-                    ? removeArray(
-                        state[key as string] ?? [],
-                        removedEntities.map(store.idGetter),
-                        store.idGetter
-                      )
-                    : null,
-                };
+          if (_isArray) {
+            store.remove$
+              .pipe(takeUntil(this._destroy$))
+              .subscribe(removedEntities => {
+                this.update(state => {
+                  return {
+                    ...state,
+                    [key]: removeArray(
+                      state[key as string] ?? [],
+                      removedEntities.map(store.idGetter),
+                      store.idGetter
+                    ),
+                  };
+                });
               });
-            });
+          }
         } else if (_store.type === 'simple') {
           const store = _store as any;
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {

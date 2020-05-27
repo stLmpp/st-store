@@ -12,7 +12,7 @@ export interface EntityState<T, S extends ID = number, E = any> {
 
 export interface EntityStoreChild<T> {
   store: EntityStore<any> | Store<any>;
-  relation: (relation: any) => any;
+  relation?: (relation: any) => any;
   reverseRelation?: (entity: T) => any;
   isArray?: boolean;
   key: keyof T;

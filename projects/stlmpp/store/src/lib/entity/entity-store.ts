@@ -362,9 +362,11 @@ export class EntityStore<T, S extends ID = number, E = any>
         isArray: _isArray,
       } of this.options.children) {
         if (_store.type === 'entity') {
+          const getIdEntity = newEntity =>
+            _isArray ? relation(newEntity) : reverseRelation(newEntity);
           const store = _store as any;
           const _upsert = newEntity => {
-            const idEntity = relation(newEntity);
+            const idEntity = getIdEntity(newEntity);
             this.update(idEntity, entity => {
               return {
                 ...entity,
@@ -385,7 +387,7 @@ export class EntityStore<T, S extends ID = number, E = any>
             .pipe(takeUntil(this._destroy$))
             .subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            const idEntity = relation(newEntity);
+            const idEntity = getIdEntity(newEntity);
             this.update(idEntity, entity => {
               return {
                 ...entity,
@@ -400,25 +402,25 @@ export class EntityStore<T, S extends ID = number, E = any>
               };
             });
           });
-          store.remove$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(removedEntities => {
-              const grouped = groupBy(removedEntities, relation);
-              for (const [idEntity, entities] of grouped) {
-                this.update(idEntity, entity => {
-                  return {
-                    ...entity,
-                    [key]: _isArray
-                      ? removeArray(
-                          entity[key as string] ?? [],
-                          entities.map(store.idGetter) as any[],
-                          store.idGetter
-                        )
-                      : null,
-                  };
-                });
-              }
-            });
+          if (_isArray) {
+            store.remove$
+              .pipe(takeUntil(this._destroy$))
+              .subscribe(removedEntities => {
+                const grouped = groupBy(removedEntities, relation);
+                for (const [idEntity, entities] of grouped) {
+                  this.update(idEntity, entity => {
+                    return {
+                      ...entity,
+                      [key]: removeArray(
+                        entity[key as string] ?? [],
+                        entities.map(store.idGetter) as any[],
+                        store.idGetter
+                      ),
+                    };
+                  });
+                }
+              });
+          }
         } else if (_store.type === 'simple') {
           _store.update$
             .pipe(takeUntil(this._destroy$))
