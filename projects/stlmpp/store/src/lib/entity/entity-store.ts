@@ -362,23 +362,29 @@ export class EntityStore<T, S extends ID = number, E = any>
         isArray: _isArray,
       } of this.options.children) {
         if (_store.type === 'entity') {
-          const getIdEntity = newEntity =>
-            _isArray ? relation(newEntity) : reverseRelation(newEntity);
+          const updateNotArray = newEntity =>
+            this.update(
+              entity => reverseRelation(entity) === store.idGetter(newEntity),
+              { [key]: newEntity } as any
+            );
+          const getIdEntity = newEntity => relation(newEntity);
           const store = _store as any;
           const _upsert = newEntity => {
-            const idEntity = getIdEntity(newEntity);
-            this.update(idEntity, entity => {
-              return {
-                ...entity,
-                [key]: _isArray
-                  ? upsertArray(
-                      entity[key as string] ?? [],
-                      newEntity,
-                      store.idGetter
-                    )
-                  : deepMerge(entity[key], newEntity),
-              };
-            });
+            if (_isArray) {
+              const idEntity = getIdEntity(newEntity);
+              this.update(idEntity, entity => {
+                return {
+                  ...entity,
+                  [key]: upsertArray(
+                    entity[key as string] ?? [],
+                    newEntity,
+                    store.idGetter
+                  ),
+                };
+              });
+            } else {
+              updateNotArray(newEntity);
+            }
           };
           store.upsert$
             .pipe(takeUntil(this._destroy$))
@@ -387,25 +393,27 @@ export class EntityStore<T, S extends ID = number, E = any>
             .pipe(takeUntil(this._destroy$))
             .subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            const idEntity = getIdEntity(newEntity);
-            this.update(idEntity, entity => {
-              return {
-                ...entity,
-                [key]: _isArray
-                  ? updateArray(
-                      entity[key as string] ?? [],
-                      store.idGetter(newEntity),
-                      newEntity,
-                      store.idGetter
-                    )
-                  : deepMerge(entity[key], newEntity),
-              };
-            });
+            if (_isArray) {
+              const idEntity = getIdEntity(newEntity);
+              this.update(idEntity, entity => {
+                return {
+                  ...entity,
+                  [key]: updateArray(
+                    entity[key as string] ?? [],
+                    store.idGetter(newEntity),
+                    newEntity,
+                    store.idGetter
+                  ),
+                };
+              });
+            } else {
+              updateNotArray(newEntity);
+            }
           });
-          if (_isArray) {
-            store.remove$
-              .pipe(takeUntil(this._destroy$))
-              .subscribe(removedEntities => {
+          store.remove$
+            .pipe(takeUntil(this._destroy$))
+            .subscribe(removedEntities => {
+              if (_isArray) {
                 const grouped = groupBy(removedEntities, relation);
                 for (const [idEntity, entities] of grouped) {
                   this.update(idEntity, entity => {
@@ -419,8 +427,16 @@ export class EntityStore<T, S extends ID = number, E = any>
                     };
                   });
                 }
-              });
-          }
+              } else {
+                for (const newEntity of removedEntities) {
+                  this.update(
+                    entity =>
+                      reverseRelation(entity) === store.idGetter(newEntity),
+                    { [key]: null } as any
+                  );
+                }
+              }
+            });
         } else if (_store.type === 'simple') {
           _store.update$
             .pipe(takeUntil(this._destroy$))

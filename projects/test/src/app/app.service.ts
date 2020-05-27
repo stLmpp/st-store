@@ -8,7 +8,6 @@ import { Query } from '../../../stlmpp/store/src/lib/store/query';
 export interface School {
   id: number;
   name: string;
-  idApp?: number;
 }
 
 export interface Simple {
@@ -20,8 +19,8 @@ export interface AppTeste {
   id: number;
   name: string;
   sur: string;
-  schools?: School[];
   idSimple?: number;
+  idSchool?: number;
   school?: School;
   simple?: Simple;
   selected?: boolean;
@@ -66,12 +65,6 @@ export class AppStore extends EntityStore<AppTeste> {
       name: 'app',
       children: [
         {
-          key: 'schools',
-          store: schoolStore,
-          relation: (relation: School) => relation.idApp,
-          isArray: true,
-        },
-        {
           key: 'simple',
           store: simpleStore,
           relation: (relation: Simple) => relation.id,
@@ -80,7 +73,7 @@ export class AppStore extends EntityStore<AppTeste> {
         {
           key: 'school',
           store: schoolStore,
-          relation: (relation: School) => relation.idApp,
+          reverseRelation: entity => entity.idSchool,
         },
       ],
     });

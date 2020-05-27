@@ -45,10 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private routerQuery: RouterQuery,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {
-    routerQuery.selectQueryParams('teste').subscribe(console.log);
-    routerQuery.selectQueryParams(['teste', 'teste1']).subscribe(console.log);
-  }
+  ) {}
 
   private _destroy$ = new Subject();
 
@@ -76,7 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.appStore.add({
       idSimple: 1,
       simple: this.simpleQuery.getState(),
-      schools: [],
       sur: randomString(),
       name: randomString(),
       id,
@@ -91,7 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.schoolStore.add({
       name: randomString(),
       id: randomInteger(1, 9999999999999999999),
-      idApp,
     });
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
@@ -110,23 +105,15 @@ export class AppComponent implements OnInit, OnDestroy {
           id: 1,
           name: 'Not so simple',
         },
-        schools: [
-          {
-            idApp: 1,
-            id: 1,
-            name: 'Teste',
-          },
-        ],
+        idSchool: 1,
       },
     ]);
     this.schoolStore.add([
       {
-        idApp: 1,
         id: 1,
         name: 'Teste',
       },
       {
-        idApp: 1,
         id: 2,
         name: 'Teste2',
       },
