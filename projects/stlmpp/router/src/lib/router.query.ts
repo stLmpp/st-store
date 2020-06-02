@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Data, Params } from '@angular/router';
-import { isArray, isNullOrUndefined } from 'is-what';
+import { ActivatedRoute, Data, ParamMap, Params } from '@angular/router';
+import { isArray, isNullOrUndefined, isString } from 'is-what';
 import { Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, pluck } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { isEqual } from 'underscore';
 
 @Injectable()
@@ -17,16 +17,26 @@ export class RouterQuery {
     return state;
   }
 
-  private selectBase<R = any>(
+  private selectBase(
+    path: 'paramMap' | 'queryParamMap',
+    params?: string | string[]
+  ): Observable<Params | string>;
+  private selectBase(
+    path: 'data',
+    params?: string | string[]
+  ): Observable<Data | any>;
+  private selectBase(path: 'fragment'): Observable<string>;
+  private selectBase(
     path: string,
     params?: string | string[]
-  ): Observable<R> {
-    let params$: Observable<R>;
+  ): Observable<any> {
+    let params$: Observable<any>;
     if (isArray(params)) {
       params$ = this.activatedRoute[path].pipe(
         map(routeParams =>
           params.reduce((acc, item) => {
-            const routeParam = routeParams[item];
+            const routeParam =
+              (routeParams as ParamMap).get?.(item) ?? routeParams[item];
             if (routeParam) {
               acc[item] = routeParam;
             }
@@ -35,9 +45,28 @@ export class RouterQuery {
         )
       );
     } else if (!isNullOrUndefined(params)) {
-      params$ = this.activatedRoute[path].pipe(pluck(params));
+      params$ = this.activatedRoute[path].pipe(
+        map(
+          routeParams =>
+            (routeParams as ParamMap).get?.(params) ?? routeParams?.[params]
+        )
+      );
     } else {
-      params$ = this.activatedRoute[path];
+      params$ = this.activatedRoute[path].pipe(
+        map((paramsRoute: ParamMap | Data | string) => {
+          if (isString(paramsRoute) || !('get' in paramsRoute)) {
+            return paramsRoute;
+          } else {
+            return (paramsRoute as ParamMap).keys.reduce(
+              (acc, key) =>
+                paramsRoute.has(key)
+                  ? { ...acc, [key]: paramsRoute.get(key) }
+                  : acc,
+              {}
+            );
+          }
+        })
+      );
     }
     return params$.pipe(
       filter(p => !isNullOrUndefined(p)),
@@ -45,18 +74,37 @@ export class RouterQuery {
     );
   }
 
-  private getBase(path: string, params?: string | string[]): string | Params {
+  private getBase(
+    path: 'paramMap' | 'queryParamMap',
+    params?: string | string[]
+  ): Params | string;
+  private getBase(path: 'data', params?: string | string[]): Data | any;
+  private getBase(path: 'fragment'): string;
+  private getBase(path: string, params?: string | string[]): any {
     const route = this.activatedRoute;
+    const paramsRoute = route.snapshot[path];
     if (isArray(params)) {
       return params.reduce((acc, param) => {
-        const routeParam = route.snapshot[path][param];
+        const routeParam = paramsRoute.get?.(param) ?? paramsRoute?.[param];
         if (routeParam) {
           acc[param] = routeParam;
         }
         return acc;
       }, {});
+    } else if (!isNullOrUndefined(params)) {
+      return paramsRoute.get?.(params) ?? paramsRoute?.[params];
     } else {
-      return route.snapshot[path][params];
+      if ('get' in paramsRoute) {
+        return (paramsRoute as ParamMap).keys.reduce(
+          (acc, key) =>
+            paramsRoute.has(key)
+              ? { ...acc, [key]: paramsRoute.get(key) }
+              : acc,
+          {}
+        );
+      } else {
+        return paramsRoute;
+      }
     }
   }
 
@@ -64,28 +112,28 @@ export class RouterQuery {
   getParams(param: string): string;
   getParams(params: string[]): Params;
   getParams(params?: string | string[]): string | Params {
-    return this.getBase('params', params);
+    return this.getBase('paramMap', params);
   }
 
   selectParams(): Observable<Params>;
   selectParams<R = any>(param: string): Observable<R>;
   selectParams(params: string[]): Observable<Params>;
   selectParams(params?: string[] | string): Observable<any> {
-    return this.selectBase('params', params);
+    return this.selectBase('paramMap', params);
   }
 
   getQueryParams(): Params;
   getQueryParams(param: string): string;
   getQueryParams(params: string[]): Params;
   getQueryParams(params?: string | string[]): string | Params {
-    return this.getBase('queryParams', params);
+    return this.getBase('queryParamMap', params);
   }
 
   selectQueryParams(): Observable<Params>;
-  selectQueryParams<R = any>(param: string): Observable<R>;
+  selectQueryParams(param: string): Observable<string>;
   selectQueryParams(params: string[]): Observable<Params>;
   selectQueryParams(params?: string[] | string): Observable<any> {
-    return this.selectBase('queryParams', params);
+    return this.selectBase('queryParamMap', params);
   }
 
   getData(): Data;

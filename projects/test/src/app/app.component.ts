@@ -90,11 +90,12 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: { teste: 'TESTE123' },
+      queryParams: { teste: 'TESTE123', teste2: idApp },
     });
   }
 
   ngOnInit(): void {
+    this.routerQuery.selectQueryParams().subscribe(o => console.log(o));
     this.appStore.set([
       {
         id: 1,
