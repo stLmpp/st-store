@@ -80,15 +80,15 @@ export class EntityQuery<T, S extends ID = number, E = any> {
 
   selectEntity(id: S): Observable<T>;
   selectEntity(callback: (entity: T, key: S) => boolean): Observable<T>;
-  selectEntity(
+  selectEntity<K extends keyof T>(
     idOrCallback: S | ((entity: T, key: S) => boolean),
-    property: keyof T
-  ): Observable<T[keyof T]>;
-  selectEntity(
+    property: K
+  ): Observable<T[K]>;
+  selectEntity<K extends keyof T>(
     idOrCallback: S | ((entity: T, key: S) => boolean),
-    property?: keyof T
-  ): Observable<T | T[keyof T]> {
-    let entity$: Observable<T | T[keyof T]>;
+    property?: K
+  ): Observable<T | T[K]> {
+    let entity$: Observable<T | T[K]>;
     if (isFunction(idOrCallback)) {
       entity$ = this.__entities$.pipe(
         map(entities => entities.find(idOrCallback))
@@ -105,8 +105,8 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   }
 
   getEntity(id: S): T;
-  getEntity(id: S, property: keyof T): T[keyof T];
-  getEntity(id: S, property?: keyof T): T | T[keyof T] {
+  getEntity<K extends keyof T>(id: S, property: K): T[K];
+  getEntity<K extends keyof T>(id: S, property?: K): T | T[K] {
     const entity = this.__getEntities.get(id);
     return property ? entity?.[property] : entity;
   }
