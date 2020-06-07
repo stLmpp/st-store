@@ -1,8 +1,10 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { OrderByPipe } from './order-by';
 import { GetDeepPipe } from './get-deep';
+import { DefaultPipe } from './default';
+import { SumByPipe, SumPipe } from './sum';
 
-const PIPES = [OrderByPipe, GetDeepPipe];
+const PIPES = [OrderByPipe, GetDeepPipe, DefaultPipe, SumByPipe, SumPipe];
 
 @NgModule({
   declarations: [...PIPES],

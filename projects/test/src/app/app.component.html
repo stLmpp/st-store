@@ -1,9 +1,6 @@
 <h1>School</h1>
 {{ schoolQuery.all$ | async | json }}
-<div
-  *ngFor="let school of schoolQuery.all$ | async; trackBy: trackBySchool"
-  style="margin-bottom: 5px;"
->
+<div *ngFor="let school of schoolQuery.all$ | async; trackBy: trackBySchool" style="margin-bottom: 5px;">
   <input
     placeholder="name"
     [ngModel]="school.name"
@@ -23,7 +20,7 @@
 </ng-container>
 <hr />
 <h1>App</h1>
-<div *ngFor="let app of appQuery.all$ | async; trackBy: trackByApp">
+<div *ngFor="let app of appQuery.all$ | async; trackByProperty: 'name'">
   {{ app | json }}
   <hr />
   <button (click)="addSchool(app.id)">Add school</button>
