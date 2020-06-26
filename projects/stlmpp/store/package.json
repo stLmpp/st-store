@@ -8,7 +8,7 @@
   "dependencies": {
     "copy-anything": "^2.0.1",
     "is-what": "^3.8.0",
-    "@stlmpp/utils": "latest",
+    "@stlmpp/utils": "^1.0.1",
     "lodash-es": "^4.17.15",
     "tslib": "^2.0.0"
   },
