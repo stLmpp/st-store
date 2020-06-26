@@ -9,10 +9,10 @@
   "dependencies": {
     "copy-anything": "^2.0.1",
     "is-what": "^3.8.0",
-    "underscore": "^1.10.2",
-    "@stlmpp/utils": "latest"
+    "@stlmpp/utils": "latest",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@types/underscore": "^1.10.0"
+    "@types/lodash": "^4.14.157"
   }
 }

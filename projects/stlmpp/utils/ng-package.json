@@ -5,7 +5,8 @@
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
       "is-what": "is-what",
-      "merge-anything": "merge-anything"
+      "merge-anything": "merge-anything",
+      "lodash": "lodash"
     }
   },
   "whitelistedNonPeerDependencies": ["."]

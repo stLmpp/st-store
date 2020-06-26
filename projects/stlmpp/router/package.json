@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "is-what": "^3.8.0",
-    "underscore": "^1.10.2"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@types/underscore": "^1.10.0"
+    "@types/lodash": "^4.14.157"
   }
 }

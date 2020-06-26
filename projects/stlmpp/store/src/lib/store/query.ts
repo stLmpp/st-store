@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { isFunction, isString } from 'is-what';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { KeyValue } from '../type';
-import { isEqual } from 'underscore';
+import { isEqual } from 'lodash';
 
 export class Query<T, E = any> {
   constructor(private __store: Store<T, E>) {}
@@ -27,9 +27,7 @@ export class Query<T, E = any> {
   select(): Observable<T>;
   select<K extends keyof T>(key: K): Observable<T[K]>;
   select<R>(callback: (state: T) => R): Observable<R>;
-  select<K extends keyof T, R>(
-    callbackOrKey?: K | ((state: T) => R)
-  ): Observable<T | R | T[K]> {
+  select<K extends keyof T, R>(callbackOrKey?: K | ((state: T) => R)): Observable<T | R | T[K]> {
     let state$: Observable<T | R | T[K]> = this.state$;
     if (callbackOrKey) {
       if (isString(callbackOrKey)) {
@@ -41,16 +39,10 @@ export class Query<T, E = any> {
     return state$.pipe(distinctUntilChanged(isEqual));
   }
 
-  selectAsKeyValue(
-    pick?: (keyof T)[]
-  ): Observable<KeyValue<string | number, any>[]> {
+  selectAsKeyValue(pick?: (keyof T)[]): Observable<KeyValue<string | number, any>[]> {
     let state$ = this.state$;
     if (pick?.length) {
-      state$ = state$.pipe(
-        distinctUntilChanged((a, b) =>
-          pick.every(key => isEqual(a[key], b[key]))
-        )
-      );
+      state$ = state$.pipe(distinctUntilChanged((a, b) => pick.every(key => isEqual(a[key], b[key]))));
     }
     return state$.pipe(
       map(state => {

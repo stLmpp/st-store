@@ -5,7 +5,7 @@
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
       "is-what": "is-what",
-      "underscore": "underscore"
+      "lodash": "lodash"
     }
   },
   "whitelistedNonPeerDependencies": ["."]

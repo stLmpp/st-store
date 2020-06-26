@@ -3,7 +3,7 @@ import { ActivatedRoute, Data, ParamMap, Params } from '@angular/router';
 import { isArray, isNullOrUndefined, isString } from 'is-what';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { isEqual } from 'underscore';
+import { isEqual } from 'lodash';
 
 @Injectable()
 export class RouterQuery {
@@ -21,22 +21,15 @@ export class RouterQuery {
     path: 'paramMap' | 'queryParamMap',
     params?: string | string[]
   ): Observable<Params | string>;
-  private selectBase(
-    path: 'data',
-    params?: string | string[]
-  ): Observable<Data | any>;
+  private selectBase(path: 'data', params?: string | string[]): Observable<Data | any>;
   private selectBase(path: 'fragment'): Observable<string>;
-  private selectBase(
-    path: string,
-    params?: string | string[]
-  ): Observable<any> {
+  private selectBase(path: string, params?: string | string[]): Observable<any> {
     let params$: Observable<any>;
     if (isArray(params)) {
       params$ = this.activatedRoute[path].pipe(
         map(routeParams =>
           params.reduce((acc, item) => {
-            const routeParam =
-              (routeParams as ParamMap).get?.(item) ?? routeParams[item];
+            const routeParam = (routeParams as ParamMap).get?.(item) ?? routeParams[item];
             if (routeParam) {
               acc[item] = routeParam;
             }
@@ -46,10 +39,7 @@ export class RouterQuery {
       );
     } else if (!isNullOrUndefined(params)) {
       params$ = this.activatedRoute[path].pipe(
-        map(
-          routeParams =>
-            (routeParams as ParamMap).get?.(params) ?? routeParams?.[params]
-        )
+        map(routeParams => (routeParams as ParamMap).get?.(params) ?? routeParams?.[params])
       );
     } else {
       params$ = this.activatedRoute[path].pipe(
@@ -58,10 +48,7 @@ export class RouterQuery {
             return paramsRoute;
           } else {
             return (paramsRoute as ParamMap).keys.reduce(
-              (acc, key) =>
-                paramsRoute.has(key)
-                  ? { ...acc, [key]: paramsRoute.get(key) }
-                  : acc,
+              (acc, key) => (paramsRoute.has(key) ? { ...acc, [key]: paramsRoute.get(key) } : acc),
               {}
             );
           }
@@ -74,10 +61,7 @@ export class RouterQuery {
     );
   }
 
-  private getBase(
-    path: 'paramMap' | 'queryParamMap',
-    params?: string | string[]
-  ): Params | string;
+  private getBase(path: 'paramMap' | 'queryParamMap', params?: string | string[]): Params | string;
   private getBase(path: 'data', params?: string | string[]): Data | any;
   private getBase(path: 'fragment'): string;
   private getBase(path: string, params?: string | string[]): any {
@@ -96,10 +80,7 @@ export class RouterQuery {
     } else {
       if ('get' in paramsRoute) {
         return (paramsRoute as ParamMap).keys.reduce(
-          (acc, key) =>
-            paramsRoute.has(key)
-              ? { ...acc, [key]: paramsRoute.get(key) }
-              : acc,
+          (acc, key) => (paramsRoute.has(key) ? { ...acc, [key]: paramsRoute.get(key) } : acc),
           {}
         );
       } else {

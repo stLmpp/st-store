@@ -1,4 +1,5 @@
 import { TrackByFunction } from '@angular/core';
+import { has, get } from 'lodash';
 
 export function trackByFactory<T = any>(key?: keyof T, ...fallback: (keyof T)[]): TrackByFunction<T> {
   return (index, element) => {
@@ -24,5 +25,24 @@ export function trackByConcat<T = any>(keys: (keyof T)[], concatBy = '-'): Track
         (acc, item, index1) => (index1 > 0 ? `${acc}${concatBy}${element[item]}` : `${element[item]}${acc}`),
         ''
       );
+  };
+}
+
+export function trackByDeep<T = any>(
+  deepKey: string | string[],
+  ...fallback: string[] | string[][]
+): TrackByFunction<T> {
+  return (index, element) => {
+    if (!deepKey) return index;
+    if (has(element, deepKey)) {
+      return get(element, deepKey);
+    } else {
+      for (const fallbackKey of fallback) {
+        if (has(element, fallbackKey)) {
+          return get(element, fallbackKey);
+        }
+      }
+      return index;
+    }
   };
 }

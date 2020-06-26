@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { StMap } from '../map';
 import { isArray, isFunction } from 'is-what';
-import { isEqual } from 'underscore';
+import { isEqual } from 'lodash';
 import { compareValues, ID, orderBy } from '@stlmpp/utils';
 
 export class EntityQuery<T, S extends ID = number, E = any> {
@@ -17,12 +17,10 @@ export class EntityQuery<T, S extends ID = number, E = any> {
     return this.__store.getState().active;
   }
 
-  all$: Observable<T[]> = this.__entities$.pipe(
-    map(entities => entities.values()),
+  all$: Observable<T[]> = this.__entities$.pipe(map(entities => entities.values()));
+  allOrdered$: Observable<T[]> = this.all$.pipe(
     map(entities =>
-      orderBy(entities, (a, b) =>
-        compareValues(this.__store.idGetter(a), this.__store.idGetter(b))
-      )
+      orderBy(entities, (a, b) => compareValues(this.__store.idGetter(a), this.__store.idGetter(b)))
     )
   );
   active$: Observable<T[]> = this.__store.selectState().pipe(
@@ -30,9 +28,7 @@ export class EntityQuery<T, S extends ID = number, E = any> {
     map(active => active.values()),
     distinctUntilChanged(isEqual)
   );
-  activeId$: Observable<S[]> = this.active$.pipe(
-    map(active => active.map(this.__store.idGetter))
-  );
+  activeId$: Observable<S[]> = this.active$.pipe(map(active => active.map(this.__store.idGetter)));
 
   loading$ = this.__store.selectState().pipe(pluck('loading'));
   error$ = this.__store.selectState().pipe(pluck('error'));
@@ -61,9 +57,7 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   exists(id: S): boolean;
   exists(ids: S[]): boolean;
   exists(callback: (entity: T, key: S) => boolean): boolean;
-  exists(
-    idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)
-  ): boolean {
+  exists(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): boolean {
     const entities = this.__getEntities;
     if (isFunction(idOrIdsOrCallback)) {
       return !!entities.find(idOrIdsOrCallback);
@@ -90,13 +84,9 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   ): Observable<T | T[K]> {
     let entity$: Observable<T | T[K]>;
     if (isFunction(idOrCallback)) {
-      entity$ = this.__entities$.pipe(
-        map(entities => entities.find(idOrCallback))
-      );
+      entity$ = this.__entities$.pipe(map(entities => entities.find(idOrCallback)));
     } else {
-      entity$ = this.__entities$.pipe(
-        map(entities => entities.get(idOrCallback))
-      );
+      entity$ = this.__entities$.pipe(map(entities => entities.get(idOrCallback)));
     }
     if (property) {
       entity$ = entity$.pipe(pluck(property as string));
