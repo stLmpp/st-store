@@ -1,6 +1,6 @@
 {
   "name": "@stlmpp/store",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": ">= 8 < 11",
     "@angular/core": ">= 8 < 11"
