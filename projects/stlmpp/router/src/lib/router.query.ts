@@ -3,7 +3,7 @@ import { ActivatedRoute, Data, ParamMap, Params } from '@angular/router';
 import { isArray, isNullOrUndefined, isString } from 'is-what';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 
 @Injectable()
 export class RouterQuery {

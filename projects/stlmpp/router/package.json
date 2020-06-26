@@ -1,16 +1,16 @@
 {
   "name": "@stlmpp/router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "peerDependencies": {
     "@angular/common": ">= 8 < 11",
     "@angular/core": ">= 8 < 11"
   },
   "dependencies": {
     "is-what": "^3.8.0",
-    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.157"
+    "@types/lodash-es": "^4.17.3"
   }
 }

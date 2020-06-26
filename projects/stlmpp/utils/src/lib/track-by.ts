@@ -1,5 +1,5 @@
 import { TrackByFunction } from '@angular/core';
-import { has, get } from 'lodash';
+import { has, get } from 'lodash-es';
 
 export function trackByFactory<T = any>(key?: keyof T, ...fallback: (keyof T)[]): TrackByFunction<T> {
   return (index, element) => {

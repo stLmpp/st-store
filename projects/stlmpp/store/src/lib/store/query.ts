@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { isFunction, isString } from 'is-what';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { KeyValue } from '../type';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 
 export class Query<T, E = any> {
   constructor(private __store: Store<T, E>) {}

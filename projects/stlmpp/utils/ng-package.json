@@ -6,7 +6,7 @@
     "umdModuleIds": {
       "is-what": "is-what",
       "merge-anything": "merge-anything",
-      "lodash": "lodash"
+      "lodash-es": "lodash-es"
     }
   },
   "whitelistedNonPeerDependencies": ["."]

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { StMap } from '../map';
 import { isArray, isFunction } from 'is-what';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { compareValues, ID, orderBy } from '@stlmpp/utils';
 
 export class EntityQuery<T, S extends ID = number, E = any> {
