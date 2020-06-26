@@ -1,13 +1,7 @@
 import { EntityState, EntityStoreOptions } from '../type';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { StMap } from '../map';
-import {
-  isArray,
-  isFunction,
-  isNullOrUndefined,
-  isPrimitive,
-  isString,
-} from 'is-what';
+import { isArray, isFunction, isNullOrUndefined, isPrimitive, isString } from 'is-what';
 import { devCopy } from '../utils';
 import { isDev } from '../env';
 import { OnDestroy } from '@angular/core';
@@ -28,8 +22,7 @@ const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   idGetter: entity => entity.id,
 } as any;
 
-export class EntityStore<T, S extends ID = number, E = any>
-  implements OnDestroy {
+export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy {
   constructor(options: EntityStoreOptions<T, S> = {} as any) {
     if (options.idGetter) {
       if (isString(options.idGetter) || isArray(options.idGetter)) {
@@ -128,14 +121,10 @@ export class EntityStore<T, S extends ID = number, E = any>
   }
 
   private updateState(
-    stateOrCallback:
-      | ((state: EntityState<T, S, E>) => EntityState<T, S, E>)
-      | Partial<EntityState<T, S, E>>
+    stateOrCallback: ((state: EntityState<T, S, E>) => EntityState<T, S, E>) | Partial<EntityState<T, S, E>>
   ): void {
     const currentState = this.getState();
-    const newState = isFunction(stateOrCallback)
-      ? stateOrCallback(currentState)
-      : stateOrCallback;
+    const newState = isFunction(stateOrCallback) ? stateOrCallback(currentState) : stateOrCallback;
     this.setState({ ...currentState, ...newState });
   }
 
@@ -146,9 +135,7 @@ export class EntityStore<T, S extends ID = number, E = any>
   }
 
   add(entityOrEntities: T | T[]): void {
-    let entities = isArray(entityOrEntities)
-      ? entityOrEntities
-      : [entityOrEntities];
+    let entities = isArray(entityOrEntities) ? entityOrEntities : [entityOrEntities];
     entities = entities.map(entity => {
       const newEntity = this.preAdd(entity);
       this._add$.next(newEntity);
@@ -169,9 +156,7 @@ export class EntityStore<T, S extends ID = number, E = any>
     const callback = isFunction(idOrIdsOrCallback)
       ? idOrIdsOrCallback
       : (entity, key) => {
-          const ids = isArray(idOrIdsOrCallback)
-            ? idOrIdsOrCallback
-            : [idOrIdsOrCallback];
+          const ids = isArray(idOrIdsOrCallback) ? idOrIdsOrCallback : [idOrIdsOrCallback];
           return ids.includes(key);
         };
     const entities = this.getState().entities.filter(callback);
@@ -186,22 +171,14 @@ export class EntityStore<T, S extends ID = number, E = any>
   update(id: S, partial: DeepPartial<T>): void;
   update(id: S, partial: Partial<T>): void;
   update(id: S, callback: (entity: T) => T): void;
-  update(
-    predicate: (entity: T, key: S) => boolean,
-    partial: DeepPartial<T>
-  ): void;
+  update(predicate: (entity: T, key: S) => boolean, partial: DeepPartial<T>): void;
   update(predicate: (entity: T, key: S) => boolean, partial: Partial<T>): void;
-  update(
-    predicate: (entity: T, key: S) => boolean,
-    callback: (entity: T) => T
-  ): void;
+  update(predicate: (entity: T, key: S) => boolean, callback: (entity: T) => T): void;
   update(
     idOrPredicate: S | ((entity: T, key: S) => boolean),
     partialOrCallback: Partial<T> | DeepPartial<T> | ((entity: T) => T)
   ): void {
-    const callback = isFunction(idOrPredicate)
-      ? idOrPredicate
-      : (_, key) => key === idOrPredicate;
+    const callback = isFunction(idOrPredicate) ? idOrPredicate : (_, key) => key === idOrPredicate;
     let entities = this.getState().entities.filter(callback).values();
     if (!entities?.length) return;
     const updateCallback = isFunction(partialOrCallback)
@@ -278,9 +255,7 @@ export class EntityStore<T, S extends ID = number, E = any>
       if (idOrEntity.every(isPrimitive)) {
         return currentState.entities.filter((_, id) => idOrEntity.includes(id));
       } else {
-        return currentState.entities.filter((_, id) =>
-          idOrEntity.map(this.idGetter).includes(id)
-        );
+        return currentState.entities.filter((_, id) => idOrEntity.map(this.idGetter).includes(id));
       }
     } else {
       const id = this.idGetter(idOrEntity);
@@ -322,9 +297,7 @@ export class EntityStore<T, S extends ID = number, E = any>
 
   toggleActive(idOrEntity: S | T): void {
     const currentState = this.getState();
-    const idEntity = isPrimitive(idOrEntity)
-      ? idOrEntity
-      : this.idGetter(idOrEntity);
+    const idEntity = isPrimitive(idOrEntity) ? idOrEntity : this.idGetter(idOrEntity);
     if (currentState.active.has(idEntity)) {
       this.removeActive(idEntity);
     } else {
@@ -354,19 +327,13 @@ export class EntityStore<T, S extends ID = number, E = any>
 
   private listenToChildren(): void {
     if (this.options.children?.length) {
-      for (const {
-        store: _store,
-        key,
-        relation,
-        reverseRelation,
-        isArray: _isArray,
-      } of this.options.children) {
+      for (const { store: _store, key, relation, reverseRelation, isArray: _isArray } of this.options
+        .children) {
         if (_store.type === 'entity') {
           const updateNotArray = newEntity =>
-            this.update(
-              entity => reverseRelation(entity) === store.idGetter(newEntity),
-              { [key]: newEntity } as any
-            );
+            this.update(entity => reverseRelation(entity) === store.idGetter(newEntity), {
+              [key]: newEntity,
+            } as any);
           const getIdEntity = newEntity => relation(newEntity);
           const store = _store as any;
           const _upsert = newEntity => {
@@ -375,23 +342,15 @@ export class EntityStore<T, S extends ID = number, E = any>
               this.update(idEntity, entity => {
                 return {
                   ...entity,
-                  [key]: upsertArray(
-                    entity[key as string] ?? [],
-                    newEntity,
-                    store.idGetter
-                  ),
+                  [key]: upsertArray(entity[key as string] ?? [], newEntity, store.idGetter),
                 };
               });
             } else {
               updateNotArray(newEntity);
             }
           };
-          store.upsert$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(newEntity => _upsert(newEntity));
-          store.add$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(newEntity => _upsert(newEntity));
+          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
+          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
             if (_isArray) {
               const idEntity = getIdEntity(newEntity);
@@ -410,42 +369,36 @@ export class EntityStore<T, S extends ID = number, E = any>
               updateNotArray(newEntity);
             }
           });
-          store.remove$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(removedEntities => {
-              if (_isArray) {
-                const grouped = groupBy(removedEntities, relation);
-                for (const [idEntity, entities] of grouped) {
-                  this.update(idEntity, entity => {
-                    return {
-                      ...entity,
-                      [key]: removeArray(
-                        entity[key as string] ?? [],
-                        entities.map(store.idGetter) as any[],
-                        store.idGetter
-                      ),
-                    };
-                  });
-                }
-              } else {
-                for (const newEntity of removedEntities) {
-                  this.update(
-                    entity =>
-                      reverseRelation(entity) === store.idGetter(newEntity),
-                    { [key]: null } as any
-                  );
-                }
+          store.remove$.pipe(takeUntil(this._destroy$)).subscribe(removedEntities => {
+            if (_isArray) {
+              const grouped = groupBy(removedEntities, relation);
+              for (const [idEntity, entities] of grouped) {
+                this.update(idEntity, entity => {
+                  return {
+                    ...entity,
+                    [key]: removeArray(
+                      entity[key as string] ?? [],
+                      entities.map(store.idGetter) as any[],
+                      store.idGetter
+                    ),
+                  };
+                });
               }
-            });
+            } else {
+              for (const newEntity of removedEntities) {
+                this.update(entity => reverseRelation(entity) === store.idGetter(newEntity), {
+                  [key]: null,
+                } as any);
+              }
+            }
+          });
         } else if (_store.type === 'simple') {
-          _store.update$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(newEntity => {
-              const idEntity = relation(newEntity);
-              this.update(entity => reverseRelation(entity) === idEntity, {
-                [key]: newEntity,
-              } as any);
-            });
+          _store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
+            const idEntity = relation(newEntity);
+            this.update(entity => reverseRelation(entity) === idEntity, {
+              [key]: newEntity,
+            } as any);
+          });
         }
       }
     }

@@ -3,14 +3,7 @@ import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
 import { isFunction, isNullOrUndefined, isPrimitive } from 'is-what';
 import { copy } from 'copy-anything';
-import {
-  deepMerge,
-  DeepPartial,
-  getDeep,
-  removeArray,
-  updateArray,
-  upsertArray,
-} from '@stlmpp/utils';
+import { deepMerge, DeepPartial, getDeep, removeArray, updateArray, upsertArray } from '@stlmpp/utils';
 import { OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,10 +11,8 @@ export class Store<T, E = any> implements OnDestroy {
   constructor(private __options?: StoreOptions<T>) {
     this.__options = {
       ...({
-        persistDeserialize: value =>
-          isPrimitive(value) ? value : JSON.parse(value),
-        persistSerialize: value =>
-          isPrimitive(value) ? value : JSON.stringify(value),
+        persistDeserialize: value => (isPrimitive(value) ? value : JSON.parse(value)),
+        persistSerialize: value => (isPrimitive(value) ? value : JSON.stringify(value)),
       } as any),
       ...__options,
     };
@@ -150,8 +141,7 @@ export class Store<T, E = any> implements OnDestroy {
 
   private listenToChildren(): void {
     if (this.__options.children?.length) {
-      for (const { store: _store, key, isArray: _isArray } of this.__options
-        .children) {
+      for (const { store: _store, key, isArray: _isArray } of this.__options.children) {
         if (_store.type === 'entity') {
           const store = _store as any;
           const _upsert = newEntity => {
@@ -159,21 +149,13 @@ export class Store<T, E = any> implements OnDestroy {
               return {
                 ...state,
                 [key]: _isArray
-                  ? upsertArray(
-                      state[key as string] ?? [],
-                      newEntity,
-                      store.idGetter
-                    )
+                  ? upsertArray(state[key as string] ?? [], newEntity, store.idGetter)
                   : deepMerge(state[key], newEntity),
               };
             });
           };
-          store.upsert$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(newEntity => _upsert(newEntity));
-          store.add$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(newEntity => _upsert(newEntity));
+          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
+          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
             this.update(state => {
               return {
@@ -189,22 +171,20 @@ export class Store<T, E = any> implements OnDestroy {
               };
             });
           });
-          store.remove$
-            .pipe(takeUntil(this._destroy$))
-            .subscribe(removedEntities => {
-              this.update(state => {
-                return {
-                  ...state,
-                  [key]: _isArray
-                    ? removeArray(
-                        state[key as string] ?? [],
-                        removedEntities.map(store.idGetter),
-                        store.idGetter
-                      )
-                    : null,
-                };
-              });
+          store.remove$.pipe(takeUntil(this._destroy$)).subscribe(removedEntities => {
+            this.update(state => {
+              return {
+                ...state,
+                [key]: _isArray
+                  ? removeArray(
+                      state[key as string] ?? [],
+                      removedEntities.map(store.idGetter),
+                      store.idGetter
+                    )
+                  : null,
+              };
             });
+          });
         } else if (_store.type === 'simple') {
           const store = _store as any;
           store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {

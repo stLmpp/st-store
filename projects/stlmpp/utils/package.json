@@ -2,14 +2,14 @@
   "name": "@stlmpp/utils",
   "version": "0.2.0",
   "peerDependencies": {
-    "@angular/common": ">= 7 < 10",
-    "@angular/core": ">= 7 < 10",
-    "tslib": ">= 1 < 2"
+    "@angular/common": ">= 8 < 11",
+    "@angular/core": ">= 8 < 11"
   },
   "dependencies": {
     "is-what": "^3.8.0",
     "merge-anything": "^3.0.3",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.157"
