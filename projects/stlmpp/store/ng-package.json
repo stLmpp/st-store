@@ -6,7 +6,7 @@
     "umdModuleIds": {
       "copy-anything": "copy-anything",
       "is-what": "is-what",
-      "lodash": "lodash",
+      "lodash-es": "lodash-es",
       "@stlmpp/utils": "@stlmpp/utils"
     }
   },
