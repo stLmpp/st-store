@@ -1,6 +1,6 @@
 {
   "name": "@stlmpp/router",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "peerDependencies": {
     "@angular/common": ">= 8 < 11",
     "@angular/core": ">= 8 < 11"
