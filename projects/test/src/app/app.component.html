@@ -20,7 +20,7 @@
 </ng-container>
 <hr />
 <h1>App</h1>
-<div *ngFor="let app of appQuery.all$ | async; trackByProperty: 'name'">
+<div *ngFor="let app of appQuery.all$ | async; trackBy: trackByApp">
   {{ app | json }}
   <hr />
   <button (click)="addSchool(app.id)">Add school</button>

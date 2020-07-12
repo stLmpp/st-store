@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  TrackByFunction,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TrackByFunction } from '@angular/core';
 import {
   AppQuery,
   AppStore,
@@ -26,6 +20,14 @@ function randomInteger(min: number, max: number): number {
 
 function randomString(): string {
   return Math.random().toString(36).substring(7);
+}
+
+function shuffleArray<T>(values: T[]): T[] {
+  for (let i = values.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [values[i], values[j]] = [values[j], values[i]];
+  }
+  return values;
 }
 
 @Component({
@@ -56,11 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.simpleStore.update({ [property]: value });
   }
 
-  updateSchool(
-    id: number,
-    property: keyof School,
-    value: School[keyof School]
-  ): void {
+  updateSchool(id: number, property: keyof School, value: School[keyof School]): void {
     this.schoolStore.update(id, { [property]: value });
   }
 
@@ -87,6 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.schoolStore.add({
       name: randomString(),
       id: randomInteger(1, 9999999999999999999),
+      idSimple: 1,
     });
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
@@ -95,7 +94,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.routerQuery.selectQueryParams().subscribe(o => console.log(o));
+    this.simpleStore.set({
+      id: 1,
+      name: 'Simple things',
+      schools: [],
+    });
     this.appStore.set([
       {
         id: 1,
@@ -105,6 +108,7 @@ export class AppComponent implements OnInit, OnDestroy {
         simple: {
           id: 1,
           name: 'Not so simple',
+          schools: [],
         },
         idSchool: 1,
       },
@@ -113,16 +117,14 @@ export class AppComponent implements OnInit, OnDestroy {
       {
         id: 1,
         name: 'Teste',
+        idSimple: 1,
       },
       {
         id: 2,
         name: 'Teste2',
+        idSimple: 1,
       },
     ]);
-    this.simpleStore.set({
-      id: 1,
-      name: 'Simple things',
-    });
   }
 
   ngOnDestroy(): void {

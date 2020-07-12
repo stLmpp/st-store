@@ -8,11 +8,13 @@ import { Query } from '../../../stlmpp/store/src/lib/store/query';
 export interface School {
   id: number;
   name: string;
+  idSimple: number;
 }
 
 export interface Simple {
   id: number;
   name: string;
+  schools: School[];
 }
 
 export interface AppTeste {
@@ -42,8 +44,18 @@ export class SchoolQuery extends EntityQuery<School> {
 
 @Injectable({ providedIn: 'root' })
 export class SimpleStore extends Store<Simple> {
-  constructor() {
-    super({ name: 'simple' });
+  constructor(private schoolStore: SchoolStore) {
+    super({
+      name: 'simple',
+      children: [
+        {
+          key: 'schools',
+          isArray: true,
+          relation: school => school.idSimple,
+          store: schoolStore,
+        },
+      ],
+    });
   }
 }
 
@@ -56,10 +68,7 @@ export class SimpleQuery extends Query<Simple> {
 
 @Injectable({ providedIn: 'root' })
 export class AppStore extends EntityStore<AppTeste> {
-  constructor(
-    private schoolStore: SchoolStore,
-    private simpleStore: SimpleStore
-  ) {
+  constructor(private schoolStore: SchoolStore, private simpleStore: SimpleStore) {
     super({
       cache: 5000,
       name: 'app',
@@ -86,7 +95,5 @@ export class AppQuery extends EntityQuery<AppTeste> {
     super(appStore);
   }
 
-  hasSelected$ = this.all$.pipe(
-    map(entities => entities.some(entity => entity.selected))
-  );
+  hasSelected$ = this.all$.pipe(map(entities => entities.some(entity => entity.selected)));
 }
