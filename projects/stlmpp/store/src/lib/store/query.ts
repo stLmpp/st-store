@@ -1,9 +1,8 @@
 import { Store } from './store';
 import { Observable } from 'rxjs';
-import { isFunction, isString } from 'is-what';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { KeyValue } from '../type';
-import { isEqual } from 'lodash-es';
+import { isEqual, isFunction, isString } from 'lodash-es';
 
 export class Query<T, E = any> {
   constructor(private __store: Store<T, E>) {}
@@ -39,7 +38,7 @@ export class Query<T, E = any> {
     return state$.pipe(distinctUntilChanged(isEqual));
   }
 
-  selectAsKeyValue(pick?: (keyof T)[]): Observable<KeyValue<string | number, any>[]> {
+  selectAsKeyValue(pick?: (keyof T)[]): Observable<KeyValue<string | number, T[keyof T]>[]> {
     let state$ = this.state$;
     if (pick?.length) {
       state$ = state$.pipe(distinctUntilChanged((a, b) => pick.every(key => isEqual(a[key], b[key]))));

@@ -1,5 +1,9 @@
-export let isDev = true;
+export let _isDev = true;
+
+export function isDev(): boolean {
+  return _isDev;
+}
 
 export function enableProd(): void {
-  isDev = false;
+  _isDev = false;
 }

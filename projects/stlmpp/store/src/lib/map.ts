@@ -1,73 +1,135 @@
-import { isArray, isFunction, isPrimitive } from 'is-what';
-import { toEntities } from './utils';
-import { deepMerge, DeepPartial, ID, IdGetter } from '@stlmpp/utils';
+import { isArray, isFunction, isObject } from 'lodash-es';
+import { formatId, isObjectEmpty, toEntities } from './utils';
+import { ID, IdGetter, idGetterFactory, IdGetterType, isID } from '@stlmpp/utils';
+import { EntityMergeFn, StMapMergeOptions } from './type';
 
-export class StMap<T, S extends ID = number> implements Iterable<T> {
-  constructor(idGetter: IdGetter<T, S>) {
-    this.setIdGetter(idGetter);
+export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
+  constructor(
+    _idGetter: IdGetterType<T, S>,
+    public mergeFn: EntityMergeFn = (entityA, entityB) => ({ ...entityA, ...entityB })
+  ) {
+    if (!_idGetter) {
+      throw new Error('IdGetter is required');
+    }
+    this.idGetter = idGetterFactory(_idGetter);
   }
 
+  private readonly idGetter: IdGetter<T, S>;
   private __state: { [K in S]?: T } = {};
   private __keys = new Set<S>();
 
-  idGetter: IdGetter<T, S>;
-
-  *[Symbol.iterator](): Iterator<T> {
+  *[Symbol.iterator](): Iterator<[S, T]> {
     for (const key of this.__keys) {
-      yield this.get(key);
+      yield [key, this.get(key)];
     }
+  }
+
+  get state(): { [K in S]?: T } {
+    return { ...this.__state };
   }
 
   get length(): number {
     return this.__keys.size;
   }
 
-  entries(): [S, T][] {
-    return this.values().map(entity => [this.idGetter(entity), entity]);
+  get keys(): Set<S> {
+    return this.__keys;
   }
 
-  keys(): S[] {
+  get entries(): [S, T][] {
+    return this.keysArray.map(key => [key, this.get(key)]);
+  }
+
+  get keysArray(): S[] {
     return [...this.__keys];
   }
 
-  values(): T[] {
-    return Object.values(this.__state);
-  }
-
-  private _filter(callback: (entity: T, key: S) => boolean): { [K in S]?: T } {
-    return this.keys().reduce((filtered, key) => {
-      const entity = this.get(key);
-      if (callback(entity, key)) {
-        return { ...filtered, [key]: entity };
-      }
-      return filtered;
-    }, {});
+  get values(): T[] {
+    return this.keysArray.map(key => this.get(key));
   }
 
   filter(callback: (entity: T, key: S) => boolean): StMap<T, S> {
-    return new StMap<T, S>(this.idGetter).fromObject(this._filter(callback));
-  }
-
-  private _map(callback: (entity: T, key: S) => T): { [K in S]?: T } {
-    return this.keys().reduce((mapped, key) => {
-      return {
-        ...mapped,
-        [key]: callback(this.get(key), key),
-      };
-    }, {});
+    const stMap = new StMap<T, S>(this.idGetter);
+    for (const [key, entity] of this) {
+      if (callback(entity, key)) {
+        stMap.set(key, entity);
+      }
+    }
+    return stMap;
   }
 
   map(callback: (entity: T, key: S) => T): StMap<T, S> {
-    return new StMap<T, S>(this.idGetter).fromObject(this._map(callback));
+    const stMap = new StMap<T, S>(this.idGetter);
+    for (const [key, entity] of this) {
+      stMap.set(key, callback(entity, key));
+    }
+    return stMap;
   }
 
-  find(callback: (entity: T, key: S) => boolean): T {
-    return this.entries().find(([key, value]) => callback(value, key))[1];
+  find(callback: (entity: T, key: S) => boolean): T | undefined {
+    for (const [key, entity] of this) {
+      if (callback(entity, key)) {
+        return entity;
+      }
+    }
+    return undefined;
   }
 
-  setIdGetter(getter: IdGetter<T, S>): this {
-    this.idGetter = getter;
-    return this;
+  forEach(callback: (entity: T, key: S) => void): void {
+    for (const [key, entity] of this) {
+      callback(entity, key);
+    }
+  }
+
+  some(callback: (entity: T, key: S) => boolean): boolean {
+    for (const [key, entity] of this) {
+      if (callback(entity, key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  every(callback: (entity: T, key: S) => boolean): boolean {
+    for (const [key, entity] of this) {
+      if (!callback(entity, key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  reduce<R>(callback: (accumulator: R, item: [S, T]) => R, initialValue?: R): R {
+    let acc = initialValue;
+    for (const pair of this) {
+      acc = callback(acc, pair);
+    }
+    return acc;
+  }
+
+  pop(): T | undefined {
+    if (!this.length) {
+      return undefined;
+    }
+    const keys = this.keysArray;
+    const lastKey = keys[keys.length - 1];
+    const entity = this.get(lastKey);
+    this.remove(lastKey);
+    return entity;
+  }
+
+  shift(): T | undefined {
+    if (!this.length) {
+      return undefined;
+    }
+    const [firstKey] = this.keysArray;
+    const entity = this.get(firstKey);
+    this.remove(firstKey);
+    return entity;
+  }
+
+  has(key: S): boolean {
+    return this.__keys.has(key);
   }
 
   get(key: S): T {
@@ -83,9 +145,35 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     return this;
   }
 
+  setMany(entities: T[]): this;
+  setMany(entities: StMap<T, S>): this;
+  setMany(entities: { [K in S]?: T }): this;
+  setMany(entities: T[] | StMap<T, S> | { [K in S]?: T }): this {
+    if (!entities) {
+      return this;
+    }
+    if (entities instanceof StMap) {
+      if (!entities.length) {
+        return this;
+      }
+      entities = entities.values;
+    } else if (isObject(entities)) {
+      if (isObjectEmpty(entities)) {
+        return this;
+      }
+      entities = Object.values(entities);
+    }
+    this.fromArray([...this.values, ...entities]);
+    return this;
+  }
+
+  fromEntity(entity: T): this {
+    this.set(this.idGetter(entity), entity);
+    return this;
+  }
+
   fromArray(entities: T[]): this {
-    if (!this.idGetter) {
-      console.warn('No IdGetter set');
+    if (!entities?.length) {
       return this;
     }
     const [newEntities, keys] = toEntities(entities, this.idGetter);
@@ -94,36 +182,56 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     return this;
   }
 
-  fromObject(entities: { [K in S]?: T }): this {
+  fromObject(entities: { [K in S]?: T }, idIsNumber?: boolean): this {
+    if (isObjectEmpty(entities)) {
+      this.__state = {};
+      this.__keys.clear();
+      return this;
+    }
+    let format = formatId(entities, this.idGetter);
+    if (idIsNumber) {
+      format = Number as any;
+    }
     this.__state = entities;
-    this.__keys = new Set(this.values().map(entity => this.idGetter(entity)));
+    this.__keys = new Set(Object.keys(entities).map(format));
     return this;
   }
 
-  merge(entities: T[]): this;
-  merge(entities: StMap<T, S>): this;
-  merge(entities: { [K in S]?: T }): this;
-  merge(entities: StMap<T, S> | T[] | { [K in S]?: T }): this {
+  fromTupple(entities: [S, T][]): this {
+    if (!entities?.length) {
+      return this;
+    }
+    this.__state = [...entities].reduce((obj, [key, entity]) => ({ [key]: entity }), {});
+    this.__keys = new Set(entities.map(([key]) => key));
+    return this;
+  }
+
+  merge(entities: T[], options?: StMapMergeOptions): this;
+  merge(entities: StMap<T, S>, options?: StMapMergeOptions): this;
+  merge(entities: { [K in S]?: T }, options?: StMapMergeOptions): this;
+  merge(entities: StMap<T, S> | T[] | { [K in S]?: T }, options: StMapMergeOptions = {}): this {
     if (entities instanceof StMap) {
-      entities = entities.values();
+      entities = entities.values;
+    } else if (isObject(entities)) {
+      entities = Object.values(entities);
     }
-    if (isArray(entities)) {
-      entities = toEntities(entities, this.idGetter)[0];
+    if (!options.upsert) {
+      entities = entities.filter(entity => this.has(this.idGetter(entity)));
     }
-    this.fromObject(deepMerge(this.__state, entities));
+    this.upsertMany(entities);
     return this;
   }
 
-  has(key: S): boolean {
-    return this.__keys.has(key);
-  }
-
-  update(key: S, partialOrCallback: DeepPartial<T> | ((entity: T) => T)): this {
+  update(key: S, partial: Partial<T>): this;
+  update(key: S, callback: (entity: T) => T): this;
+  update(key: S, partialOrCallback: Partial<T> | ((entity: T) => T)): this {
     const entity = this.get(key);
-    if (!entity) return;
+    if (!entity) {
+      return this;
+    }
     const callback = isFunction(partialOrCallback)
       ? partialOrCallback
-      : entity1 => deepMerge(entity1, partialOrCallback);
+      : entity1 => this.mergeFn(entity1, partialOrCallback);
     this.__state = {
       ...this.__state,
       [key]: callback(entity),
@@ -131,17 +239,11 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
     return this;
   }
 
-  upsert(entities: Array<T | Partial<T> | DeepPartial<T>>): this;
-  upsert(key: S, entity: T | Partial<T> | DeepPartial<T>): this;
-  upsert(
-    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
-    entity?: T | Partial<T> | DeepPartial<T>
-  ): this;
-  upsert(
-    keyOrEntities: Array<T | Partial<T> | DeepPartial<T>> | S,
-    entity?: T | Partial<T> | DeepPartial<T>
-  ): this {
-    if (entity && isPrimitive(keyOrEntities)) {
+  upsert(entities: Array<T | Partial<T>>): this;
+  upsert(key: S, entity: T | Partial<T>): this;
+  upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this;
+  upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this {
+    if (entity && isID(keyOrEntities)) {
       return this.upsertOne(keyOrEntities, entity as any);
     } else {
       return this.upsertMany(keyOrEntities as any[]);
@@ -150,40 +252,39 @@ export class StMap<T, S extends ID = number> implements Iterable<T> {
 
   private upsertOne(key: S, entity: T): this;
   private upsertOne(key: S, entity: Partial<T>): this;
-  private upsertOne(key: S, entity: DeepPartial<T>): this;
-  private upsertOne(key: S, entity: T | Partial<T> | DeepPartial<T>): this {
+  private upsertOne(key: S, entity: T | Partial<T>): this {
     if (this.has(key)) {
-      return this.update(key, entity as DeepPartial<T>);
+      return this.update(key, entity as Partial<T>);
     } else {
       return this.set(key, entity as T);
     }
   }
 
-  private upsertMany(entities: T[] | DeepPartial<T>[]): this {
-    if (!this.idGetter) {
-      console.warn('IdGetter is not defined');
-      return this;
-    }
-    const [newEntities, keys] = toEntities(entities as T[], this.idGetter);
-    this.__keys = new Set([...this.__keys, ...keys]);
-    this.__state = deepMerge(this.__state, newEntities);
+  private upsertMany(newEntities: T[] | Partial<T>[]): this {
+    const [newEntites, newKeys] = toEntities(newEntities as T[], this.idGetter);
+    const allKeys = new Set([...this.__keys, ...newKeys]);
+    this.__state = [...allKeys].reduce((entities, key) => {
+      const currentItem = this.get(key);
+      const newItem = newEntites[key];
+      return { ...entities, [key]: this.mergeFn(currentItem, newItem) };
+    }, {});
+    this.__keys = allKeys;
     return this;
   }
 
-  remove(idOrIds: S | S[]): this;
+  remove(id: S): this;
+  remove(ids: S[]): this;
   remove(callback: (entity: T, key: S) => boolean): this;
   remove(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): this;
   remove(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): this {
-    if (!isFunction(idOrIdsOrCallback)) {
-      const ids = isArray(idOrIdsOrCallback)
-        ? idOrIdsOrCallback
-        : [idOrIdsOrCallback];
-      this.fromObject(this._filter((_, key) => !ids.includes(key)));
-    } else {
-      this.fromObject(
-        this._filter((entity, key) => !idOrIdsOrCallback(entity, key))
-      );
-    }
+    const callback = isFunction(idOrIdsOrCallback)
+      ? (entity, key) => !idOrIdsOrCallback(entity, key)
+      : isArray(idOrIdsOrCallback)
+      ? (_, key) => !idOrIdsOrCallback.includes(key)
+      : (_, key) => key !== idOrIdsOrCallback;
+    const newMap = this.filter(callback);
+    this.__state = newMap.state;
+    this.__keys = newMap.keys;
     return this;
   }
 }

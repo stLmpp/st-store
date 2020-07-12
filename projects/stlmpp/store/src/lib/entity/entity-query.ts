@@ -2,9 +2,8 @@ import { EntityStore } from './entity-store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { StMap } from '../map';
-import { isArray, isFunction } from 'is-what';
-import { isEqual } from 'lodash-es';
-import { compareValues, ID, orderBy } from '@stlmpp/utils';
+import { isArray, isEqual, isFunction } from 'lodash-es';
+import { ID } from '@stlmpp/utils';
 
 export class EntityQuery<T, S extends ID = number, E = any> {
   constructor(private __store: EntityStore<T, S, E>) {}
@@ -13,33 +12,36 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   private get __getEntities(): StMap<T, S> {
     return this.__store.getState().entities;
   }
+  private get __getKeys(): Set<S> {
+    return this.__getEntities.keys;
+  }
   private get __getActive(): StMap<T, S> {
     return this.__store.getState().active;
   }
 
-  all$: Observable<T[]> = this.__entities$.pipe(map(entities => entities.values()));
-  allOrdered$: Observable<T[]> = this.all$.pipe(
-    map(entities =>
-      orderBy(entities, (a, b) => compareValues(this.__store.idGetter(a), this.__store.idGetter(b)))
-    )
-  );
+  all$: Observable<T[]> = this.__entities$.pipe(map(entities => entities.values));
   active$: Observable<T[]> = this.__store.selectState().pipe(
     pluck('active'),
-    map(active => active.values()),
+    map(active => active.values),
     distinctUntilChanged(isEqual)
   );
-  activeId$: Observable<S[]> = this.active$.pipe(map(active => active.map(this.__store.idGetter)));
+
+  activeId$: Observable<S[]> = this.__store.selectState().pipe(
+    pluck('active'),
+    map(active => active.keysArray),
+    distinctUntilChanged(isEqual)
+  );
 
   loading$ = this.__store.selectState().pipe(pluck('loading'));
   error$ = this.__store.selectState().pipe(pluck('error'));
   hasCache$ = this.__store.selectCache();
 
   getAll(): T[] {
-    return this.__getEntities.values();
+    return this.__getEntities.values;
   }
 
   getActive(): T[] {
-    return this.__getActive.values();
+    return this.__getActive.values;
   }
 
   getLoading(): boolean {
@@ -60,9 +62,9 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   exists(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): boolean {
     const entities = this.__getEntities;
     if (isFunction(idOrIdsOrCallback)) {
-      return !!entities.find(idOrIdsOrCallback);
+      return entities.some(idOrIdsOrCallback);
     } else if (isArray(idOrIdsOrCallback)) {
-      return !!entities.find((_, key) => idOrIdsOrCallback.includes(key));
+      return idOrIdsOrCallback.some(id => entities.has(id));
     } else {
       return entities.has(idOrIdsOrCallback);
     }
@@ -94,17 +96,20 @@ export class EntityQuery<T, S extends ID = number, E = any> {
     return entity$.pipe(distinctUntilChanged(isEqual));
   }
 
-  getEntity(id: S): T;
-  getEntity<K extends keyof T>(id: S, property: K): T[K];
-  getEntity<K extends keyof T>(id: S, property?: K): T | T[K] {
-    const entity = this.__getEntities.get(id);
+  getEntity(key: S): T;
+  getEntity<K extends keyof T>(key: S, property: K): T[K];
+  getEntity<K extends keyof T>(key: S, property?: K): T | T[K] {
+    const entity = this.__getEntities.get(key);
     return property ? entity?.[property] : entity;
   }
 
-  selectMany(ids: S[]): Observable<T[]> {
+  selectMany(callback: (entity: T, key: S) => boolean): Observable<T[]>;
+  selectMany(keys: S[]): Observable<T[]>;
+  selectMany(keysOrCallback: S[] | ((entity: T, key: S) => boolean)): Observable<T[]> {
+    const callback = isFunction(keysOrCallback) ? keysOrCallback : (_, key) => keysOrCallback.includes(key);
     return this.__entities$.pipe(
-      map(entities => entities.filter((_, id) => ids.includes(id))),
-      map(entities => entities.values())
+      map(entities => entities.filter(callback).values),
+      distinctUntilChanged(isEqual)
     );
   }
 }

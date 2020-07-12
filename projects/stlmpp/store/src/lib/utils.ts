@@ -1,7 +1,7 @@
 import { ID, IdGetter } from '@stlmpp/utils';
 import { isDev } from './env';
 import { copy } from 'copy-anything';
-import { isAnyObject, isArray } from 'is-what';
+import { isArray, isNumber, isObject } from 'lodash-es';
 
 export function toEntities<T, S extends ID = number>(
   entities: T[],
@@ -18,11 +18,10 @@ export function toEntities<T, S extends ID = number>(
   );
 }
 
-export const devCopy = <T>(value: T): T =>
-  isDev ? deepFreeze(copy(value)) : value;
+export const devCopy = <T>(value: T): T => (isDev() ? deepFreeze(copy(value)) : value);
 
 export function deepFreeze<T>(object: T): T {
-  if (!isDev || (!isArray(object) && !isAnyObject(object))) {
+  if (!isDev() || (!isArray(object) && !isObject(object))) {
     return object;
   }
   Object.freeze(object);
@@ -31,16 +30,24 @@ export function deepFreeze<T>(object: T): T {
   Object.getOwnPropertyNames(object).forEach(prop => {
     if (
       hasOwnProp.call(object, prop) &&
-      (oIsFunction
-        ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments'
-        : true) &&
+      (oIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true) &&
       object[prop] !== null &&
-      (typeof object[prop] === 'object' ||
-        typeof object[prop] === 'function') &&
+      (typeof object[prop] === 'object' || typeof object[prop] === 'function') &&
       !Object.isFrozen(object[prop])
     ) {
       deepFreeze(object[prop]);
     }
   });
   return object;
+}
+
+export function isObjectEmpty(obj: any): boolean {
+  return !obj || !isObject(obj) || !Object.keys(obj).length;
+}
+
+export function formatId<T, S extends ID = number>(object: any, idGetter: IdGetter<T, S>): (key: ID) => S {
+  if (isObjectEmpty(object)) {
+    return key => key as S;
+  }
+  return isNumber(idGetter(Object.values<T>(object)[0])) ? Number : key => key as any;
 }

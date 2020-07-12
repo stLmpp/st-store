@@ -1,18 +1,20 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
-import { isFunction, isNullOrUndefined, isPrimitive } from 'is-what';
+import { isFunction, isNil, set } from 'lodash-es';
 import { copy } from 'copy-anything';
-import { deepMerge, DeepPartial, getDeep, removeArray, updateArray, upsertArray } from '@stlmpp/utils';
-import { OnDestroy } from '@angular/core';
+import { getDeep, isID, removeArray, updateArray, upsertArray } from '@stlmpp/utils';
+import { Directive, OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
+@Directive()
+// tslint:disable-next-line:directive-class-suffix
 export class Store<T, E = any> implements OnDestroy {
   constructor(private __options?: StoreOptions<T>) {
     this.__options = {
       ...({
-        persistDeserialize: value => (isPrimitive(value) ? value : JSON.parse(value)),
-        persistSerialize: value => (isPrimitive(value) ? value : JSON.stringify(value)),
+        persistDeserialize: value => (isID(value) ? value : JSON.parse(value)),
+        persistSerialize: value => (isID(value) ? value : JSON.stringify(value)),
       } as any),
       ...__options,
     };
@@ -45,9 +47,11 @@ export class Store<T, E = any> implements OnDestroy {
     if (this.__options.cache) {
       clearTimeout(this.__timeout);
       this.__cache$.next(hasCache);
-      this.__timeout = setTimeout(() => {
-        this.setHasCache(false);
-      }, this.__options.cache);
+      if (hasCache) {
+        this.__timeout = setTimeout(() => {
+          this.setHasCache(false);
+        }, this.__options.cache);
+      }
     }
   }
 
@@ -92,20 +96,11 @@ export class Store<T, E = any> implements OnDestroy {
   }
 
   private setPersist(state: T): void {
-    state = state ?? ({} as any);
+    state = { ...state } ?? ({} as any);
     let value = localStorage.getItem(this.getPersistKey());
     if (value) {
       value = this.__options.persistDeserialize(value);
-      const keys = this.__options.persist.split('.');
-      let newState = state;
-      while (keys.length - 1) {
-        const n = keys.shift();
-        if (!(n in newState) || isNullOrUndefined(newState[n])) {
-          newState[n as string] = {};
-        }
-        newState = newState[n as string];
-      }
-      newState[keys[0] as string] = value;
+      set(state as any, this.__options.persist, value);
       this.update(state);
     }
   }
@@ -114,7 +109,7 @@ export class Store<T, E = any> implements OnDestroy {
     if (this.__options.persist) {
       const key = this.getPersistKey();
       const value = getDeep(state, this.__options.persist);
-      if (isNullOrUndefined(value)) {
+      if (isNil(value)) {
         localStorage.removeItem(key);
       } else {
         localStorage.setItem(key, this.__options.persistSerialize(value));
@@ -128,15 +123,15 @@ export class Store<T, E = any> implements OnDestroy {
     this.__state$.next(devCopy(state));
   }
 
-  update(deepPartial: DeepPartial<T>): void;
   update(partial: Partial<T>): void;
   update(state: T): void;
   update(callback: (state: T) => T): void;
-  update(state: T | Partial<T> | DeepPartial<T> | ((state: T) => T)): void {
+  update(state: T | Partial<T> | ((state: T) => T)): void {
     const currentState = this.getState();
-    const callback = isFunction(state) ? state : s => deepMerge(s, state);
+    const callback = isFunction(state) ? state : s => ({ ...s, ...state });
     const newState = this.preUpdate(callback(currentState));
     this.set(newState);
+    this.postUpdate();
   }
 
   private listenToChildren(): void {
@@ -149,8 +144,8 @@ export class Store<T, E = any> implements OnDestroy {
               return {
                 ...state,
                 [key]: _isArray
-                  ? upsertArray(state[key as string] ?? [], newEntity, store.idGetter)
-                  : deepMerge(state[key], newEntity),
+                  ? upsertArray(state?.[key as string] ?? [], newEntity, store.idGetter)
+                  : { ...state?.[key], ...newEntity },
               };
             });
           };
@@ -167,7 +162,7 @@ export class Store<T, E = any> implements OnDestroy {
                       newEntity,
                       store.idGetter
                     )
-                  : deepMerge(state[key], newEntity),
+                  : { ...state[key], ...newEntity },
               };
             });
           });

@@ -1,7 +1,7 @@
 import { StMap } from './map';
 import { EntityStore } from './entity/entity-store';
 import { Store } from './store/store';
-import { ID, IdGetter } from '@stlmpp/utils';
+import { ID, IdGetterType } from '@stlmpp/utils';
 
 export interface EntityState<T, S extends ID = number, E = any> {
   entities: StMap<T, S>;
@@ -20,7 +20,8 @@ export interface EntityStoreChild<T> {
 
 export interface EntityStoreOptions<T, S extends ID = number> {
   name: string;
-  idGetter?: IdGetter<T, S> | string | string[];
+  idGetter?: IdGetterType<T, S>;
+  mergeFn?: EntityMergeFn<T>;
   initialState?: { [K in S]?: T } | T[];
   initialActive?: { [K in S]?: T } | T[];
   children?: EntityStoreChild<T>[];
@@ -37,7 +38,13 @@ export interface StoreOptions<T> {
   children?: EntityStoreChild<T>[];
 }
 
+export type EntityMergeFn<T = any> = (entityA: T, entityB: T | Partial<T>) => T;
+
 export interface KeyValue<K, V> {
   key: K;
   value: V;
+}
+
+export interface StMapMergeOptions {
+  upsert?: boolean;
 }
