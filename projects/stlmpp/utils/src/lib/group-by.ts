@@ -1,7 +1,4 @@
-export function groupBy<T>(
-  array: T[],
-  idGetter: (entity) => any
-): [T[keyof T], T[]][] {
+export function groupBy<T>(array: T[], idGetter: (entity) => any): [T[keyof T], T[]][] {
   return array.reduce((acc, item) => {
     if (!acc.some(([id]) => id === idGetter(item))) {
       return [...acc, [idGetter(item), [item]]];

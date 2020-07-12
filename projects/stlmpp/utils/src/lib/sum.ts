@@ -1,15 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { getDeep } from './get-deep';
+import { isArray, isString } from 'lodash-es';
 
 export function sum(values: number[]): number {
   if (!values?.length) return 0;
   return values.reduce((acc, item) => acc + +(item ?? 0), 0);
 }
 
-export function sumBy<T = any>(values: T[], key: keyof T | (keyof T)[]): number {
-  if (!values?.length || !key) return 0;
-  return values.reduce((acc, item) => acc + +(getDeep(item, key as string[]) ?? 0), 0);
+export function sumBy<T = any>(values: T[], key: keyof T | (keyof T)[] | string | string[]): number {
+  const keyIsArray = isArray(key);
+  if (!values?.length || !key || (keyIsArray && !(key as any[])?.length)) return 0;
+  const get = keyIsArray || (isString(key) && key.includes('.')) ? getDeep : value => value[key];
+  return values.reduce((acc, item) => acc + +(get(item, key as string) ?? 0), 0);
 }
 
 export const sumOperator = () => map<number[], number>(values => sum(values));
@@ -19,7 +22,6 @@ export const sumByOperator = <T>(key: keyof T | (keyof T)[]) =>
 @Pipe({ name: 'stSumBy' })
 export class SumByPipe implements PipeTransform {
   transform<T = any>(value: T[], key: keyof T | (keyof T)[]): number {
-    if (!value?.length || !key) return 0;
     return sumBy(value, key);
   }
 }

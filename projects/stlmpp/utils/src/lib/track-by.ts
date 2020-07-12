@@ -1,5 +1,6 @@
 import { TrackByFunction } from '@angular/core';
-import { has, get } from 'lodash-es';
+import { has } from 'lodash-es';
+import { getDeep } from './get-deep';
 
 export function trackByFactory<T = any>(key?: keyof T, ...fallback: (keyof T)[]): TrackByFunction<T> {
   return (index, element) => {
@@ -35,11 +36,11 @@ export function trackByDeep<T = any>(
   return (index, element) => {
     if (!deepKey) return index;
     if (has(element, deepKey)) {
-      return get(element, deepKey);
+      return getDeep(element, deepKey);
     } else {
       for (const fallbackKey of fallback) {
         if (has(element, fallbackKey)) {
-          return get(element, fallbackKey);
+          return getDeep(element, fallbackKey);
         }
       }
       return index;

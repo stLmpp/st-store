@@ -1,13 +1,12 @@
 {
   "name": "@stlmpp/utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "peerDependencies": {
     "@angular/common": ">= 8 < 11",
     "@angular/core": ">= 8 < 11"
   },
   "dependencies": {
-    "is-what": "^3.8.0",
-    "merge-anything": "^3.0.3",
+    "fast-sort": "^2.2.0",
     "lodash-es": "^4.17.15",
     "tslib": "^2.0.0"
   },

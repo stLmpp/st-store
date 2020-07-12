@@ -4,9 +4,8 @@
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
-      "is-what": "is-what",
-      "merge-anything": "merge-anything",
-      "lodash-es": "lodash-es"
+      "lodash-es": "lodash-es",
+      "fast-sort": "fast-sort"
     }
   },
   "whitelistedNonPeerDependencies": ["."]

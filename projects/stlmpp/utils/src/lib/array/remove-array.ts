@@ -1,29 +1,24 @@
-import { isArray, isFunction } from 'is-what';
-import { ID, IdGetter } from '../type';
+import { isArray, isFunction } from 'lodash-es';
+import { ID, IdGetterType } from '../type';
+import { idGetterFactory } from '../util';
 
-export function removeArray<T, S extends ID = number>(
-  array: T[],
-  id: S,
-  idGetter?: IdGetter<T, S>
-): T[];
+export function removeArray<T, S extends ID = number>(array: T[], id: S, idGetter?: IdGetterType<T, S>): T[];
 export function removeArray<T, S extends ID = number>(
   array: T[],
   ids: S[],
-  idGetter?: IdGetter<T, S>
+  idGetter?: IdGetterType<T, S>
 ): T[];
-export function removeArray<T>(
-  array: T[],
-  callback: (entity: T) => boolean
-): T[];
+export function removeArray<T>(array: T[], callback: (entity: T, index: number) => boolean): T[];
 export function removeArray<T, S extends ID = number>(
   array: T[],
-  idOrIdsOrCallback: S | S[] | ((entity: T) => boolean),
-  idGetter: IdGetter<T, S> = entity => (entity as any).id
+  idOrIdsOrCallback: S | S[] | ((entity: T, index: number) => boolean),
+  _idGetter: IdGetterType<T, S> = 'id'
 ): T[] {
+  const idGetter = idGetterFactory(_idGetter);
   const callback = isFunction(idOrIdsOrCallback)
     ? idOrIdsOrCallback
     : isArray(idOrIdsOrCallback)
     ? entity => idOrIdsOrCallback.includes(idGetter(entity))
     : entity => idOrIdsOrCallback === idGetter(entity);
-  return (array ?? []).filter(entity => !callback(entity));
+  return (array ?? []).filter((entity, index) => !callback(entity, index));
 }

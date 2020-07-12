@@ -1,39 +1,40 @@
-import { isArray, isFunction } from 'is-what';
-import { ID, IdGetter } from '../type';
-import { DeepPartial } from '../deep-partial';
-import { deepMerge } from '../deep-merge';
+import { isArray, isFunction } from 'lodash-es';
+import { ID, IdGetterType } from '../type';
+import { idGetterFactory } from '../util';
 
 export function updateArray<T, S extends ID = number>(
   array: T[],
   id: S,
-  partial: Partial<T> | DeepPartial<T>,
-  idGetter?: IdGetter<T, S>
+  partial: Partial<T> | ((entity: T) => T),
+  idGetter?: IdGetterType<T, S>
 ): T[];
 export function updateArray<T, S extends ID = number>(
   array: T[],
   ids: S[],
-  partial: Partial<T> | DeepPartial<T>,
-  idGetter?: IdGetter<T, S>
+  partial: Partial<T> | ((entity: T) => T),
+  idGetter?: IdGetterType<T, S>
 ): T[];
 export function updateArray<T>(
   array: T[],
-  callback: (entity: T) => boolean,
-  partial: Partial<T> | DeepPartial<T>
+  callback: (entity: T, index: number) => boolean,
+  partial: Partial<T> | ((entity: T) => T)
 ): T[];
 export function updateArray<T, S extends ID = number>(
   array: T[],
-  idOrIdsOrCallback: S | S[] | ((entity: T) => boolean),
-  partial: Partial<T> | DeepPartial<T>,
-  idGetter: IdGetter<T, S> = entity => (entity as any).id
+  idOrIdsOrCallback: S | S[] | ((entity: T, index: number) => boolean),
+  partial: Partial<T> | ((entity: T) => T),
+  _idGetter: IdGetterType<T, S> = 'id'
 ): T[] {
+  const idGetter = idGetterFactory(_idGetter);
   const callback = isFunction(idOrIdsOrCallback)
     ? idOrIdsOrCallback
     : isArray(idOrIdsOrCallback)
     ? entity => idOrIdsOrCallback.includes(idGetter(entity))
     : entity => idOrIdsOrCallback === idGetter(entity);
-  return (array ?? []).map(item => {
-    if (callback(item)) {
-      item = deepMerge(item, partial);
+  const updateCallback = isFunction(partial) ? partial : entity => ({ ...entity, ...partial });
+  return (array ?? []).map((item, index) => {
+    if (callback(item, index)) {
+      item = { ...item, ...updateCallback(item) };
     }
     return item;
   });
