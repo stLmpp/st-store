@@ -9,7 +9,7 @@
     "copy-anything": "^2.0.1",
     "@stlmpp/utils": "^1.1.0",
     "lodash-es": "^4.17.15",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.1"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.3"
