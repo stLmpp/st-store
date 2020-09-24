@@ -1,3 +1,6 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { idGetterFactory } from './util';
+
 export function groupBy<T>(array: T[], idGetter: (entity) => any): [T[keyof T], T[]][] {
   return array.reduce((acc, item) => {
     if (!acc.some(([id]) => id === idGetter(item))) {
@@ -11,4 +14,11 @@ export function groupBy<T>(array: T[], idGetter: (entity) => any): [T[keyof T], 
       });
     }
   }, []);
+}
+
+@Pipe({ name: 'stGroupBy' })
+export class GroupByPipe implements PipeTransform {
+  transform<T = any, K extends keyof T = keyof T>(value: T[], key: K): [T[keyof T], T[]][] {
+    return groupBy(value, idGetterFactory(key));
+  }
 }

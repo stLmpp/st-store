@@ -3,13 +3,9 @@ import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
 import { isFunction, isNil, set } from 'lodash-es';
 import { copy } from 'copy-anything';
-import { getDeep, isID, removeArray, updateArray, upsertArray } from '@stlmpp/utils';
-import { Directive, OnDestroy } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { getDeep, isID } from '@stlmpp/utils';
 
-@Directive()
-// tslint:disable-next-line:directive-class-suffix
-export class Store<T, E = any> implements OnDestroy {
+export class Store<T, E = any> {
   constructor(private __options?: StoreOptions<T>) {
     this.__options = {
       ...({
@@ -22,12 +18,7 @@ export class Store<T, E = any> implements OnDestroy {
     if (this.__options.persist) {
       this.setPersist(copy(this.getState()));
     }
-    this.listenToChildren();
   }
-
-  type = 'simple';
-
-  private _destroy$ = new Subject();
 
   private __state$: BehaviorSubject<T>;
   private __error$ = new BehaviorSubject<E>(null);
@@ -134,62 +125,6 @@ export class Store<T, E = any> implements OnDestroy {
     this.postUpdate();
   }
 
-  private listenToChildren(): void {
-    if (this.__options.children?.length) {
-      for (const { store: _store, key, isArray: _isArray } of this.__options.children) {
-        if (_store.type === 'entity') {
-          const store = _store as any;
-          const _upsert = newEntity => {
-            this.update(state => {
-              return {
-                ...state,
-                [key]: _isArray
-                  ? upsertArray(state?.[key as string] ?? [], newEntity, store.idGetter)
-                  : { ...state?.[key], ...newEntity },
-              };
-            });
-          };
-          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
-          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
-          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            this.update(state => {
-              return {
-                ...state,
-                [key]: _isArray
-                  ? updateArray(
-                      state[key as string] ?? [],
-                      store.idGetter(newEntity),
-                      newEntity,
-                      store.idGetter
-                    )
-                  : { ...state[key], ...newEntity },
-              };
-            });
-          });
-          store.remove$.pipe(takeUntil(this._destroy$)).subscribe(removedEntities => {
-            this.update(state => {
-              return {
-                ...state,
-                [key]: _isArray
-                  ? removeArray(
-                      state[key as string] ?? [],
-                      removedEntities.map(store.idGetter),
-                      store.idGetter
-                    )
-                  : null,
-              };
-            });
-          });
-        } else if (_store.type === 'simple') {
-          const store = _store as any;
-          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            this.update({ [key]: newEntity } as any);
-          });
-        }
-      }
-    }
-  }
-
   reset(): void {
     this.__state$.next(this.__options.initialState);
   }
@@ -199,14 +134,4 @@ export class Store<T, E = any> implements OnDestroy {
   }
 
   postUpdate(): void {}
-
-  destroy(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
-    this.reset();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy();
-  }
 }

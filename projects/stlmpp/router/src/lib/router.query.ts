@@ -19,10 +19,7 @@ export class RouterQuery {
   }
 
   private reduceParams(params: string[], paramMap: ParamMap): Params {
-    return params.reduce(
-      (acc, param) => (paramMap.has(param) ? { ...acc, [param]: paramMap.get(param) } : acc),
-      {}
-    );
+    return params.reduce((acc, param) => (paramMap.has(param) ? { ...acc, [param]: paramMap.get(param) } : acc), {});
   }
 
   private getParamsBase(type: ParamType, params?: string | string[]): string | Params {
@@ -36,10 +33,7 @@ export class RouterQuery {
     }
   }
 
-  private selectParamsBase(
-    type: ParamType,
-    params?: string | string[]
-  ): Observable<string> | Observable<Params> {
+  private selectParamsBase(type: ParamType, params?: string | string[]): Observable<string> | Observable<Params> {
     const paramMap = this.activatedRoute[type];
     if (!params) {
       return paramMap.pipe(
@@ -64,6 +58,21 @@ export class RouterQuery {
   getParams(params: string[]): Params;
   getParams(params?: string | string[]): string | Params {
     return this.getParamsBase('paramMap', params);
+  }
+
+  getAllParams(param: string): string[] {
+    let state = this._activatedRoute;
+    const params = new Set<string>();
+    while (state.firstChild) {
+      if (state.snapshot.paramMap.has(param)) {
+        params.add(state.snapshot.paramMap.get(param));
+      }
+      state = state.firstChild;
+    }
+    if (state.snapshot.paramMap.has(param)) {
+      params.add(state.snapshot.paramMap.get(param));
+    }
+    return [...params];
   }
 
   selectParams(): Observable<Params>;
@@ -97,10 +106,7 @@ export class RouterQuery {
     } else if (isString(params)) {
       return data[params];
     } else if (isArray(params)) {
-      return params.reduce(
-        (acc, param) => (!isNil(data?.[param]) ? { ...acc, [param]: data[param] } : acc),
-        {}
-      );
+      return params.reduce((acc, param) => (!isNil(data?.[param]) ? { ...acc, [param]: data[param] } : acc), {});
     }
   }
 
@@ -115,9 +121,7 @@ export class RouterQuery {
       return data.pipe(pluck(params));
     } else if (isArray(params)) {
       return data.pipe(
-        map(d =>
-          params.reduce((acc, param) => (!isNil(d?.[param]) ? { ...acc, [param]: d[param] } : acc), {})
-        )
+        map(d => params.reduce((acc, param) => (!isNil(d?.[param]) ? { ...acc, [param]: d[param] } : acc), {}))
       );
     }
   }

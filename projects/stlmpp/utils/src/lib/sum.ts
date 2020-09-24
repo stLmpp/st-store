@@ -15,7 +15,7 @@ export function sumBy<T = any>(values: T[], key: keyof T | (keyof T)[] | string 
   return values.reduce((acc, item) => acc + +(get(item, key as string) ?? 0), 0);
 }
 
-export const sumOperator = () => map<number[], number>(values => sum(values));
+export const sumOperator = () => map<number[], number>(sum);
 export const sumByOperator = <T>(key: keyof T | (keyof T)[]) =>
   map<T[], number>(values => sumBy(values, key));
 

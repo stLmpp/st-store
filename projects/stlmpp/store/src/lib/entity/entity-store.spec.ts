@@ -427,4 +427,22 @@ describe('Entity Store', () => {
       done();
     }, 1001);
   });
+
+  it('should map', () => {
+    const newItems = [
+      { id: 2, name: '2' },
+      { id: 3, name: '3' },
+    ];
+    store.add(newItems);
+    store.map((entity, key) => {
+      if (key === 1) {
+        return { ...entity, name: '1' };
+      } else {
+        return { ...entity, name: '5' };
+      }
+    });
+    expect(store.getState().entities.get(1).name).toBe('1');
+    expect(store.getState().entities.get(2).name).toBe('5');
+    expect(store.getState().entities.get(3).name).toBe('5');
+  });
 });

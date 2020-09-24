@@ -9,13 +9,13 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   constructor(private __store: EntityStore<T, S, E>) {}
 
   private __entities$ = this.__store.selectState().pipe(pluck('entities'));
-  private get __getEntities(): StMap<T, S> {
+  private get __entities(): StMap<T, S> {
     return this.__store.getState().entities;
   }
-  private get __getKeys(): Set<S> {
-    return this.__getEntities.keys;
+  private get __keys(): Set<S> {
+    return this.__entities.keys;
   }
-  private get __getActive(): StMap<T, S> {
+  private get __active(): StMap<T, S> {
     return this.__store.getState().active;
   }
 
@@ -37,11 +37,11 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   hasCache$ = this.__store.selectCache();
 
   getAll(): T[] {
-    return this.__getEntities.values;
+    return this.__entities.values;
   }
 
   getActive(): T[] {
-    return this.__getActive.values;
+    return this.__active.values;
   }
 
   getLoading(): boolean {
@@ -60,7 +60,7 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   exists(ids: S[]): boolean;
   exists(callback: (entity: T, key: S) => boolean): boolean;
   exists(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): boolean {
-    const entities = this.__getEntities;
+    const entities = this.__entities;
     if (isFunction(idOrIdsOrCallback)) {
       return entities.some(idOrIdsOrCallback);
     } else if (isArray(idOrIdsOrCallback)) {
@@ -71,15 +71,12 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   }
 
   hasActive(): boolean {
-    return !!this.__getActive.length;
+    return !!this.__active.length;
   }
 
   selectEntity(id: S): Observable<T>;
   selectEntity(callback: (entity: T, key: S) => boolean): Observable<T>;
-  selectEntity<K extends keyof T>(
-    idOrCallback: S | ((entity: T, key: S) => boolean),
-    property: K
-  ): Observable<T[K]>;
+  selectEntity<K extends keyof T>(idOrCallback: S | ((entity: T, key: S) => boolean), property: K): Observable<T[K]>;
   selectEntity<K extends keyof T>(
     idOrCallback: S | ((entity: T, key: S) => boolean),
     property?: K
@@ -99,7 +96,7 @@ export class EntityQuery<T, S extends ID = number, E = any> {
   getEntity(key: S): T;
   getEntity<K extends keyof T>(key: S, property: K): T[K];
   getEntity<K extends keyof T>(key: S, property?: K): T | T[K] {
-    const entity = this.__getEntities.get(key);
+    const entity = this.__entities.get(key);
     return property ? entity?.[property] : entity;
   }
 

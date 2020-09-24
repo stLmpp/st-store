@@ -4,18 +4,7 @@ import { StMap } from '../map';
 import { isArray, isFunction, isNil } from 'lodash-es';
 import { devCopy } from '../utils';
 import { isDev } from '../env';
-import {
-  groupBy,
-  ID,
-  IdGetter,
-  idGetterFactory,
-  isID,
-  removeArray,
-  updateArray,
-  upsertArray,
-} from '@stlmpp/utils';
-import { takeUntil } from 'rxjs/operators';
-import { Directive, OnDestroy } from '@angular/core';
+import { ID, IdGetter, idGetterFactory, isID } from '@stlmpp/utils';
 
 const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   idGetter: entity => entity.id,
@@ -23,29 +12,12 @@ const ST_ENTITY_STORE_DEFAULTS: EntityStoreOptions<any, any> = {
   name: '',
 };
 
-@Directive()
-// tslint:disable-next-line:directive-class-suffix
-export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy {
+export class EntityStore<T, S extends ID = number, E = any> {
   constructor(options: EntityStoreOptions<T, S> = {} as any) {
     this.idGetter = idGetterFactory(options.idGetter);
     this.options = { ...(ST_ENTITY_STORE_DEFAULTS as any), ...options };
     this.setInitialState();
-    this.listenToChildren();
   }
-
-  type = 'entity';
-
-  private _destroy$ = new Subject();
-
-  private _add$ = new Subject<T>();
-  private _update$ = new Subject<T>();
-  private _remove$ = new Subject<T[]>();
-  private _upsert$ = new Subject<T>();
-
-  add$ = this._add$.asObservable();
-  update$ = this._update$.asObservable();
-  remove$ = this._remove$.asObservable();
-  upsert$ = this._upsert$.asObservable();
 
   idGetter: IdGetter<T, S>;
   private options: EntityStoreOptions<T, S> = {} as any;
@@ -143,7 +115,6 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
   private addMany(entities: T[]): void {
     const newEntities = entities.map(entity => {
       entity = this.preAdd(entity);
-      this._add$.next(entity);
       return entity;
     });
     this.updateState(state => {
@@ -156,7 +127,6 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
 
   private addOne(entity: T): void {
     const newEntity = this.preAdd(entity);
-    this._add$.next(newEntity);
     this.updateState(state => {
       return {
         ...state,
@@ -180,7 +150,6 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
     });
     const entitiesRemoved = entities.values;
     this.postRemove(entitiesRemoved);
-    this._remove$.next(entitiesRemoved);
   }
 
   update(id: S, partial: Partial<T>): void;
@@ -200,7 +169,6 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
         return;
       }
       const newEntity = this.preUpdate(updateCallback(entity));
-      this._update$.next(newEntity);
       this.updateState(state => {
         return { ...state, entities: state.entities.update(idOrPredicate, newEntity) };
       });
@@ -208,9 +176,7 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
       let entities = this.getState().entities.filter(idOrPredicate).values;
       if (!entities?.length) return;
       entities = entities.map(entity => {
-        const updated = this.preUpdate(updateCallback(entity));
-        this._update$.next(updated);
-        return updated;
+        return this.preUpdate(updateCallback(entity));
       });
       this.updateState(state => {
         return {
@@ -241,11 +207,9 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
       if (currentEntities.has(keyOrEntities)) {
         const entityStored = this.getState().entities.get(keyOrEntities);
         const newEntity = this.preUpdate(this.options.mergeFn(entityStored, entity));
-        this._upsert$.next(newEntity);
         return [newEntity];
       } else {
         const newEntity = this.preAdd(entity as T);
-        this._upsert$.next(newEntity);
         return [newEntity];
       }
     } else {
@@ -257,11 +221,9 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
         if (currentEntities.has(id)) {
           const currentEntity = currentEntities.get(id);
           const updated = this.preUpdate(this.options.mergeFn(currentEntity, item));
-          this._upsert$.next(updated);
           return [...acc, updated];
         } else {
           const newEntity = this.preAdd(item as T);
-          this._upsert$.next(newEntity);
           return [...acc, newEntity];
         }
       }, []);
@@ -347,83 +309,13 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
     this.updateActive();
   }
 
-  private listenToChildren(): void {
-    if (this.options.children?.length) {
-      for (const { store: _store, key, relation, reverseRelation, isArray: _isArray } of this.options
-        .children) {
-        if (_store.type === 'entity') {
-          const updateNotArray = newEntity =>
-            this.update(entity => reverseRelation(entity) === store.idGetter(newEntity), {
-              [key]: newEntity,
-            } as any);
-          const getIdEntity = newEntity => relation(newEntity);
-          const store = _store as any;
-          const _upsert = newEntity => {
-            if (_isArray) {
-              const idEntity = getIdEntity(newEntity);
-              this.update(idEntity, entity => {
-                return {
-                  ...entity,
-                  [key]: upsertArray(entity[key as string] ?? [], newEntity, store.idGetter),
-                };
-              });
-            } else {
-              updateNotArray(newEntity);
-            }
-          };
-          store.upsert$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
-          store.add$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => _upsert(newEntity));
-          store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            if (_isArray) {
-              const idEntity = getIdEntity(newEntity);
-              this.update(idEntity, entity => {
-                return {
-                  ...entity,
-                  [key]: updateArray(
-                    entity[key as string] ?? [],
-                    store.idGetter(newEntity),
-                    newEntity,
-                    store.idGetter
-                  ),
-                };
-              });
-            } else {
-              updateNotArray(newEntity);
-            }
-          });
-          store.remove$.pipe(takeUntil(this._destroy$)).subscribe(removedEntities => {
-            if (_isArray) {
-              const grouped = groupBy(removedEntities, relation);
-              for (const [idEntity, entities] of grouped) {
-                this.update(idEntity, entity => {
-                  return {
-                    ...entity,
-                    [key]: removeArray(
-                      entity[key as string] ?? [],
-                      entities.map(store.idGetter) as any[],
-                      store.idGetter
-                    ),
-                  };
-                });
-              }
-            } else {
-              for (const newEntity of removedEntities) {
-                this.update(entity => reverseRelation(entity) === store.idGetter(newEntity), {
-                  [key]: null,
-                } as any);
-              }
-            }
-          });
-        } else if (_store.type === 'simple') {
-          _store.update$.pipe(takeUntil(this._destroy$)).subscribe(newEntity => {
-            const idEntity = relation(newEntity);
-            this.update(entity => reverseRelation(entity) === idEntity, {
-              [key]: newEntity,
-            } as any);
-          });
-        }
-      }
-    }
+  map(callback: (entity: T, key: S) => T): void {
+    this.updateState(state => {
+      return {
+        ...state,
+        entities: state.entities.map(callback),
+      };
+    });
   }
 
   setLoading(loading: boolean): void {
@@ -458,15 +350,5 @@ export class EntityStore<T, S extends ID = number, E = any> implements OnDestroy
 
   postRemove(entitiesRemoved: T[]): void {
     this.removeActive(entitiesRemoved);
-  }
-
-  destroy(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
-    this.reset();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy();
   }
 }
