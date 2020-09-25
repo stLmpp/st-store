@@ -6,7 +6,7 @@ describe('StMap', () => {
     { id: 1, name: 'Guilherme' },
     { id: 2, name: 'Teste' },
   ];
-  const idGetter = entity => entity.id;
+  const idGetter = (entity: IdName) => entity.id;
   let map: StMap<IdName>;
 
   beforeEach(() => {
@@ -127,7 +127,7 @@ describe('StMap', () => {
     }, 0);
     const reduced3 = map.reduce((acc, [key]) => {
       return [...acc, key];
-    }, []);
+    }, [] as number[]);
     expect(reduced1).toBeDefined();
     expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
     expect(reduced2).toBeDefined();
@@ -265,15 +265,15 @@ describe('StMap', () => {
 
   it('should update', () => {
     map.update(1, { name: '1' });
-    expect(map.get(1).name).toBe('1');
+    expect(map.get(1)?.name).toBe('1');
     map.update(1, entity => ({ ...entity, name: 'Guilherme' }));
-    expect(map.get(1).name).toBe('Guilherme');
+    expect(map.get(1)?.name).toBe('Guilherme');
   });
 
   it('should upsert', () => {
     map.upsert(1, { name: '1' });
     expect(map.length).toBe(2);
-    expect(map.get(1).name).toBe('1');
+    expect(map.get(1)?.name).toBe('1');
     map.upsert(3, { id: 1, name: '3' });
     expect(map.length).toBe(3);
     expect(map.has(3)).toBeTrue();
@@ -285,7 +285,7 @@ describe('StMap', () => {
     expect(map.length).toBe(4);
     expect(map.has(4)).toBeTrue();
     expect(map.get(4)).toEqual({ id: 4, name: '4' });
-    expect(map.get(3).name).toBe('Teste3');
+    expect(map.get(3)?.name).toBe('Teste3');
   });
 
   it('should remove (id)', () => {

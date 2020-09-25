@@ -26,12 +26,12 @@ export function updateArray<T, S extends ID = number>(
   _idGetter: IdGetterType<T, S> = 'id'
 ): T[] {
   const idGetter = idGetterFactory(_idGetter);
-  const callback = isFunction(idOrIdsOrCallback)
+  const callback: (entity: T, index: number) => boolean = isFunction(idOrIdsOrCallback)
     ? idOrIdsOrCallback
     : isArray(idOrIdsOrCallback)
     ? entity => idOrIdsOrCallback.includes(idGetter(entity))
     : entity => idOrIdsOrCallback === idGetter(entity);
-  const updateCallback = isFunction(partial) ? partial : entity => ({ ...entity, ...partial });
+  const updateCallback = isFunction(partial) ? partial : (entity: T) => ({ ...entity, ...partial });
   return (array ?? []).map((item, index) => {
     if (callback(item, index)) {
       item = { ...item, ...updateCallback(item) };

@@ -9,13 +9,13 @@ export class Query<T, E = any> {
 
   state$: Observable<T> = this.__store.selectState();
   loading$: Observable<boolean> = this.__store.selectLoading();
-  error$: Observable<E> = this.__store.selectError();
+  error$: Observable<E | null> = this.__store.selectError();
 
   getState(): T {
     return this.__store.getState();
   }
 
-  getError(): E {
+  getError(): E | null {
     return this.__store.getError();
   }
 
@@ -32,7 +32,7 @@ export class Query<T, E = any> {
       if (isString(callbackOrKey)) {
         state$ = state$.pipe(pluck(callbackOrKey));
       } else if (isFunction(callbackOrKey)) {
-        state$ = state$.pipe(map(callbackOrKey));
+        state$ = state$.pipe(map(callbackOrKey as any));
       }
     }
     return state$.pipe(distinctUntilChanged(isEqual));

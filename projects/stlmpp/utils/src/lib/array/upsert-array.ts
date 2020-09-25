@@ -24,14 +24,16 @@ export function upsertOne<T>(array: T[], newItem: T | Partial<T>, idGetter: IdGe
     return updateArray(array, idGetter(newItem as any), newItem);
   } else if (idGetter(newItem as any)) {
     return addArray(array, newItem as T);
+  } else {
+    return array;
   }
 }
 
 export function upsertMany<T>(array: T[], newItems: Array<T | Partial<T>>, idGetter: IdGetter<T>): T[] {
-  const ids = [...new Set([...array.map(idGetter), ...newItems.map(idGetter)])];
+  const ids = [...new Set([...array.map(idGetter), ...newItems.map(entity => idGetter(entity as T))])];
   return ids.reduce((acc, id) => {
     const item = array.find(value => idGetter(value) === id);
     const newItem = newItems.find(value => idGetter(value as T) === id);
-    return [...acc, { ...item, ...newItem }];
-  }, []);
+    return [...acc, { ...item, ...newItem }] as T[];
+  }, [] as T[]);
 }

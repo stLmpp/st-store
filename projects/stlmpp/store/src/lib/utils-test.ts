@@ -3,6 +3,7 @@ import { Query } from './store/query';
 import { Injectable } from '@angular/core';
 import { EntityStore } from './entity/entity-store';
 import { EntityQuery } from './entity/entity-query';
+import { EntityState } from './type';
 
 export interface IdName {
   id: number;
@@ -32,15 +33,20 @@ export class SimpleQuery extends Query<IdName> {
   }
 }
 
+export interface IdNameEntityState extends EntityState<IdNameEntity> {
+  list: number[];
+  loadingNames: boolean;
+}
+
 @Injectable()
-export class SimpleEntityStore extends EntityStore<IdNameEntity> {
+export class SimpleEntityStore extends EntityStore<IdNameEntityState> {
   constructor() {
     super({ name: 'simple-entity', cache: 1000, initialState: entityInitialState });
   }
 }
 
 @Injectable()
-export class SimpleEntityQuery extends EntityQuery<IdNameEntity> {
+export class SimpleEntityQuery extends EntityQuery<IdNameEntityState> {
   constructor(private simpleEntityStore: SimpleEntityStore) {
     super(simpleEntityStore);
   }

@@ -22,7 +22,7 @@ export class RouterQuery {
     return params.reduce((acc, param) => (paramMap.has(param) ? { ...acc, [param]: paramMap.get(param) } : acc), {});
   }
 
-  private getParamsBase(type: ParamType, params?: string | string[]): string | Params {
+  private getParamsBase(type: ParamType, params?: string | string[]): string | Params | null {
     const paramMap = this.activatedRoute.snapshot[type];
     if (!params) {
       return this.reduceParams(paramMap.keys, paramMap);
@@ -30,10 +30,15 @@ export class RouterQuery {
       return paramMap.get(params);
     } else if (isArray(params)) {
       return this.reduceParams(params, paramMap);
+    } else {
+      return null;
     }
   }
 
-  private selectParamsBase(type: ParamType, params?: string | string[]): Observable<string> | Observable<Params> {
+  private selectParamsBase(
+    type: ParamType,
+    params?: string | string[]
+  ): Observable<string | null> | Observable<Params> {
     const paramMap = this.activatedRoute[type];
     if (!params) {
       return paramMap.pipe(
@@ -43,20 +48,22 @@ export class RouterQuery {
     } else if (isString(params)) {
       return paramMap.pipe(
         map(paramRoute => paramRoute.get(params)),
-        distinctUntilChanged<string>()
+        distinctUntilChanged()
       );
     } else if (isArray(params)) {
       return paramMap.pipe(
         map(paramsRoute => this.reduceParams(params, paramsRoute)),
         distinctUntilChanged(isEqual)
       );
+    } else {
+      return paramMap;
     }
   }
 
   getParams(): Params;
-  getParams(param: string): string;
+  getParams(param: string): string | null;
   getParams(params: string[]): Params;
-  getParams(params?: string | string[]): string | Params {
+  getParams(params?: string | string[]): string | null | Params {
     return this.getParamsBase('paramMap', params);
   }
 
@@ -65,12 +72,12 @@ export class RouterQuery {
     const params = new Set<string>();
     while (state.firstChild) {
       if (state.snapshot.paramMap.has(param)) {
-        params.add(state.snapshot.paramMap.get(param));
+        params.add(state.snapshot.paramMap.get(param)!);
       }
       state = state.firstChild;
     }
     if (state.snapshot.paramMap.has(param)) {
-      params.add(state.snapshot.paramMap.get(param));
+      params.add(state.snapshot.paramMap.get(param)!);
     }
     return [...params];
   }
@@ -83,9 +90,9 @@ export class RouterQuery {
   }
 
   getQueryParams(): Params;
-  getQueryParams(param: string): string;
+  getQueryParams(param: string): string | null;
   getQueryParams(params: string[]): Params;
-  getQueryParams(params?: string | string[]): string | Params {
+  getQueryParams(params?: string | string[]): string | null | Params {
     return this.getParamsBase('queryParamMap', params);
   }
 
@@ -97,9 +104,9 @@ export class RouterQuery {
   }
 
   getData(): Data;
-  getData(param: string): string;
+  getData<R = any>(param: string): R | null;
   getData(params: string[]): Data;
-  getData(params?: string | string[]): string | Data {
+  getData<R = any>(params?: string | string[]): R | null | Data {
     const data = this.activatedRoute.snapshot.data;
     if (!params) {
       return data;
@@ -107,13 +114,15 @@ export class RouterQuery {
       return data[params];
     } else if (isArray(params)) {
       return params.reduce((acc, param) => (!isNil(data?.[param]) ? { ...acc, [param]: data[param] } : acc), {});
+    } else {
+      return null;
     }
   }
 
   selectData(): Observable<Data>;
-  selectData<R = any>(param: string): Observable<R>;
+  selectData<R = any>(param: string): Observable<R | null>;
   selectData(params: string[]): Observable<Data>;
-  selectData(params?: string[] | string): Observable<any> {
+  selectData<R = any>(params?: string[] | string): Observable<R | Data | null> {
     const data = this.activatedRoute.data;
     if (!params) {
       return data;
@@ -123,6 +132,8 @@ export class RouterQuery {
       return data.pipe(
         map(d => params.reduce((acc, param) => (!isNil(d?.[param]) ? { ...acc, [param]: d[param] } : acc), {}))
       );
+    } else {
+      return data;
     }
   }
 

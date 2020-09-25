@@ -99,7 +99,7 @@ describe('Entity Query', () => {
         ]);
       });
     query
-      .selectMany(entity => /^([13])$/.test(entity.other))
+      .selectMany(entity => /^([13])$/.test(entity?.other ?? ''))
       .pipe(take(1))
       .subscribe(entities => {
         expect(entities.length).toBe(2);

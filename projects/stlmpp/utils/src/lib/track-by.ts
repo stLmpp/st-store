@@ -22,10 +22,7 @@ export function trackByConcat<T = any>(keys: (keyof T)[], concatBy = '-'): Track
   return (index, element) => {
     return keys
       .filter(key => !!element?.[key])
-      .reduce(
-        (acc, item, index1) => (index1 > 0 ? `${acc}${concatBy}${element[item]}` : `${element[item]}${acc}`),
-        ''
-      );
+      .reduce((acc, item, index1) => (index1 > 0 ? `${acc}${concatBy}${element[item]}` : `${element[item]}${acc}`), '');
   };
 }
 

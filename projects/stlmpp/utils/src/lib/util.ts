@@ -21,7 +21,7 @@ export function idGetterFactory<T, S extends ID = number>(arg?: IdGetterType<T, 
     if (arg.includes('.')) {
       return entity => getDeep(entity, arg);
     } else {
-      return entity => entity[arg];
+      return entity => (entity as any)[arg];
     }
   } else if (isArray(arg)) {
     return entity => getDeep(entity, arg as string[]);

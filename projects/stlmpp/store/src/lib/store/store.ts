@@ -1,37 +1,33 @@
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
-import { isFunction, isNil, set } from 'lodash-es';
-import { copy } from 'copy-anything';
-import { getDeep, isID } from '@stlmpp/utils';
+import { isFunction, isNil } from 'lodash-es';
+import { isID } from '@stlmpp/utils';
+import { SetRequired } from 'type-fest';
 
 export class Store<T, E = any> {
-  constructor(private __options?: StoreOptions<T>) {
+  constructor(__options: SetRequired<Partial<StoreOptions<T>>, 'initialState' | 'name'>) {
     this.__options = {
       ...({
-        persistDeserialize: value => (isID(value) ? value : JSON.parse(value)),
-        persistSerialize: value => (isID(value) ? value : JSON.stringify(value)),
+        persistDeserialize: (value: any) => (isID(value) ? value : JSON.parse(value)),
+        persistSerialize: (value: any) => (isID(value) ? value : JSON.stringify(value)),
       } as any),
       ...__options,
     };
-    this.__state$ = new BehaviorSubject(__options.initialState);
-    if (this.__options.persist) {
-      this.setPersist(copy(this.getState()));
-    }
+    this.__state$ = new BehaviorSubject(this.__options.initialState);
+    this.setPersist();
   }
 
+  private __options: StoreOptions<T>;
   private __state$: BehaviorSubject<T>;
-  private __error$ = new BehaviorSubject<E>(null);
+  private __error$ = new BehaviorSubject<E | null>(null);
   private __loading$ = new BehaviorSubject<boolean>(false);
 
   private __timeout: any;
   private __cache$ = new BehaviorSubject(false);
 
-  private _update$ = new Subject<T>();
-  update$ = this._update$.asObservable();
-
   hasCache(): boolean {
-    return this.__options.cache && this.__cache$.value;
+    return !!this.__options.cache && this.__cache$.value;
   }
 
   setHasCache(hasCache: boolean): void {
@@ -54,7 +50,7 @@ export class Store<T, E = any> {
     return this.__state$.asObservable();
   }
 
-  selectError(): Observable<E> {
+  selectError(): Observable<E | null> {
     return this.__error$.asObservable();
   }
 
@@ -66,7 +62,7 @@ export class Store<T, E = any> {
     return this.__state$.value;
   }
 
-  getError(): E {
+  getError(): E | null {
     return this.__error$.value;
   }
 
@@ -83,23 +79,28 @@ export class Store<T, E = any> {
   }
 
   private getPersistKey(): string {
-    return this.__options.name + '.' + this.__options.persist;
+    return '__ST_STORE__' + this.__options.name + '.' + this.__options.persist;
   }
 
-  private setPersist(state: T): void {
-    state = { ...state } ?? ({} as any);
-    let value = localStorage.getItem(this.getPersistKey());
-    if (value) {
-      value = this.__options.persistDeserialize(value);
-      set(state as any, this.__options.persist, value);
-      this.update(state);
+  private setPersist(): void {
+    if (this.__options.persist) {
+      let state = this.getState();
+      state = { ...state };
+      let value = localStorage.getItem(this.getPersistKey());
+      if (value) {
+        value = this.__options.persistDeserialize(value);
+        this.update({
+          ...state,
+          [this.__options.persist]: value,
+        });
+      }
     }
   }
 
   private persist(state: T): void {
     if (this.__options.persist) {
       const key = this.getPersistKey();
-      const value = getDeep(state, this.__options.persist);
+      const value = state[this.__options.persist];
       if (isNil(value)) {
         localStorage.removeItem(key);
       } else {
@@ -110,7 +111,6 @@ export class Store<T, E = any> {
 
   set(state: T): void {
     this.persist(state);
-    this._update$.next(state);
     this.__state$.next(devCopy(state));
   }
 
@@ -119,7 +119,7 @@ export class Store<T, E = any> {
   update(callback: (state: T) => T): void;
   update(state: T | Partial<T> | ((state: T) => T)): void {
     const currentState = this.getState();
-    const callback = isFunction(state) ? state : s => ({ ...s, ...state });
+    const callback = isFunction(state) ? state : (s: T) => ({ ...s, ...state });
     const newState = this.preUpdate(callback(currentState));
     this.set(newState);
     this.postUpdate();

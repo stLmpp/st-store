@@ -31,11 +31,11 @@ export function deepFreeze<T>(object: T): T {
     if (
       hasOwnProp.call(object, prop) &&
       (oIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true) &&
-      object[prop] !== null &&
-      (typeof object[prop] === 'object' || typeof object[prop] === 'function') &&
-      !Object.isFrozen(object[prop])
+      (object as any)[prop] !== null &&
+      (typeof (object as any)[prop] === 'object' || typeof (object as any)[prop] === 'function') &&
+      !Object.isFrozen((object as any)[prop])
     ) {
-      deepFreeze(object[prop]);
+      deepFreeze((object as any)[prop]);
     }
   });
   return object;

@@ -20,7 +20,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
 
   *[Symbol.iterator](): Iterator<[S, T]> {
     for (const key of this.__keys) {
-      yield [key, this.get(key)];
+      yield [key, this.get(key)!];
     }
   }
 
@@ -37,7 +37,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   get entries(): [S, T][] {
-    return this.keysArray.map(key => [key, this.get(key)]);
+    return this.keysArray.map(key => [key, this.get(key)!]);
   }
 
   get keysArray(): S[] {
@@ -45,7 +45,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   get values(): T[] {
-    return this.keysArray.map(key => this.get(key));
+    return this.keysArray.map(key => this.get(key)!);
   }
 
   filter(callback: (entity: T, key: S) => boolean): StMap<T, S> {
@@ -99,7 +99,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     return true;
   }
 
-  reduce<R>(callback: (accumulator: R, item: [S, T]) => R, initialValue?: R): R {
+  reduce<R>(callback: (accumulator: R, item: [S, T]) => R, initialValue: R): R {
     let acc = initialValue;
     for (const pair of this) {
       acc = callback(acc, pair);
@@ -132,15 +132,12 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     return this.__keys.has(key);
   }
 
-  get(key: S): T {
+  get(key: S): T | undefined {
     return this.__state[key];
   }
 
   set(key: S, value: T): this {
-    this.__state = {
-      ...this.__state,
-      [key]: value,
-    };
+    this.__state = { ...this.__state, [key]: value };
     this.__keys.add(key);
     return this;
   }
@@ -231,7 +228,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     }
     const callback = isFunction(partialOrCallback)
       ? partialOrCallback
-      : entity1 => this.mergeFn(entity1, partialOrCallback);
+      : (entity1: T) => this.mergeFn(entity1, partialOrCallback);
     this.__state = {
       ...this.__state,
       [key]: callback(entity),
@@ -277,7 +274,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   remove(callback: (entity: T, key: S) => boolean): this;
   remove(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): this;
   remove(idOrIdsOrCallback: S | S[] | ((entity: T, key: S) => boolean)): this {
-    const callback = isFunction(idOrIdsOrCallback)
+    const callback: (entity: T, key: S) => boolean = isFunction(idOrIdsOrCallback)
       ? (entity, key) => !idOrIdsOrCallback(entity, key)
       : isArray(idOrIdsOrCallback)
       ? (_, key) => !idOrIdsOrCallback.includes(key)

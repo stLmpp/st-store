@@ -98,14 +98,14 @@ describe('Entity Store', () => {
 
   it('should update (id)', () => {
     store.update(1, { name: 'Guilherme' });
-    expect(store.getState().entities.get(1).name).toBe('Guilherme');
+    expect(store.getState().entities.get(1)?.name).toBe('Guilherme');
     takeOne().subscribe(state => {
-      expect(state.entities.get(1).name).toBe('Guilherme');
+      expect(state.entities.get(1)?.name).toBe('Guilherme');
     });
     store.update(1, entity => ({ ...entity, name: '1' }));
-    expect(store.getState().entities.get(1).name).toBe('1');
+    expect(store.getState().entities.get(1)?.name).toBe('1');
     takeOne().subscribe(state => {
-      expect(state.entities.get(1).name).toBe('1');
+      expect(state.entities.get(1)?.name).toBe('1');
     });
   });
 
@@ -226,9 +226,9 @@ describe('Entity Store', () => {
   it('should update the active', () => {
     store.setActive(1);
     store.update(1, { name: '1' });
-    expect(store.getState().active.get(1).name).toBe('1');
+    expect(store.getState().active.get(1)?.name).toBe('1');
     takeOne().subscribe(state => {
-      expect(state.active.get(1).name).toBe('1');
+      expect(state.active.get(1)?.name).toBe('1');
     });
   });
 
@@ -366,7 +366,7 @@ describe('Entity Store', () => {
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: 'Guilherme', other: '1' });
     store.replace(1, { id: 1, name: '1' });
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: '1' });
-    expect(store.getState().entities.get(1).other).toBeUndefined();
+    expect(store.getState().entities.get(1)?.other).toBeUndefined();
   });
 
   it('should reset', () => {
@@ -441,8 +441,23 @@ describe('Entity Store', () => {
         return { ...entity, name: '5' };
       }
     });
-    expect(store.getState().entities.get(1).name).toBe('1');
-    expect(store.getState().entities.get(2).name).toBe('5');
-    expect(store.getState().entities.get(3).name).toBe('5');
+    expect(store.getState().entities.get(1)?.name).toBe('1');
+    expect(store.getState().entities.get(2)?.name).toBe('5');
+    expect(store.getState().entities.get(3)?.name).toBe('5');
+  });
+
+  it('should update the state (partial)', () => {
+    store.updateState({ loadingNames: true });
+    expect(store.getState().loadingNames).toBe(true);
+  });
+
+  it('should update the state (callback)', () => {
+    store.updateState(state => {
+      return {
+        ...state,
+        list: [1, 2, 3],
+      };
+    });
+    expect(store.getState().list).toEqual([1, 2, 3]);
   });
 });
