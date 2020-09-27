@@ -2,16 +2,16 @@
 # yarn lockfile v1
 
 
-"@stlmpp/utils@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-1.1.0.tgz#bcbc499380e4a2fdadacebca3e6d5c5e59efd374"
-  integrity sha512-9d37W2aMC/YzR08MojpRKH3F68aj0mugHqfduuI1+xMjjw5AK232Kj/vsMN5kyGs5knYY6F4UQQ1hnAob1YjCQ==
+"@stlmpp/utils@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.0.1.tgz#101b35b08380cc4baba04ec8d6721bdc1d374e7e"
+  integrity sha512-H84cCXIYNyGtrKCo4zG3a3zN/RQHMh5TtFBo0lQZsVjFiAKNW9p3Hp3LeuYocpTKMkXHC0czgCzvDWzhbXJoiA==
   dependencies:
     fast-sort "^2.2.0"
     lodash-es "^4.17.15"
-    tslib "^2.0.0"
+    tslib "^2.0.1"
 
-"@types/lodash-es@^4.17.3":
+"@types/lodash-es@4.17.3":
   version "4.17.3"
   resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.3.tgz#87eb0b3673b076b8ee655f1890260a136af09a2d"
   integrity sha512-iHI0i7ZAL1qepz1Y7f3EKg/zUMDwDfTzitx+AlHhJJvXwenP682ZyGbgPSc5Ej3eEAKVbNWKFuwOadCj5vBbYQ==
@@ -23,7 +23,7 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.157.tgz#fdac1c52448861dfde1a2e1515dbc46e54926dc8"
   integrity sha512-Ft5BNFmv2pHDgxV5JDsndOWTRJ+56zte0ZpYLowp03tW+K+t8u8YMOzAnpuqPgzX6WO1XpDIUm7u04M8vdDiVQ==
 
-copy-anything@^2.0.1:
+copy-anything@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/copy-anything/-/copy-anything-2.0.1.tgz#2afbce6da684bdfcbec93752fa762819cb480d9a"
   integrity sha512-lA57e7viQHOdPQcrytv5jFeudZZOXuyk47lZym279FiDQ8jeZomXiGuVf6ffMKkJ+3TIai3J1J3yi6M+/4U35g==
@@ -40,17 +40,12 @@ is-what@^3.7.1:
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.8.0.tgz#610bc46a524355f2424eb85eedc6ebbbf7e1ff8c"
   integrity sha512-UKeBoQfV8bjlM4pmx1FLDHdxslW/1mTksEs8ReVsilPmUv5cORd4+2/wFcviI3cUjrLybxCjzc8DnodAzJ/Wrg==
 
-lodash-es@^4.17.15:
+lodash-es@4.17.15, lodash-es@^4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
   integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
-tslib@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
-  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
-
-tslib@^2.0.1:
+tslib@2.0.1, tslib@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.1.tgz#410eb0d113e5b6356490eec749603725b021b43e"
   integrity sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==
