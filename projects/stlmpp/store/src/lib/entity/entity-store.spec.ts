@@ -233,6 +233,7 @@ describe('Entity Store', () => {
   });
 
   it('should add active (id)', () => {
+    store.add({ id: 2, name: '2' });
     store.addActive(1);
     expect(store.getState().active.length).toBe(1);
     expect(store.getState().active.has(1)).toBeTrue();
@@ -242,9 +243,23 @@ describe('Entity Store', () => {
       expect(state.active.has(1)).toBeTrue();
       expect(state.active.get(1)).toBeDefined();
     });
+    store.addActive(2);
+    expect(store.getState().active.length).toBe(2);
+    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().active.get(1)).toBeDefined();
+    expect(store.getState().active.has(2)).toBeTrue();
+    expect(store.getState().active.get(2)).toBeDefined();
+    takeOne().subscribe(state => {
+      expect(state.active.length).toBe(2);
+      expect(state.active.has(1)).toBeTrue();
+      expect(state.active.get(1)).toBeDefined();
+      expect(state.active.has(2)).toBeTrue();
+      expect(state.active.get(2)).toBeDefined();
+    });
   });
 
   it('should add active (entity)', () => {
+    store.add({ id: 2, name: '2' });
     store.addActive(simpleInitialState);
     expect(store.getState().active.length).toBe(1);
     expect(store.getState().active.has(1)).toBeTrue();
@@ -253,6 +268,19 @@ describe('Entity Store', () => {
       expect(state.active.length).toBe(1);
       expect(state.active.has(1)).toBeTrue();
       expect(state.active.get(1)).toBeDefined();
+    });
+    store.addActive(store.getState().entities.get(2)!);
+    expect(store.getState().active.length).toBe(2);
+    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().active.get(1)).toBeDefined();
+    expect(store.getState().active.has(2)).toBeTrue();
+    expect(store.getState().active.get(2)).toBeDefined();
+    takeOne().subscribe(state => {
+      expect(state.active.length).toBe(2);
+      expect(state.active.has(1)).toBeTrue();
+      expect(state.active.get(1)).toBeDefined();
+      expect(state.active.has(2)).toBeTrue();
+      expect(state.active.get(2)).toBeDefined();
     });
   });
 

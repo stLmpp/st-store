@@ -1,9 +1,50 @@
 import { EntityStore } from './entity-store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
-import { isArray, isEqual, isFunction, isString } from 'lodash-es';
+import { isArray, isFunction, isString } from 'lodash-es';
 import { ID } from '@stlmpp/utils';
-import { EntityState, EntityType, ErrorType, IdType } from '../type';
+import { DistinctUntilChangedFn, EntityState, EntityType, ErrorType, IdType } from '../type';
+import { distinctUntilManyChanged } from '../utils';
+
+function isEqualEntity<T = any>(entityA: T, entityB: T): boolean {
+  if (entityA === entityB) {
+    return true;
+  }
+  if ((!entityA && entityB) || (entityA && !entityB)) {
+    return false;
+  }
+  const entriesA = Object.entries(entityA);
+  const entriesB = Object.entries(entityB);
+  if (entriesA.length !== entriesB.length) {
+    return false;
+  }
+  for (const [key, value] of entriesA) {
+    if ((entityB as any)[key] !== value) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isEqualEntitiesFactory<T = any>(distinctFn: DistinctUntilChangedFn<T>): DistinctUntilChangedFn<T[]> {
+  return (entitiesA, entitiesB) => {
+    if (entitiesA === entitiesB) {
+      return true;
+    }
+    if ((!entitiesA && entitiesB) || (entitiesA && !entitiesB) || entitiesA?.length !== entitiesB?.length) {
+      return false;
+    }
+    let index = entitiesA.length;
+    while (index--) {
+      const entityA = entitiesA[index];
+      const entityB = entitiesB[index];
+      if (!distinctFn(entityA, entityB)) {
+        return false;
+      }
+    }
+    return true;
+  };
+}
 
 export class EntityQuery<
   State extends EntityState,
@@ -11,8 +52,18 @@ export class EntityQuery<
   S extends ID = IdType<State>,
   E = ErrorType<State>
 > {
-  constructor(private __store: EntityStore<State, T, S, E>) {}
+  constructor(
+    private __store: EntityStore<State, T, S, E>,
+    private __distinctUntilChangedFn: DistinctUntilChangedFn<T> = isEqualEntity
+  ) {
+    this.__distinctUntilManyChangedFn = isEqualEntitiesFactory(__distinctUntilChangedFn);
+    this.active$ = this.select('active').pipe(
+      map(active => active.values),
+      distinctUntilChanged(this.__distinctUntilManyChangedFn)
+    );
+  }
 
+  private readonly __distinctUntilManyChangedFn: DistinctUntilChangedFn<T[]>;
   private __state$ = this.__store.selectState();
   private __entities$ = this.__state$.pipe(pluck('entities'));
   private get __entities(): State['entities'] {
@@ -29,14 +80,11 @@ export class EntityQuery<
   }
 
   all$: Observable<T[]> = this.__entities$.pipe(map(entities => entities.values));
-  active$: Observable<T[]> = this.select('active').pipe(
-    map(active => active.values),
-    distinctUntilChanged(isEqual)
-  );
+  active$: Observable<T[]>;
 
   activeId$: Observable<S[]> = this.select('active').pipe(
-    map(active => active.keysArray),
-    distinctUntilChanged(isEqual)
+    map(active => active.keysArray as S[]),
+    distinctUntilManyChanged()
   );
 
   loading$: Observable<boolean> = this.select('loading');
@@ -93,7 +141,7 @@ export class EntityQuery<
         state$ = state$.pipe(map(callbackOrKey as any));
       }
     }
-    return state$.pipe(distinctUntilChanged(isEqual));
+    return state$.pipe(distinctUntilChanged() as any);
   }
 
   selectEntity(id: S): Observable<T>;
@@ -105,14 +153,20 @@ export class EntityQuery<
   ): Observable<T | T[K] | undefined> {
     let entity$: Observable<T | T[K] | undefined>;
     if (isFunction(idOrCallback)) {
-      entity$ = this.__entities$.pipe(map(entities => entities.find(idOrCallback as any)));
+      entity$ = this.__entities$.pipe(
+        map(entities => entities.find(idOrCallback as any)),
+        distinctUntilChanged(this.__distinctUntilChangedFn)
+      );
     } else {
-      entity$ = this.__entities$.pipe(map(entities => entities.get(idOrCallback)));
+      entity$ = this.__entities$.pipe(
+        map(entities => entities.get(idOrCallback)),
+        distinctUntilChanged(this.__distinctUntilChangedFn)
+      );
     }
     if (property) {
-      entity$ = entity$.pipe(pluck(property as string));
+      entity$ = entity$.pipe(pluck(property as string) as any, distinctUntilChanged());
     }
-    return entity$.pipe(distinctUntilChanged(isEqual));
+    return entity$;
   }
 
   getEntity(key: S): T | undefined;
@@ -128,7 +182,7 @@ export class EntityQuery<
     const callback = isFunction(keysOrCallback) ? keysOrCallback : (_: T, key: S) => keysOrCallback.includes(key);
     return this.__entities$.pipe(
       map(entities => entities.filter(callback as any).values),
-      distinctUntilChanged(isEqual)
+      distinctUntilChanged(this.__distinctUntilManyChangedFn)
     );
   }
 }

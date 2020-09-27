@@ -4,7 +4,7 @@ import { getDeep } from './get-deep';
 
 export function trackByFactory<T = any>(key?: keyof T, ...fallback: (keyof T)[]): TrackByFunction<T> {
   return (index, element) => {
-    if (!key) return index;
+    if (!key || !element) return index;
     if (element?.[key]) {
       return element[key];
     } else {

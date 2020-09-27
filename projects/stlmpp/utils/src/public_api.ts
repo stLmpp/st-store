@@ -2,13 +2,13 @@
  * Public API Surface of utils
  */
 
-export * from './lib/st-utils.module';
-export * from './lib/get-deep';
-export * from './lib/group-by';
-export * from './lib/order-by';
-export * from './lib/array';
-export * from './lib/type';
-export * from './lib/track-by';
-export * from './lib/default';
-export * from './lib/sum';
-export * from './lib/util';
+export { StUtilsModule } from './lib/st-utils.module';
+export { getDeep, GetDeepPipe } from './lib/get-deep';
+export { groupBy, GroupByPipe } from './lib/group-by';
+export { OrderByDirection, orderBy, orderByOperator, OrderByPipe, OrderByType } from './lib/order-by';
+export { addArray, removeArray, updateArray, upsertArray, upsertMany, upsertOne } from './lib/array';
+export { ID, IdGetter, IdGetterType } from './lib/type';
+export { trackByConcat, trackByDeep, trackByFactory } from './lib/track-by';
+export { DEFAULT_PIPE_TYPE, DefaultPipe, DefaultPipeType } from './lib/default';
+export { sum, sumBy, sumByOperator, SumByPipe, sumOperator, SumPipe } from './lib/sum';
+export { idGetterFactory, isID } from './lib/util';

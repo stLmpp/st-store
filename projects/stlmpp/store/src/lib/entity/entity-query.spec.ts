@@ -109,4 +109,56 @@ describe('Entity Query', () => {
         ]);
       });
   });
+
+  it('should not emit if equal entity', () => {
+    const subscriber = jasmine.createSpy('subscriber');
+    query.selectEntity(1).subscribe(subscriber);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.add({ id: 5, name: '5' });
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.update(5, { other: '2' });
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.upsert([
+      { id: 1, other: '2' },
+      { id: 5, other: '67' },
+    ]);
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    store.remove(1);
+    expect(subscriber).toHaveBeenCalledTimes(3);
+  });
+
+  it('should not emit if equal entites', () => {
+    store.set([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    const subscriber = jasmine.createSpy('subscriber');
+    query.selectMany([1, 2]).subscribe(subscriber);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.add({ id: 3, name: '3' });
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.update(3, { other: '3' });
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.remove(3);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.upsert([{ id: 1, name: '1' }]);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.upsert([{ id: 1, other: '1' }]);
+    expect(subscriber).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not emit if equal active ids', () => {
+    store.set([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    store.setActive(1);
+    const subscriber = jasmine.createSpy('subscriber');
+    query.activeId$.subscribe(subscriber);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.addActive(2);
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    store.remove(1);
+    expect(subscriber).toHaveBeenCalledTimes(3);
+  });
 });

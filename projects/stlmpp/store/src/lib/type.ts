@@ -12,6 +12,8 @@ export type EntityType<State> = State extends EntityState<infer T> ? T : never;
 export type IdType<State> = State extends EntityState<any, infer S> ? S : never;
 export type ErrorType<State> = State extends EntityState<any, any, infer E> ? E : never;
 
+export type DistinctUntilChangedFn<T = any> = (entityA: T, entityB: T) => boolean;
+
 export interface EntityStoreOptions<T, S extends ID = number> {
   name: string;
   idGetter: IdGetterType<T, S>;

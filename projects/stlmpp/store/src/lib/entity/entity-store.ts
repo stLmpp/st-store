@@ -267,7 +267,7 @@ export class EntityStore<
     this.updateState(state => {
       return {
         ...state,
-        active: formatted,
+        active: state.active.setMany(formatted),
       };
     });
   }

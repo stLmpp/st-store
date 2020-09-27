@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap, Params } from '@angular/router';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
-import { isArray, isEqual, isNil, isString } from 'lodash-es';
+import { isArray, isNil, isString } from 'lodash-es';
 
 type ParamType = 'queryParamMap' | 'paramMap';
 
@@ -43,7 +43,7 @@ export class RouterQuery {
     if (!params) {
       return paramMap.pipe(
         map(paramsRoute => this.reduceParams(paramsRoute.keys, paramsRoute)),
-        distinctUntilChanged(isEqual)
+        distinctUntilChanged()
       );
     } else if (isString(params)) {
       return paramMap.pipe(
@@ -53,7 +53,7 @@ export class RouterQuery {
     } else if (isArray(params)) {
       return paramMap.pipe(
         map(paramsRoute => this.reduceParams(params, paramsRoute)),
-        distinctUntilChanged(isEqual)
+        distinctUntilChanged((paramsA, paramsB) => params.every(key => paramsA[key] === paramsB[key]))
       );
     } else {
       return paramMap;

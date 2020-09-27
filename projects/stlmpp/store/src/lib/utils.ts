@@ -2,6 +2,8 @@ import { ID, IdGetter } from '@stlmpp/utils';
 import { isDev } from './env';
 import { copy } from 'copy-anything';
 import { isArray, isNumber, isObject } from 'lodash-es';
+import { MonoTypeOperatorFunction } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 export function toEntities<T, S extends ID = number>(
   entities: T[],
@@ -50,4 +52,22 @@ export function formatId<T, S extends ID = number>(object: any, idGetter: IdGett
     return key => key as S;
   }
   return isNumber(idGetter(Object.values<T>(object)[0])) ? Number : key => key as any;
+}
+
+export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[]> {
+  return distinctUntilChanged<T[]>((manyA: T[], manyB: T[]) => {
+    if (manyA === manyB) {
+      return true;
+    }
+    if ((!manyA && manyB) || (manyA && !manyB) || manyA?.length !== manyB?.length) {
+      return false;
+    }
+    let index = manyA.length;
+    while (index--) {
+      if (manyA[index] !== manyB[index]) {
+        return false;
+      }
+    }
+    return true;
+  });
 }
