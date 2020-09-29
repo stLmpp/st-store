@@ -99,6 +99,7 @@ export class EntityStore<
   }
 
   set(array: T[]): void {
+    array = array.map(entry => this.preAdd(entry));
     this.updateState({
       entities: new StMap<T, S>(this.idGetter).fromArray(array),
     } as any);
