@@ -13,6 +13,24 @@ describe('StMap', () => {
     map = new StMap<IdName>(idGetter).fromArray(data);
   });
 
+  it('should set from array', () => {
+    map.fromArray([]);
+    expect(map.length).toBe(0);
+    expect(map.has(1)).toBeFalse();
+    expect(map.get(1)).toBeUndefined();
+    map.fromArray(data);
+    expect(map).toBeDefined();
+    expect(map.length).toBe(2);
+    expect(map.state).toBeDefined();
+    expect(map.state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+    expect(map.keys).toBeDefined();
+    expect(map.keys).toEqual(new Set([1, 2]));
+    map.fromArray(undefined as any);
+    expect(map.length).toBe(0);
+    expect(map.has(1)).toBeFalse();
+    expect(map.get(1)).toBeUndefined();
+  });
+
   it('should create the map', () => {
     expect(map).toBeDefined();
     expect(map.length).toBe(2);
@@ -137,21 +155,26 @@ describe('StMap', () => {
   });
 
   it('should pop', () => {
-    const popped = map.pop();
+    let popped = map.pop();
     expect(map.length).toBe(1);
     expect(map.has(1)).toBeTrue();
     expect(map.has(2)).toBeFalse();
     expect(popped).toBeDefined();
     expect(popped).toEqual({ id: 2, name: 'Teste' });
+    map.fromObject({});
+    popped = map.pop();
+    expect(popped).toBeUndefined();
   });
 
   it('should shift', () => {
-    const shifted = map.shift();
+    let shifted = map.shift();
     expect(map.length).toBe(1);
     expect(map.has(2)).toBeTrue();
     expect(map.has(1)).toBeFalse();
     expect(shifted).toBeDefined();
     expect(shifted).toEqual({ id: 1, name: 'Guilherme' });
+    shifted = map.fromObject({}).shift();
+    expect(shifted).toBeUndefined();
   });
 
   it('should set', () => {
@@ -166,6 +189,14 @@ describe('StMap', () => {
     expect(map.length).toBe(3);
     expect(map.has(3)).toBeTrue();
     expect(map.get(3)).toEqual({ id: 3, name: '3' });
+    map.setMany([]);
+    expect(map.length).toBe(3);
+    expect(map.has(3)).toBeTrue();
+    expect(map.get(3)).toEqual({ id: 3, name: '3' });
+    map.setMany(undefined as any);
+    expect(map.length).toBe(3);
+    expect(map.has(3)).toBeTrue();
+    expect(map.get(3)).toEqual({ id: 3, name: '3' });
   });
 
   it('should set many (Object)', () => {
@@ -173,10 +204,18 @@ describe('StMap', () => {
     expect(map.length).toBe(3);
     expect(map.has(3)).toBeTrue();
     expect(map.get(3)).toEqual({ id: 3, name: '3' });
+    map.setMany({});
+    expect(map.length).toBe(3);
+    expect(map.has(3)).toBeTrue();
+    expect(map.get(3)).toEqual({ id: 3, name: '3' });
   });
 
   it('should set many (StMap)', () => {
-    map.setMany(new StMap<IdName>(idGetter)).set(3, { id: 3, name: '3' });
+    map.setMany(new StMap<IdName>(idGetter).set(3, { id: 3, name: '3' }));
+    expect(map.length).toBe(3);
+    expect(map.has(3)).toBeTrue();
+    expect(map.get(3)).toEqual({ id: 3, name: '3' });
+    map.setMany(new StMap<IdName>(idGetter));
     expect(map.length).toBe(3);
     expect(map.has(3)).toBeTrue();
     expect(map.get(3)).toEqual({ id: 3, name: '3' });
@@ -198,13 +237,25 @@ describe('StMap', () => {
     expect(map.length).toBe(0);
     expect(map.has(1)).toBeFalse();
     expect(map.get(1)).toBeUndefined();
+    map.fromObject({ 2: { id: 2, name: '2' } }, true);
+    expect(map.length).toBe(1);
+    expect(map.has(2)).toBeTrue();
+    expect(map.get(2)).toEqual({ id: 2, name: '2' });
   });
 
-  it('should set from tupple', () => {
-    map.fromTupple([[1, { id: 1, name: '1' }]]);
+  it('should set from tuple', () => {
+    map.fromTuple([[1, { id: 1, name: '1' }]]);
     expect(map.length).toBe(1);
     expect(map.has(1)).toBeTrue();
     expect(map.get(1)).toEqual({ id: 1, name: '1' });
+    map.fromTuple([]);
+    expect(map.length).toBe(0);
+    expect(map.has(1)).toBeFalse();
+    expect(map.get(1)).toBeUndefined();
+    map.fromTuple(undefined as any);
+    expect(map.length).toBe(0);
+    expect(map.has(1)).toBeFalse();
+    expect(map.get(1)).toBeUndefined();
   });
 
   it('should merge (Array)', () => {
@@ -263,11 +314,26 @@ describe('StMap', () => {
     expect(map.get(3)).toEqual({ id: 3, name: '3' });
   });
 
+  it('should not merge', () => {
+    map.merge(undefined as any);
+    expect(map.length).toBe(2);
+    map.merge([]);
+    expect(map.length).toBe(2);
+    map.merge({});
+    expect(map.length).toBe(2);
+    map.merge(new StMap(idGetter));
+    expect(map.length).toBe(2);
+  });
+
   it('should update', () => {
     map.update(1, { name: '1' });
     expect(map.get(1)?.name).toBe('1');
     map.update(1, entity => ({ ...entity, name: 'Guilherme' }));
     expect(map.get(1)?.name).toBe('Guilherme');
+    map.update(888434, { name: '3' });
+    expect(map.get(888434)).toBeUndefined();
+    expect(map.has(888434)).toBeFalse();
+    expect(map.length).toBe(2);
   });
 
   it('should upsert', () => {
@@ -307,5 +373,11 @@ describe('StMap', () => {
     expect(map.get(2)).toBeUndefined();
     expect(map.has(2)).toBeFalse();
     expect(map.length).toBe(1);
+  });
+
+  it('should throw error if idGetter not set', () => {
+    expect(() => {
+      const newMap = new StMap<any, any>(undefined as any);
+    }).toThrow();
   });
 });

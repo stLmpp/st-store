@@ -1,27 +1,19 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { devCopy } from '../utils';
 import { StoreOptions } from '../type';
-import { isFunction, isNil } from 'lodash-es';
-import { isID } from '@stlmpp/utils';
-import { SetRequired } from 'type-fest';
+import { isFunction } from 'lodash-es';
+import { StorePersistStrategy, StorePersistLocalStorageStrategy } from './store-persist';
 
 export class Store<T, E = any> {
-  constructor(__options: SetRequired<Partial<StoreOptions<T>>, 'initialState' | 'name'>) {
-    this.__options = {
-      ...({
-        persistDeserialize: (value: any) => (isID(value) ? value : JSON.parse(value)),
-        persistSerialize: (value: any) => (isID(value) ? value : JSON.stringify(value)),
-      } as any),
-      ...__options,
-    };
-    this.__state$ = new BehaviorSubject(this.__options.initialState);
-    this.setPersist();
+  constructor(private __options: StoreOptions<T>) {
+    this.__persist = this.__options.persistStrategy ?? new StorePersistLocalStorageStrategy();
+    this.__state$ = new BehaviorSubject(this.setPersist(this.__options.initialState));
   }
 
-  private __options: StoreOptions<T>;
   private __state$: BehaviorSubject<T>;
   private __error$ = new BehaviorSubject<E | null>(null);
   private __loading$ = new BehaviorSubject<boolean>(false);
+  private __persist: StorePersistStrategy<T>;
 
   private __timeout: any;
   private __cache$ = new BehaviorSubject(false);
@@ -79,33 +71,26 @@ export class Store<T, E = any> {
   }
 
   private getPersistKey(): string {
-    return '__ST_STORE__' + this.__options.name + '.' + this.__options.persist;
+    return '__ST_STORE__' + this.__options.name + '.' + (this.__options.persistKey ?? '');
   }
 
-  private setPersist(): void {
-    if (this.__options.persist) {
-      let state = this.getState();
-      state = { ...state };
-      let value = localStorage.getItem(this.getPersistKey());
+  private setPersist(state: T): T {
+    if (this.__options.persistStrategy) {
+      const key = this.getPersistKey();
+      let value = this.__persist.get(key);
       if (value) {
-        value = this.__options.persistDeserialize(value);
-        this.update({
-          ...state,
-          [this.__options.persist]: value,
-        });
+        value = this.__persist.deserialize(value);
+        return this.__persist.setStore(state, value, this.__options.persistKey);
       }
     }
+    return state;
   }
 
   private persist(state: T): void {
-    if (this.__options.persist) {
+    if (this.__options.persistStrategy) {
       const key = this.getPersistKey();
-      const value = state[this.__options.persist];
-      if (isNil(value)) {
-        localStorage.removeItem(key);
-      } else {
-        localStorage.setItem(key, this.__options.persistSerialize(value));
-      }
+      const value = this.__persist.getStore(state, this.__options.persistKey);
+      this.__persist.set(key, this.__persist.serialize(value));
     }
   }
 

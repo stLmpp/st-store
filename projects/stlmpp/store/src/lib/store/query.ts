@@ -2,7 +2,7 @@ import { Store } from './store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { KeyValue } from '../type';
-import { isFunction, isString } from 'lodash-es';
+import { isString } from 'lodash-es';
 
 export class Query<T, E = any> {
   constructor(private __store: Store<T, E>) {}
@@ -27,11 +27,12 @@ export class Query<T, E = any> {
   select<K extends keyof T>(key: K): Observable<T[K]>;
   select<R>(callback: (state: T) => R): Observable<R>;
   select<K extends keyof T, R>(callbackOrKey?: K | ((state: T) => R)): Observable<T | R | T[K]> {
-    let state$: Observable<T | R | T[K]> = this.state$;
+    let state$: Observable<any> = this.state$;
     if (callbackOrKey) {
-      if (isString(callbackOrKey)) {
+      const isKey = (key: any): key is keyof T => isString(key);
+      if (isKey(callbackOrKey)) {
         state$ = state$.pipe(pluck(callbackOrKey));
-      } else if (isFunction(callbackOrKey)) {
+      } else {
         state$ = state$.pipe(map(callbackOrKey as any));
       }
     }

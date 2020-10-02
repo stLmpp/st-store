@@ -1,6 +1,7 @@
-import { SimpleEntityQuery, SimpleEntityStore, simpleInitialState } from '../utils-test';
+import { entityInitialState, SimpleEntityQuery, SimpleEntityStore, simpleInitialState } from '../utils-test';
 import { TestBed } from '@angular/core/testing';
 import { take } from 'rxjs/operators';
+import { isEqualEntitiesFactory, isEqualEntity } from './entity-query';
 
 describe('Entity Query', () => {
   let query: SimpleEntityQuery;
@@ -69,6 +70,13 @@ describe('Entity Query', () => {
         expect(entity).toBeDefined();
         expect(entity).toEqual({ id: 1, name: '1', other: '1' });
       });
+
+    query
+      .selectEntity(123, 'name')
+      .pipe(take(1))
+      .subscribe(name => {
+        expect(name).toBeUndefined();
+      });
   });
 
   it('should get entity', () => {
@@ -76,6 +84,7 @@ describe('Entity Query', () => {
     expect(entity).toEqual(simpleInitialState);
     const name = query.getEntity(1, 'name');
     expect(name).toBe('Guilherme');
+    expect(query.getEntity(123, 'name')).toBeUndefined();
   });
 
   it('should select many', () => {
@@ -160,5 +169,135 @@ describe('Entity Query', () => {
     expect(subscriber).toHaveBeenCalledTimes(2);
     store.remove(1);
     expect(subscriber).toHaveBeenCalledTimes(3);
+  });
+
+  it('should update the active', () => {
+    store.set([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    store.setActive(1);
+    query.active$.pipe(take(1)).subscribe(active => {
+      expect(active.length).toBe(1);
+      expect(active[0]).toBeDefined();
+      expect(active[0].name).toBe('1');
+    });
+    store.addActive(2);
+    query.active$.pipe(take(1)).subscribe(active => {
+      expect(active.length).toBe(2);
+      expect(active[0]).toBeDefined();
+      expect(active[0].name).toBe('1');
+      expect(active[1]).toBeDefined();
+      expect(active[1].name).toBe('2');
+    });
+  });
+
+  it('should emit if active is updated', () => {
+    store.set([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    store.setActive([1, 2]);
+    const subscriber = jasmine.createSpy('subscriber');
+    query.active$.subscribe(subscriber);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.update(1, { name: '2' });
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    store.add({ name: '3', id: 3 });
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    store.remove(2);
+    expect(subscriber).toHaveBeenCalledTimes(3);
+    store.update(3, { other: '3' });
+    expect(subscriber).toHaveBeenCalledTimes(3);
+  });
+
+  it('should define if entity is equal', () => {
+    expect(isEqualEntity({ id: 1, nome: 'Guilherme' }, { nome: 'Guilherme', id: 1 })).toBeTrue();
+    const entity = { id: 2 };
+    expect(isEqualEntity(entity, entity)).toBeTrue();
+    expect(isEqualEntity(entity, undefined)).toBeFalse();
+    expect(isEqualEntity(undefined, entity)).toBeFalse();
+  });
+
+  it('should distinct if entities are equal', () => {
+    const comparator = isEqualEntitiesFactory(isEqualEntity);
+    const entitiesA = [{ id: 1, nome: 'Guilherme' }];
+    const entitiesB = [{ nome: 'Guilherme', id: 1 }];
+    expect(comparator(entitiesA, entitiesB)).toBeTrue();
+    expect(comparator(entitiesA, entitiesA)).toBeTrue();
+    expect(comparator(entitiesA, undefined as any)).toBeFalse();
+    expect(comparator(undefined as any, entitiesA)).toBeFalse();
+    expect(comparator(entitiesA, []));
+    expect(comparator([], entitiesA));
+    expect(comparator([...entitiesA], [...entitiesB])).toBeTrue();
+    expect(comparator([...entitiesA, { id: 2, nome: 'Guilherme2' }], entitiesB)).toBeFalse();
+  });
+
+  it('should return the keys', () => {
+    // @ts-ignore
+    const keys = query.__keys;
+    expect(keys).toBeDefined();
+    expect(keys?.size).toBe(1);
+  });
+
+  it('should return all entities', () => {
+    query.all$.pipe(take(1)).subscribe(entities => {
+      expect(entities).toBeDefined();
+      expect(entities.length).toBe(1);
+      expect(entities).toEqual(entityInitialState);
+    });
+  });
+
+  it('should return all active', () => {
+    store.setActive(1);
+    const active = query.getActive();
+    expect(active).toBeDefined();
+    expect(active.length).toBe(1);
+    expect(active).toEqual(entityInitialState);
+  });
+
+  it('should return the loading state', () => {
+    expect(query.getLoading()).toBeFalse();
+    store.setLoading(true);
+    expect(query.getLoading()).toBeTrue();
+  });
+
+  it('should return the error state', () => {
+    expect(query.getError()).toBeNull();
+    store.setError({ code: 1 });
+    expect(query.getError()).toEqual({ code: 1 });
+  });
+
+  it('should return the cache state', done => {
+    store.setHasCache(true);
+    expect(query.getHasCache()).toBeTrue();
+    setTimeout(() => {
+      expect(query.getHasCache()).toBeFalse();
+      done();
+    }, 1001);
+  });
+
+  it('should select the state', () => {
+    query
+      .select()
+      .pipe(take(1))
+      .subscribe(state => {
+        expect(state).toBeDefined();
+        expect(state.entities.length).toBe(1);
+      });
+
+    query
+      .select('loading')
+      .pipe(take(1))
+      .subscribe(loading => {
+        expect(loading).toBeFalse();
+      });
+
+    query
+      .select(state => state.loading)
+      .pipe(take(1))
+      .subscribe(loading => {
+        expect(loading).toBeFalse();
+      });
   });
 });

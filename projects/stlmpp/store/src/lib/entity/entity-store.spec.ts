@@ -1,6 +1,10 @@
-import { entityInitialState, SimpleEntityStore, simpleInitialState } from '../utils-test';
+import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState } from '../utils-test';
 import { TestBed } from '@angular/core/testing';
 import { take } from 'rxjs/operators';
+import { EntityStore } from './entity-store';
+import { EntityState } from '../type';
+import { environment } from '../environment';
+import { StStoreModule } from '../st-store.module';
 
 describe('Entity Store', () => {
   let store: SimpleEntityStore;
@@ -9,9 +13,11 @@ describe('Entity Store', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [StStoreModule.forRoot()],
       providers: [SimpleEntityStore],
     });
     store = TestBed.inject(SimpleEntityStore);
+    environment.reset();
   });
 
   it('should create the store', () => {
@@ -22,6 +28,16 @@ describe('Entity Store', () => {
     takeOne().subscribe(state => {
       expect(state.entities.values).toEqual(entityInitialState);
     });
+  });
+
+  it('should use custom merge function', () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({
+      name: 'teste',
+      initialState: entityInitialState,
+      mergeFn: (a, b) => ({ ...b, ...a }),
+    });
+    newStore.update(1, { name: '2' });
+    expect(newStore.getState().entities.get(1)?.name).toBe('Guilherme');
   });
 
   it('should set the state', () => {
@@ -136,6 +152,14 @@ describe('Entity Store', () => {
     });
   });
 
+  it('should not update', () => {
+    store.update(4, { name: '1' });
+    expect(store.getState().entities.length).toBe(1);
+
+    store.update(entity => entity.name === 'NOT EXISTS', { name: '1' });
+    expect(store.getState().entities.length).toBe(1);
+  });
+
   it('should upsert (one)', () => {
     store.upsert(1, { id: 1, name: 'U' });
     expect(store.getState().entities.length).toBe(1);
@@ -169,19 +193,24 @@ describe('Entity Store', () => {
     });
   });
 
+  it('should not upsert many if id is null or undefined', () => {
+    store.upsert([{ name: '1' }]);
+    expect(store.getState().entities.length).toBe(1);
+    expect(store.getState().entities.get(1)).toEqual(simpleInitialState);
+    expect(store.getState().entities.some(entity => entity.name === '1')).toBeFalse();
+  });
+
   it('should set active (id)', () => {
     store.add([
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ]);
     store.setActive(1);
-    expect(store.getState().active.length).toBe(1);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(1);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(1);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
+      expect(state.activeKeys.size).toBe(1);
+      expect(state.activeKeys.has(1)).toBeTrue();
     });
   });
 
@@ -192,13 +221,11 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.setActive(newItens[0]);
-    expect(store.getState().active.length).toBe(1);
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(1);
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(1);
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
+      expect(state.activeKeys.size).toBe(1);
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
@@ -209,78 +236,53 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.setActive([1, 2]);
-    expect(store.getState().active.length).toBe(2);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(2);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(2);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
-    });
-  });
-
-  it('should update the active', () => {
-    store.setActive(1);
-    store.update(1, { name: '1' });
-    expect(store.getState().active.get(1)?.name).toBe('1');
-    takeOne().subscribe(state => {
-      expect(state.active.get(1)?.name).toBe('1');
+      expect(state.activeKeys.size).toBe(2);
+      expect(state.activeKeys.has(1)).toBeTrue();
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
   it('should add active (id)', () => {
     store.add({ id: 2, name: '2' });
     store.addActive(1);
-    expect(store.getState().active.length).toBe(1);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(1);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(1);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
+      expect(state.activeKeys.size).toBe(1);
+      expect(state.activeKeys.has(1)).toBeTrue();
     });
     store.addActive(2);
-    expect(store.getState().active.length).toBe(2);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(2);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(2);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
+      expect(state.activeKeys.size).toBe(2);
+      expect(state.activeKeys.has(1)).toBeTrue();
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
   it('should add active (entity)', () => {
     store.add({ id: 2, name: '2' });
     store.addActive(simpleInitialState);
-    expect(store.getState().active.length).toBe(1);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(1);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(1);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
+      expect(state.activeKeys.size).toBe(1);
+      expect(state.activeKeys.has(1)).toBeTrue();
     });
     store.addActive(store.getState().entities.get(2)!);
-    expect(store.getState().active.length).toBe(2);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(2);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(2);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
+      expect(state.activeKeys.size).toBe(2);
+      expect(state.activeKeys.has(1)).toBeTrue();
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
@@ -291,17 +293,13 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.addActive([1, 2]);
-    expect(store.getState().active.length).toBe(2);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(2);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(2);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
+      expect(state.activeKeys.size).toBe(2);
+      expect(state.activeKeys.has(1)).toBeTrue();
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
@@ -312,17 +310,13 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.addActive([simpleInitialState, newItens[0]]);
-    expect(store.getState().active.length).toBe(2);
-    expect(store.getState().active.has(1)).toBeTrue();
-    expect(store.getState().active.get(1)).toBeDefined();
-    expect(store.getState().active.has(2)).toBeTrue();
-    expect(store.getState().active.get(2)).toBeDefined();
+    expect(store.getState().activeKeys.size).toBe(2);
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.length).toBe(2);
-      expect(state.active.has(1)).toBeTrue();
-      expect(state.active.get(1)).toBeDefined();
-      expect(state.active.has(2)).toBeTrue();
-      expect(state.active.get(2)).toBeDefined();
+      expect(state.activeKeys.size).toBe(2);
+      expect(state.activeKeys.has(1)).toBeTrue();
+      expect(state.activeKeys.has(2)).toBeTrue();
     });
   });
 
@@ -333,19 +327,19 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.addActive(1);
-    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     takeOne().subscribe(state => {
-      expect(state.active.has(1)).toBeTrue();
+      expect(state.activeKeys.has(1)).toBeTrue();
     });
     store.removeActive(1);
-    expect(store.getState().active.has(1)).toBeFalse();
+    expect(store.getState().activeKeys.has(1)).toBeFalse();
     takeOne().subscribe(state => {
-      expect(state.active.has(1)).toBeFalse();
+      expect(state.activeKeys.has(1)).toBeFalse();
     });
     store.addActive([1, 2, 3]);
-    expect(store.getState().active.length).toBe(3);
+    expect(store.getState().activeKeys.size).toBe(3);
     store.removeActive([1, 2]);
-    expect(store.getState().active.length).toBe(1);
+    expect(store.getState().activeKeys.size).toBe(1);
   });
 
   it('should remove active (remove)', () => {
@@ -355,11 +349,11 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.addActive([1, 2]);
-    expect(store.getState().active.length).toBe(2);
+    expect(store.getState().activeKeys.size).toBe(2);
     store.remove(1);
-    expect(store.getState().active.length).toBe(1);
-    expect(store.getState().active.has(1)).toBeFalse();
-    expect(store.getState().active.has(2)).toBeTrue();
+    expect(store.getState().activeKeys.size).toBe(1);
+    expect(store.getState().activeKeys.has(1)).toBeFalse();
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
   });
 
   it('should toggle the active', () => {
@@ -369,9 +363,13 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.toggleActive(1);
-    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     store.toggleActive(1);
-    expect(store.getState().active.has(1)).toBeFalse();
+    expect(store.getState().activeKeys.has(1)).toBeFalse();
+    store.toggleActive(newItens[0]);
+    expect(store.getState().activeKeys.has(2)).toBeTrue();
+    store.toggleActive(newItens[0]);
+    expect(store.getState().activeKeys.has(2)).toBeFalse();
   });
 
   it('should remove the entities (removeActiveEntities)', () => {
@@ -381,15 +379,15 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     store.addActive(1);
-    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().entities.has(1)).toBeTrue();
     store.removeActiveEntities();
     expect(store.getState().entities.has(1)).toBeFalse();
-    expect(store.getState().active.has(1)).toBeFalse();
+    expect(store.getState().activeKeys.has(1)).toBeFalse();
     expect(store.getState().entities.length).toBe(2);
   });
 
-  it('shoud replace', () => {
+  it('should replace', () => {
     store.update(1, { other: '1' });
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: 'Guilherme', other: '1' });
     store.replace(1, { id: 1, name: '1' });
@@ -407,10 +405,10 @@ describe('Entity Store', () => {
       { id: 1, name: 'Guilherme', other: 'A' },
       { id: 2, name: 'B' },
     ]);
-    expect(store.getState().active.has(1)).toBeTrue();
+    expect(store.getState().activeKeys.has(1)).toBeTrue();
     store.reset();
     expect(store.getState().entities.values).toEqual(entityInitialState);
-    expect(store.getState().active.has(1)).toBeFalse();
+    expect(store.getState().activeKeys.has(1)).toBeFalse();
   });
 
   it('should pass through preAdd', () => {
@@ -456,6 +454,12 @@ describe('Entity Store', () => {
     }, 1001);
   });
 
+  it('should not have cache', () => {
+    const newStore = new EntityStore({ name: 'teste' });
+    newStore.setHasCache(true);
+    expect(store.hasCache()).toBeFalse();
+  });
+
   it('should map', () => {
     const newItems = [
       { id: 2, name: '2' },
@@ -487,5 +491,74 @@ describe('Entity Store', () => {
       };
     });
     expect(store.getState().list).toEqual([1, 2, 3]);
+  });
+
+  it('should create store without initialState', () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'teste', idGetter: 'id' });
+    expect(newStore.getState().entities.length).toBe(0);
+  });
+
+  it('should create with object initialState', () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({
+      name: 'teste',
+      idGetter: 'id',
+      initialState: { 1: { id: 1, name: 'Guilherme' } },
+    });
+    expect(newStore.getState().entities.length).toBe(1);
+    expect(newStore.getState().entities.has(1)).toBeTrue();
+    expect(newStore.getState().entities.get(1)).toBeDefined();
+  });
+
+  it('should create with initial active', () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({
+      name: 'teste',
+      idGetter: 'id',
+      initialState: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } },
+      initialActive: [1, 2],
+    });
+    expect(newStore.getState().activeKeys.has(1)).toBeTrue();
+    expect(newStore.getState().activeKeys.has(2)).toBeTrue();
+  });
+
+  it(`should not set initial active that doesn't exists`, () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({
+      name: 'teste',
+      idGetter: 'id',
+      initialState: { 1: { id: 1, name: 'Guilherme' } },
+      initialActive: [1, 2],
+    });
+    expect(newStore.getState().activeKeys.has(1)).toBeTrue();
+    expect(newStore.getState().activeKeys.has(2)).toBeFalse();
+  });
+
+  it('should dev copy', () => {
+    environment.isDev = true;
+    store.updateState({ loadingNames: true });
+    const entity = store.getState().entities.get(1)!;
+    expect(Object.isFrozen(entity)).toBeTrue();
+    expect(() => (entity.name = '1')).toThrow();
+  });
+
+  it('should not dev copy', () => {
+    environment.isDev = false;
+    const oldEntity = store.getState().entities.get(1)!;
+    store.updateState({ loadingNames: true });
+    const newEntity = store.getState().entities.get(1)!;
+    expect(oldEntity === newEntity).toBeTrue();
+    expect(Object.isFrozen(newEntity)).toBeFalse();
+  });
+
+  it('should set loading', () => {
+    store.setLoading(true);
+    expect(store.getState().loading).toBeTrue();
+    store.setLoading(false);
+    expect(store.getState().loading).toBeFalse();
+  });
+
+  it('should set error', () => {
+    store.setError({ code: 1 });
+    expect(store.getState().error?.code).toBe(1);
+    store.setError(null);
+    expect(store.getState().error).toBeNull();
   });
 });

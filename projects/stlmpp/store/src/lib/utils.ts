@@ -1,5 +1,5 @@
 import { ID, IdGetter } from '@stlmpp/utils';
-import { isDev } from './env';
+import { environment } from './environment';
 import { copy } from 'copy-anything';
 import { isArray, isNumber, isObject } from 'lodash-es';
 import { MonoTypeOperatorFunction } from 'rxjs';
@@ -20,26 +20,36 @@ export function toEntities<T, S extends ID = number>(
   );
 }
 
-export const devCopy = <T>(value: T): T => (isDev() ? deepFreeze(copy(value)) : value);
+export const devCopy = <T>(value: T): T => {
+  if (environment.isDev) {
+    if (environment.copyData) {
+      value = copy(value);
+    }
+    if (environment.freezeData) {
+      value = deepFreeze(value);
+    }
+  }
+  return value;
+};
 
 export function deepFreeze<T>(object: T): T {
-  if (!isDev() || (!isArray(object) && !isObject(object))) {
+  if (!object || !isObject(object)) {
     return object;
   }
-  Object.freeze(object);
-  const oIsFunction = typeof object === 'function';
-  const hasOwnProp = Object.prototype.hasOwnProperty;
-  Object.getOwnPropertyNames(object).forEach(prop => {
-    if (
-      hasOwnProp.call(object, prop) &&
-      (oIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true) &&
-      (object as any)[prop] !== null &&
-      (typeof (object as any)[prop] === 'object' || typeof (object as any)[prop] === 'function') &&
-      !Object.isFrozen((object as any)[prop])
-    ) {
-      deepFreeze((object as any)[prop]);
+  if (!Object.isFrozen(object)) {
+    Object.freeze(object);
+  }
+  if (isArray(object)) {
+    for (const item of object) {
+      deepFreeze(item);
     }
-  });
+  } else {
+    for (const value of Object.values(object)) {
+      if (!Object.isFrozen(value)) {
+        deepFreeze(value);
+      }
+    }
+  }
   return object;
 }
 
@@ -47,7 +57,7 @@ export function isObjectEmpty(obj: any): boolean {
   return !obj || !isObject(obj) || !Object.keys(obj).length;
 }
 
-export function formatId<T, S extends ID = number>(object: any, idGetter: IdGetter<T, S>): (key: ID) => S {
+export function predictIdType<T, S extends ID = number>(object: any, idGetter: IdGetter<T, S>): (key: ID) => S {
   if (isObjectEmpty(object)) {
     return key => key as S;
   }
@@ -59,7 +69,7 @@ export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[
     if (manyA === manyB) {
       return true;
     }
-    if ((!manyA && manyB) || (manyA && !manyB) || manyA?.length !== manyB?.length) {
+    if ((!manyA && manyB) || (manyA && !manyB) || manyA.length !== manyB.length) {
       return false;
     }
     let index = manyA.length;
