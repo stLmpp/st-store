@@ -1,3 +1,5 @@
 language: node_js
+node_js:
+  - 14
 script: yarn coverage-store
 after_success: 'yarn coveralls'
