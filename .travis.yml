@@ -4,5 +4,7 @@ node_js:
 before_script:
   - cd projects/stlmpp/store
   - yarn install
-script: yarn coverage-store
+script:
+  - cd ../../../
+  - yarn coverage-store
 after_success: 'yarn coveralls'
