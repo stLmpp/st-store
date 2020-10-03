@@ -1,7 +1,7 @@
 import { updateArray } from './update-array';
 import { addArray } from './add-array';
 import { IdGetter, IdGetterType } from '../type';
-import { isArray } from 'lodash-es';
+import { isArray, isNil } from 'lodash-es';
 import { idGetterFactory } from '../util';
 
 export function upsertArray<T>(array: T[], newItem: T | Partial<T>, idGetter?: IdGetterType<T>): T[];
@@ -11,6 +11,10 @@ export function upsertArray<T>(
   newItem: T | Partial<T> | Array<T | Partial<T>>,
   _idGetter: IdGetterType<T> = 'id'
 ): T[] {
+  array ??= [];
+  if (!newItem) {
+    return array;
+  }
   const idGetter = idGetterFactory(_idGetter);
   if (isArray(newItem)) {
     return upsertMany(array, newItem, idGetter);
@@ -20,16 +24,21 @@ export function upsertArray<T>(
 }
 
 export function upsertOne<T>(array: T[], newItem: T | Partial<T>, idGetter: IdGetter<T>): T[] {
-  if (array.some(item => idGetter(item) === idGetter(newItem as any))) {
-    return updateArray(array, idGetter(newItem as any), newItem);
-  } else if (idGetter(newItem as any)) {
-    return addArray(array, newItem as T);
-  } else {
+  const newItemId = idGetter(newItem as T);
+  if (isNil(newItemId)) {
     return array;
+  }
+  if (array.some(item => idGetter(item) === newItemId)) {
+    return updateArray(array, newItemId, newItem);
+  } else {
+    return addArray(array, newItem as T);
   }
 }
 
 export function upsertMany<T>(array: T[], newItems: Array<T | Partial<T>>, idGetter: IdGetter<T>): T[] {
+  if (!newItems.length) {
+    return array;
+  }
   const ids = [...new Set([...array.map(idGetter), ...newItems.map(entity => idGetter(entity as T))])];
   return ids.reduce((acc, id) => {
     const item = array.find(value => idGetter(value) === id);

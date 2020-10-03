@@ -68,4 +68,8 @@ describe('Update Array', () => {
     expect(array[0].name).toBe('1');
     expect(array.length).toBe(4);
   });
+
+  it('should return empty', () => {
+    expect(updateArray(undefined as any, 1, { name: '1' })).toEqual([]);
+  });
 });

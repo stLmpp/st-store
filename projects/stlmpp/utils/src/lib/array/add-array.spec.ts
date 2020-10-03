@@ -14,6 +14,10 @@ describe('Add Array', () => {
     expect(newArray[1]).toBeDefined();
     expect(newArray[1]).toEqual({ id: 2, name: '2' });
     expect(array.length).toBe(1);
+    const newArray2 = addArray(undefined as any, { id: 2, name: '2' });
+    expect(newArray2.length).toBe(1);
+    expect(newArray2[0]).toBeDefined();
+    expect(newArray2[0]).toEqual({ id: 2, name: '2' });
   });
 
   it('should add array (many)', () => {

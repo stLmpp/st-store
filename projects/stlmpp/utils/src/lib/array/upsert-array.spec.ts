@@ -38,4 +38,12 @@ describe('Upsert array', () => {
     expect(array[0].other).toBeUndefined();
     expect(array[4]).toBeUndefined();
   });
+
+  it('should upsert empty and undefined', () => {
+    expect(upsertArray(undefined as any, { id: 1, name: '1' })).toEqual([{ id: 1, name: '1' }]);
+    expect(upsertArray([{ id: 1, name: '1' }], undefined as any)).toEqual([{ id: 1, name: '1' }]);
+    expect(upsertArray([], { id: 1, name: '1' })).toEqual([{ id: 1, name: '1' }]);
+    expect(upsertArray([{ id: 1, name: '1' }], { name: '1' })).toEqual([{ id: 1, name: '1' }]);
+    expect(upsertArray([{ id: 1, name: '1' }], [])).toEqual([{ id: 1, name: '1' }]);
+  });
 });

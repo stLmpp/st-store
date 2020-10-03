@@ -36,4 +36,9 @@ describe('Remove Array', () => {
     expect(array.length).toBe(4);
     expect(array[0].id).toBe(1);
   });
+
+  it('should return empty', () => {
+    const newArray = removeArray(undefined as any, 1);
+    expect(newArray).toEqual([]);
+  });
 });
