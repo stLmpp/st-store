@@ -7,7 +7,14 @@ branches:
 before_script:
   - cd projects/stlmpp/store
   - yarn install
+  - cd ../utils
+  - yarn install
+  - cd ../router
+  - yarn install
 script:
   - cd ../../../
   - yarn coverage-store
+  - yarn coverage-utils
+  - yarn coverage-router
+  - yarn combine-coverage
 after_success: 'yarn coveralls'
