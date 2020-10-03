@@ -1,5 +1,8 @@
 language: node_js
 node_js:
   - 14
+before_script:
+  - cd projects/stlmpp/store
+  - yarn install
 script: yarn coverage-store
 after_success: 'yarn coveralls'
