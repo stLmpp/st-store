@@ -16,7 +16,7 @@
     "build-router:prod": "ng build @stlmpp/router --prod",
     "build-all": "yarn build-utils && yarn build-store && yarn build-router",
     "build-all:prod": "yarn build-utils:prod && yarn build-store:prod && yarn build-router:prod",
-    "coverage-store": "ng test @stlmpp/store --no-watch --code-coverage",
+    "coverage-store": "ng test @stlmpp/store --no-watch --code-coverage --no-progress",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "private": true,
