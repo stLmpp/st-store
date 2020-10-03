@@ -1,7 +1,11 @@
 language: node_js
 node_js:
   - 14
+branches:
+  only:
+    - master
 before_script:
+  - yarn global -g @angular@cli
   - cd projects/stlmpp/store
   - yarn install
 script:
