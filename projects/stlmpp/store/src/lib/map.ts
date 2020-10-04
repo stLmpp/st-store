@@ -1,5 +1,5 @@
 import { isArray, isFunction } from 'lodash-es';
-import { predictIdType, isObjectEmpty, toEntities } from './utils';
+import { predictIdType, isObjectEmpty, toEntities } from './util';
 import { ID, IdGetter, idGetterFactory, IdGetterType, isID } from '@stlmpp/utils';
 import {
   EntityMergeFn,

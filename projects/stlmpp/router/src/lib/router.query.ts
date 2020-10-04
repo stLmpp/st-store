@@ -1,21 +1,91 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRoute, Data, ParamMap, Params } from '@angular/router';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
-import { isArray, isNil, isString } from 'lodash-es';
+import { Injectable, OnDestroy } from '@angular/core';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  ActivationEnd,
+  convertToParamMap,
+  Data,
+  Event,
+  ParamMap,
+  Params,
+  Router,
+} from '@angular/router';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, map, pluck, takeUntil } from 'rxjs/operators';
+import { isEqual, isNil, isString } from 'lodash-es';
 
 type ParamType = 'queryParamMap' | 'paramMap';
 
 @Injectable()
-export class RouterQuery {
-  constructor(private _activatedRoute: ActivatedRoute) {}
+export class RouterQuery implements OnDestroy {
+  constructor(activatedRoute: ActivatedRoute, private router: Router) {
+    this.listenToRouteChanges();
+    this._lastSnapshot = activatedRoute.snapshot;
+  }
 
-  get activatedRoute(): ActivatedRoute {
-    let state = this._activatedRoute.root;
-    while (state.firstChild) {
-      state = state.firstChild;
+  private _lastSnapshot: ActivatedRouteSnapshot;
+
+  private _destroy$ = new Subject();
+
+  private _params$ = new BehaviorSubject<Params>({});
+  private _queryParams$ = new BehaviorSubject<Params>({});
+  private _data$ = new BehaviorSubject<Data>({});
+
+  private listenToRouteChanges(): void {
+    this.router.events
+      .pipe(
+        takeUntil(this._destroy$),
+        filter(event => event instanceof ActivationEnd),
+        map<Event, ActivationEnd>(event => event as ActivationEnd),
+        auditTime(0)
+      )
+      .subscribe(event => {
+        let state = event.snapshot;
+        this._lastSnapshot = state;
+        const params: Params = {};
+        const queryParams: Params = {};
+        let data: Data = {};
+        const fill = (_state: ActivatedRouteSnapshot) => {
+          for (const key of state.paramMap.keys) {
+            params[key] = state.paramMap.get(key);
+          }
+          for (const key of state.queryParamMap.keys) {
+            queryParams[key] = state.queryParamMap.get(key);
+          }
+          data = { ...data, ...state.data };
+        };
+        while (state.firstChild) {
+          fill(state);
+          state = state.firstChild;
+        }
+        fill(state);
+        this._params$.next(params);
+        this._queryParams$.next(queryParams);
+        this._data$.next(data);
+      });
+  }
+
+  private getParamMap(type: ParamType): ParamMap {
+    let params: Params;
+    if (type === 'paramMap') {
+      params = this._params$.value;
+    } else {
+      params = this._queryParams$.value;
     }
-    return state;
+    return convertToParamMap(params);
+  }
+
+  private selectParamMap(type: ParamType): Observable<ParamMap> {
+    let params$: Observable<Params>;
+    if (type === 'paramMap') {
+      params$ = this._params$;
+    } else {
+      params$ = this._queryParams$;
+    }
+    return params$.pipe(
+      distinctUntilChanged(isEqual),
+      map(params => convertToParamMap(params))
+    );
   }
 
   private reduceParams(params: string[], paramMap: ParamMap): Params {
@@ -23,15 +93,13 @@ export class RouterQuery {
   }
 
   private getParamsBase(type: ParamType, params?: string | string[]): string | Params | null {
-    const paramMap = this.activatedRoute.snapshot[type];
+    const paramMap = this.getParamMap(type);
     if (!params) {
       return this.reduceParams(paramMap.keys, paramMap);
     } else if (isString(params)) {
       return paramMap.get(params);
-    } else if (isArray(params)) {
-      return this.reduceParams(params, paramMap);
     } else {
-      return null;
+      return this.reduceParams(params, paramMap);
     }
   }
 
@@ -39,24 +107,19 @@ export class RouterQuery {
     type: ParamType,
     params?: string | string[]
   ): Observable<string | null> | Observable<Params> {
-    const paramMap = this.activatedRoute[type];
+    const paramMap$ = this.selectParamMap(type);
     if (!params) {
-      return paramMap.pipe(
-        map(paramsRoute => this.reduceParams(paramsRoute.keys, paramsRoute)),
-        distinctUntilChanged()
-      );
+      return paramMap$.pipe(map(paramsRoute => this.reduceParams(paramsRoute.keys, paramsRoute)));
     } else if (isString(params)) {
-      return paramMap.pipe(
+      return paramMap$.pipe(
         map(paramRoute => paramRoute.get(params)),
         distinctUntilChanged()
       );
-    } else if (isArray(params)) {
-      return paramMap.pipe(
-        map(paramsRoute => this.reduceParams(params, paramsRoute)),
-        distinctUntilChanged((paramsA, paramsB) => params.every(key => paramsA[key] === paramsB[key]))
-      );
     } else {
-      return paramMap;
+      return paramMap$.pipe(
+        map(paramsRoute => this.reduceParams(params, paramsRoute)),
+        distinctUntilChanged(isEqual)
+      );
     }
   }
 
@@ -68,24 +131,24 @@ export class RouterQuery {
   }
 
   getAllParams(param: string): string[] {
-    let state = this._activatedRoute;
+    let state = this._lastSnapshot;
     const params = new Set<string>();
     while (state.firstChild) {
-      if (state.snapshot.paramMap.has(param)) {
-        params.add(state.snapshot.paramMap.get(param)!);
+      if (state.paramMap.has(param)) {
+        params.add(state.paramMap.get(param)!);
       }
       state = state.firstChild;
     }
-    if (state.snapshot.paramMap.has(param)) {
-      params.add(state.snapshot.paramMap.get(param)!);
+    if (state.paramMap.has(param)) {
+      params.add(state.paramMap.get(param)!);
     }
     return [...params];
   }
 
   selectParams(): Observable<Params>;
-  selectParams<R = any>(param: string): Observable<R>;
+  selectParams(param: string): Observable<string | null>;
   selectParams(params: string[]): Observable<Params>;
-  selectParams(params?: string[] | string): Observable<any> {
+  selectParams(params?: string[] | string): Observable<string | null | Params> {
     return this.selectParamsBase('paramMap', params);
   }
 
@@ -99,49 +162,42 @@ export class RouterQuery {
   selectQueryParams(): Observable<Params>;
   selectQueryParams(param: string): Observable<string>;
   selectQueryParams(params: string[]): Observable<Params>;
-  selectQueryParams(params?: string[] | string): Observable<any> {
+  selectQueryParams(params?: string[] | string): Observable<string | null | Params> {
     return this.selectParamsBase('queryParamMap', params);
   }
 
   getData(): Data;
-  getData<R = any>(param: string): R | null;
+  getData<R = unknown>(param: string): R | undefined;
   getData(params: string[]): Data;
-  getData<R = any>(params?: string | string[]): R | null | Data {
-    const data = this.activatedRoute.snapshot.data;
+  getData<R = unknown>(params?: string | string[]): R | undefined | Data {
+    const data = this._data$.value;
     if (!params) {
       return data;
     } else if (isString(params)) {
       return data[params];
-    } else if (isArray(params)) {
-      return params.reduce((acc, param) => (!isNil(data?.[param]) ? { ...acc, [param]: data[param] } : acc), {});
     } else {
-      return null;
+      return params.reduce((acc, param) => (!isNil(data[param]) ? { ...acc, [param]: data[param] } : acc), {});
     }
   }
 
   selectData(): Observable<Data>;
-  selectData<R = any>(param: string): Observable<R | null>;
+  selectData<R = unknown>(param: string): Observable<R | undefined>;
   selectData(params: string[]): Observable<Data>;
-  selectData<R = any>(params?: string[] | string): Observable<R | Data | null> {
-    const data = this.activatedRoute.data;
+  selectData<R = unknown>(params?: string[] | string): Observable<R | Data | undefined> {
+    const data$ = this._data$.asObservable();
     if (!params) {
-      return data;
+      return data$;
     } else if (isString(params)) {
-      return data.pipe(pluck(params));
-    } else if (isArray(params)) {
-      return data.pipe(
-        map(d => params.reduce((acc, param) => (!isNil(d?.[param]) ? { ...acc, [param]: d[param] } : acc), {}))
-      );
+      return data$.pipe(pluck(params));
     } else {
-      return data;
+      return data$.pipe(
+        map(data => params.reduce((acc, param) => (!isNil(data[param]) ? { ...acc, [param]: data[param] } : acc), {}))
+      );
     }
   }
 
-  getFragment(): string {
-    return this.activatedRoute.snapshot.fragment;
-  }
-
-  selectFragment(): Observable<string> {
-    return this.activatedRoute.fragment;
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

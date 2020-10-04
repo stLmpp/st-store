@@ -1,4 +1,4 @@
-import { deepFreeze, devCopy, distinctUntilManyChanged, predictIdType } from './utils';
+import { deepFreeze, devCopy, distinctUntilManyChanged, predictIdType } from './util';
 import { IdGetter, idGetterFactory } from '@stlmpp/utils';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from './environment';

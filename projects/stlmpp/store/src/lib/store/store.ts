@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { devCopy } from '../utils';
+import { devCopy } from '../util';
 import { StoreOptions } from '../type';
 import { isFunction } from 'lodash-es';
 import { StorePersistStrategy, StorePersistLocalStorageStrategy } from './store-persist';

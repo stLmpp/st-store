@@ -4,7 +4,7 @@ import { distinctUntilChanged, map, pluck, switchMap } from 'rxjs/operators';
 import { isArray, isFunction, isString } from 'lodash-es';
 import { ID } from '@stlmpp/utils';
 import { DistinctUntilChangedFn, EntityState, EntityType, Entries, ErrorType, IdType } from '../type';
-import { distinctUntilManyChanged } from '../utils';
+import { distinctUntilManyChanged } from '../util';
 
 export function isEqualEntity<T = any>(entityA: T, entityB: T): boolean {
   if (entityA === entityB) {

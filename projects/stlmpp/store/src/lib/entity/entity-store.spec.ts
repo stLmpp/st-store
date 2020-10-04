@@ -1,4 +1,4 @@
-import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState } from '../utils-test';
+import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState } from '../util-test';
 import { TestBed } from '@angular/core/testing';
 import { take } from 'rxjs/operators';
 import { EntityStore } from './entity-store';

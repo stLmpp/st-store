@@ -1,4 +1,4 @@
-import { simpleInitialState, SimpleQuery, SimpleStore } from '../utils-test';
+import { simpleInitialState, SimpleQuery, SimpleStore } from '../util-test';
 import { TestBed } from '@angular/core/testing';
 import { take } from 'rxjs/operators';
 

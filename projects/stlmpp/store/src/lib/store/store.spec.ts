@@ -7,7 +7,7 @@ import {
   SimpleStore,
   SimpleStoreCustomPersist,
   StorePersistCustomStrategy,
-} from '../utils-test';
+} from '../util-test';
 
 describe('Store', () => {
   let store: SimpleStore;

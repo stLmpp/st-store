@@ -13,7 +13,7 @@ import {
 import { BehaviorSubject, Observable } from 'rxjs';
 import { StMap } from '../map';
 import { isArray, isFunction, isNil } from 'lodash-es';
-import { devCopy } from '../utils';
+import { devCopy } from '../util';
 import { environment } from '../environment';
 import { ID, IdGetter, idGetterFactory, isID } from '@stlmpp/utils';
 

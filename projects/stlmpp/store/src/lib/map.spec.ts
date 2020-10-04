@@ -1,5 +1,5 @@
 import { StMap } from './map';
-import { IdName } from './utils-test';
+import { IdName } from './util-test';
 
 describe('StMap', () => {
   const data: IdName[] = [
