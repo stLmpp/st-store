@@ -1,4 +1,4 @@
-import { isArray, isFunction, isObject, isString } from 'lodash-es';
+import { isArray, isFunction, isString } from 'lodash-es';
 import { getDeep } from './get-deep';
 import { map } from 'rxjs/operators';
 import { MonoTypeOperatorFunction } from 'rxjs';
@@ -27,11 +27,12 @@ export function orderBy<T, K extends keyof T>(
   keyOrCommand?: OrderByType<T>,
   order: OrderByDirection = 'asc'
 ): T[] {
-  if (!values?.length) return values;
-  if (!order && !keyOrCommand) return values;
+  if (!values?.length || (!order && !keyOrCommand)) {
+    return values;
+  }
   values = [...values];
   if (!keyOrCommand) {
-    return sort(values).asc();
+    return sort(values)[order]();
   } else if (isFunction(keyOrCommand)) {
     return values.sort(keyOrCommand);
   } else if (isString(keyOrCommand)) {
@@ -40,12 +41,12 @@ export function orderBy<T, K extends keyof T>(
   } else if (isArray(keyOrCommand)) {
     const getter = keyOrCommand.some((key: any) => key.includes('.')) ? getDeep : (value: T, key: K) => value[key];
     return sort(values)[order]((keyOrCommand as string[]).map(key => entity => getter(entity, key as any)));
-  } else if (isObject(keyOrCommand)) {
-    return sort(values).by(
-      Object.entries<OrderByDirection>(keyOrCommand).map(([key, value]) => ({ [value]: key })) as any
-    );
   } else {
-    return values;
+    return sort(values).by(
+      Object.entries<OrderByDirection>(keyOrCommand as Record<K, OrderByDirection>).map(([key, value]) => ({
+        [value]: key,
+      })) as any
+    );
   }
 }
 
