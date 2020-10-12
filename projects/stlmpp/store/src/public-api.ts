@@ -23,3 +23,4 @@ export { Store } from './lib/store/store';
 export { Query } from './lib/store/query';
 export { setError, setLoading, useCache } from './lib/operators';
 export { StStoreModule, StStoreModuleConfig } from './lib/st-store.module';
+export { StorePersistLocalStorageStrategy, StorePersistStrategy } from './lib/store/store-persist';
