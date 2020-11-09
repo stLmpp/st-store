@@ -1,5 +1,5 @@
 import { Component, DebugElement } from '@angular/core';
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { Validators } from './validators';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';

@@ -3,7 +3,9 @@
   "dest": "../../../dist/stlmpp/router",
   "lib": {
     "entryFile": "src/public-api.ts",
-    "umdModuleIds": {}
+    "umdModuleIds": {
+      "@stlmpp/utils": "@stlmpp/utils"
+    }
   },
   "whitelistedNonPeerDependencies": ["."]
 }

@@ -9,15 +9,15 @@ import {
   Optional,
   SimpleChanges,
 } from '@angular/core';
-import { Control } from '../control';
 import { ControlParent } from '../control-parent';
 import { isNil } from '@stlmpp/utils';
 import { ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Subject } from 'rxjs';
 import { filter, pairwise, startWith, takeUntil } from 'rxjs/operators';
-import { ValidatorsModel } from '../validator';
+import { ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { isID } from '@stlmpp/utils';
+import { Control } from '../control/control';
 
 export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
 

@@ -1,5 +1,5 @@
 import { ControlValidator } from './validator';
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { isArray } from '@stlmpp/utils';
 
 export class ContainsValidator<T extends string | any[] = any, U = T extends Array<infer RealType> ? RealType : string>

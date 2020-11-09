@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 
-import { ControlValidator } from './validator';
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { DebugElement } from '@angular/core';
 import { isUndefined } from '@stlmpp/utils';
-import { Control } from './control';
+import { Control } from './control/control';
+import { ControlValidator } from './validator/validator';
 
 export function wait(ms = 10): Promise<void> {
   return new Promise(resolve => {

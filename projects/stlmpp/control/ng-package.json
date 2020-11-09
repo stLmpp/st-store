@@ -8,5 +8,6 @@
       "@angular/cdk": "@angular/cdk",
       "@stlmpp/utils": "@stlmpp/utils"
     }
-  }
+  },
+  "whitelistedNonPeerDependencies": ["."]
 }

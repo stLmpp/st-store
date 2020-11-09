@@ -1,4 +1,3 @@
-import { ValidatorsModel } from '../validator';
 import {
   Directive,
   Host,
@@ -12,6 +11,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { ControlError, ControlErrorShowWhen } from './control-error';
+import { ValidatorsModel } from '../validator/validators';
 
 export class ControlErrorCaseContext<K extends keyof ValidatorsModel> {
   constructor(error: ValidatorsModel[K]) {

@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { ControlGroup } from '../control-group';
-import { Control, ControlNameDirective } from '../control';
 import { TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlArray } from './control-array';
 import { ControlArrayNameDirective } from './control-array-name.directive';
+import { Control } from '../control/control';
+import { ControlNameDirective } from '../control/control-name.directive';
+import { ControlGroup } from '../control-group/control-group';
 
 @Component({ template: '<div controlArrayName="not exists"></div>' })
 class WithoutParent {}

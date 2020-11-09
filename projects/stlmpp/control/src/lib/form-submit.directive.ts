@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, HostBinding, HostListener, Output, Self } from '@angular/core';
-import { ControlGroup } from './control-group';
-import { ControlGroupDirective } from './control-group';
+import { ControlGroupDirective } from './control-group/control-group.directive';
+import { ControlGroup } from './control-group/control-group';
 
 @Directive({ selector: 'form[controlGroup]:not([nativeValidate])' })
 export class FormSubmitDirective<T = any> {

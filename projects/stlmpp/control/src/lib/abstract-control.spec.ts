@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Control } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from './st-control.module';
+import { Control } from './control/control';
 
 @Component({ template: '<input [control]="control" [disabled]="disabled">' })
 export class ControlComponent {

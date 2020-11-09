@@ -1,9 +1,9 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { ControlGroup } from '../control-group';
 import { Control } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlNameDirective } from './control-name.directive';
+import { ControlGroup } from '../control-group/control-group';
 
 @Component({
   template:

@@ -1,10 +1,10 @@
 import { ControlBuilder } from './control-builder';
 import { TestBed } from '@angular/core/testing';
 import { StControlModule } from './st-control.module';
-import { Validators } from './validator';
-import { Control } from './control';
-import { ControlGroup } from './control-group';
-import { ControlArray } from './control-array';
+import { Validators } from './validator/validators';
+import { Control } from './control/control';
+import { ControlArray } from './control-array/control-array';
+import { ControlGroup } from './control-group/control-group';
 
 interface Group {
   control: string;

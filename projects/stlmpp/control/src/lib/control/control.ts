@@ -2,12 +2,13 @@ import { BehaviorSubject, isObservable, Observable, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, map, pluck, take, takeUntil } from 'rxjs/operators';
 import { Entries } from '../util';
 import { isArray, isNil, isString, uniq, uniqBy } from '@stlmpp/utils';
-import { ControlGroup } from '../control-group';
-import { ControlValidator, ValidatorsModel } from '../validator';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { KeyValue } from '@angular/common';
 import { isObjectEmpty } from '@stlmpp/utils';
+import { ControlGroup } from '../control-group/control-group';
+import { ControlValidator } from '../validator/validator';
+import { ValidatorsModel } from '../validator/validators';
 
 export interface ControlOptions<T = any> extends AbstractControlOptions {
   validators?: ControlValidator[];

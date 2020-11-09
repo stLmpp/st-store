@@ -1,6 +1,3 @@
-import { ControlGroup } from './control-group';
-import { ControlArray } from './control-array';
-import { Control } from './control';
 import {
   AfterContentInit,
   ContentChildren,
@@ -14,6 +11,9 @@ import { AbstractControlDirective } from './abstract-control';
 import { Subject } from 'rxjs';
 import { ControlChild } from './control-child';
 import { takeUntil } from 'rxjs/operators';
+import { Control } from './control/control';
+import { ControlArray } from './control-array/control-array';
+import { ControlGroup } from './control-group/control-group';
 
 @Directive()
 export abstract class ControlParent<T = any>

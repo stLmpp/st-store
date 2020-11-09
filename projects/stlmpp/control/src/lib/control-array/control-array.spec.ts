@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { ControlGroup } from '../control-group';
+import { ControlGroup } from '../control-group/control-group';
 import { ControlArray } from './control-array';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { CommonModule } from '@angular/common';
-import { Control } from '../control';
 import { AsyncValidator, triggerEvent, wait } from '../util-tests';
 import { By } from '@angular/platform-browser';
-import { Validators } from '../validator';
+import { Validators } from '../validator/validators';
+import { Control } from '../control/control';
 
 interface Group {
   array: string[];

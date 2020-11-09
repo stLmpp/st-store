@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { Control } from '../control';
-import { ControlGroup } from '../control-group';
+import { Control } from '../control/control';
+import { ControlGroup } from '../control-group/control-group';
 import { Validators } from './validators';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';

@@ -14,7 +14,7 @@ import {
   Self,
 } from '@angular/core';
 import { ControlDirective } from './control.directive';
-import { ControlValue } from '../control-value';
+import { ControlValue } from '../control-value/control-value';
 import { ControlParent } from '../control-parent';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Control } from './control';

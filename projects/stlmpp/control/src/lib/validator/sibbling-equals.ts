@@ -1,5 +1,5 @@
 import { ControlValidator } from './validator';
-import { Control } from '../control';
+import { Control } from '../control/control';
 
 export interface SibblingEqualsValidationError {
   sibbling: any;

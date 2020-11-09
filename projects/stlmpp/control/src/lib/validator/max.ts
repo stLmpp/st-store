@@ -1,5 +1,5 @@
 import { ControlValidator, ControlValidatorAttributes } from './validator';
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { isDate, isNil, isString } from '@stlmpp/utils';
 import { format, isAfter, parseISO } from 'date-fns';
 

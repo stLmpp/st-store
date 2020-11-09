@@ -2,7 +2,7 @@ import { ControlValidator, ControlValidatorAttributes } from './validator';
 import { getTypeAndValue, MaxMinValidationError, MaxMinType } from './max';
 import { isNil, isString } from '@stlmpp/utils';
 import { isBefore, parseISO } from 'date-fns';
-import { Control } from '../control';
+import { Control } from '../control/control';
 
 export class MinValidator<T extends Date | number> implements ControlValidator<T, MaxMinValidationError<T>> {
   constructor(min: string | Date | number) {

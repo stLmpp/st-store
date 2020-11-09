@@ -3,10 +3,11 @@ import { Control, ControlState } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
-import { ControlValue } from '../control-value';
-import { ControlValidator, Validators } from '../validator';
+import { ControlValue } from '../control-value/control-value';
 import { triggerEvent, wait } from '../util-tests';
 import { ControlDirective } from './control.directive';
+import { ControlValidator } from '../validator/validator';
+import { Validators } from '../validator/validators';
 
 @Directive({ selector: '[withoutControlValue][control]' })
 class WithoutControlValue extends ControlValue {

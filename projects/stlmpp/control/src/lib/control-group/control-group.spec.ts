@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ControlGroup } from './control-group';
-import { Control } from '../control';
-import { Validators } from '../validator';
+import { Control } from '../control/control';
+import { Validators } from '../validator/validators';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { StControlModule } from '../st-control.module';

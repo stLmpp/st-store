@@ -2,11 +2,11 @@ import { Component, DebugElement, Type, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlErrorCase } from './control-error-case';
-import { Control } from '../control';
-import { Validators, ValidatorsModel } from '../validator';
 import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
 import { ControlErrorShowWhen } from './control-error';
+import { Control } from '../control/control';
+import { Validators, ValidatorsModel } from '../validator/validators';
 
 @Component({ template: `<small *error="'required'"></small>` })
 class WithoutControlError {}

@@ -15,7 +15,7 @@ import {
   Self,
   SimpleChanges,
 } from '@angular/core';
-import { ControlValue } from '../control-value';
+import { ControlValue } from '../control-value/control-value';
 import { ControlValueNotFound } from '../error';
 import { Subject } from 'rxjs';
 import { auditTime, filter, takeUntil } from 'rxjs/operators';

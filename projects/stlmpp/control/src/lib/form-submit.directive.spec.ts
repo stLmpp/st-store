@@ -1,10 +1,10 @@
 import { Component, DebugElement } from '@angular/core';
-import { ControlGroup } from './control-group';
-import { Control } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from './st-control.module';
 import { By } from '@angular/platform-browser';
 import { triggerEvent } from './util-tests';
+import { Control } from './control/control';
+import { ControlGroup } from './control-group/control-group';
 
 @Component({
   template: `

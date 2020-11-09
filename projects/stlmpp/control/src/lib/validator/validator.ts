@@ -1,4 +1,4 @@
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { Observable } from 'rxjs';
 
 export type ControlValidatorAttributes = Record<string, string | number | boolean | undefined>;

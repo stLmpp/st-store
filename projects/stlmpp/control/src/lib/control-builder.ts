@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-group';
-import { Control, ControlOptions, ControlType } from './control';
-import { ControlValidator } from './validator';
 import { Entries } from './util';
 import { isArray, isObject } from '@stlmpp/utils';
-import { ControlArray, ControlArrayOptions } from './control-array';
+import { Control, ControlOptions } from './control/control';
+import { ControlArray, ControlArrayOptions } from './control-array/control-array';
+import { ControlType } from './control/control-type';
+import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-group/control-group';
+import { ControlValidator } from './validator/validator';
 
 export type ControlBuilderTupple<T> =
   | [T | null | undefined, ControlOptions<T> | ControlValidator<T>[] | undefined]

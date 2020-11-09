@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlGroup } from './control-group';
 import { ControlGroupNameDirective } from './control-group-name.directive';
-import { Control, ControlNameDirective } from '../control';
+import { Control } from '../control/control';
+import { ControlNameDirective } from '../control/control-name.directive';
 
 @Component({ template: '<div controlGroupName="not exists"></div>' })
 class WithoutParent {}

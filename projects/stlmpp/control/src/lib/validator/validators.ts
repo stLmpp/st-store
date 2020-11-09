@@ -16,6 +16,7 @@ import { LesserValidationError, LesserValidator } from './lesser';
 import { BetweenValidator } from './between';
 import { RequiredTrueValidator } from './required-true';
 
+// @dynamic
 export class Validators {
   static get required(): RequiredValidator {
     return new RequiredValidator();

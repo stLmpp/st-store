@@ -1,4 +1,4 @@
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { isArray, isNil, isString } from '@stlmpp/utils';
 import { ControlValidator } from './validator';
 

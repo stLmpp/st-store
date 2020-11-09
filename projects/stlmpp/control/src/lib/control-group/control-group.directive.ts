@@ -1,8 +1,8 @@
 import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
 import { ControlParent } from '../control-parent';
-import { Control } from '../control';
-import { ControlArray } from '../control-array';
 import { ControlGroup } from './control-group';
+import { Control } from '../control/control';
+import { ControlArray } from '../control-array/control-array';
 
 @Directive({
   selector: '[controlGroup]',

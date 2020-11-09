@@ -1,6 +1,6 @@
-import { ControlArray } from '../control-array';
-import { ControlGroup } from '../control-group';
 import { Control } from './control';
+import { ControlArray } from '../control-array/control-array';
+import { ControlGroup } from '../control-group/control-group';
 
 export type ControlType<T> = [T] extends [Control]
   ? T

@@ -1,6 +1,6 @@
 import { ControlValidator } from './validator';
 import { Observable, timer } from 'rxjs';
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { delay, map } from 'rxjs/operators';
 import { Component, DebugElement } from '@angular/core';
 import { Validators } from './validators';

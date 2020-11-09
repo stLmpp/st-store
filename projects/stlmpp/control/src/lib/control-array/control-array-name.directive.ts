@@ -1,10 +1,11 @@
 import { Directive, forwardRef, Host, Input, OnDestroy, OnInit, Optional, SkipSelf } from '@angular/core';
 import { ControlParent } from '../control-parent';
-import { Control, ControlType } from '../control';
-import { ControlGroup } from '../control-group';
+import { ControlGroup } from '../control-group/control-group';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
 import { ControlArray } from './control-array';
 import { ControlChild } from '../control-child';
+import { Control } from '../control/control';
+import { ControlType } from '../control/control-type';
 
 @Directive({
   selector: '[controlArrayName]',

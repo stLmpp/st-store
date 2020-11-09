@@ -1,11 +1,12 @@
-import { Control, ControlType, ControlUpdateOptions } from '../control';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { isNil } from '@stlmpp/utils';
 import { PartialDeep } from 'type-fest';
-import { ControlArray } from '../control-array';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
+import { Control, ControlUpdateOptions } from '../control/control';
+import { ControlType } from '../control/control-type';
+import { ControlArray } from '../control-array/control-array';
 
 export type ControlGroupType<T> = {
   [K in keyof T]: ControlType<T[K]>;

@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { ControlGroup } from './control-group';
-import { Control } from '../control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { ControlGroupDirective } from './control-group.directive';
+import { Control } from '../control/control';
 
 interface Group {
   id: number;

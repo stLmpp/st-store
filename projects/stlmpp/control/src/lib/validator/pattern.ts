@@ -1,5 +1,5 @@
 import { ControlValidator, ControlValidatorAttributes } from './validator';
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { isRegExp } from '@stlmpp/utils';
 
 export interface PatternValidationError {

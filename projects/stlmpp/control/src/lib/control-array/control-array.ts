@@ -1,10 +1,11 @@
-import { ControlGroup } from '../control-group';
-import { Control, ControlType, ControlUpdateOptions } from '../control';
+import { ControlGroup } from '../control-group/control-group';
 import { PartialDeep } from 'type-fest';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { takeUntil } from 'rxjs/operators';
+import { Control, ControlUpdateOptions } from '../control/control';
+import { ControlType } from '../control/control-type';
 
 export type ControlArrayOptions = AbstractControlOptions;
 

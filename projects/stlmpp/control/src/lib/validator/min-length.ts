@@ -1,4 +1,4 @@
-import { Control } from '../control';
+import { Control } from '../control/control';
 import { ControlValidator, ControlValidatorAttributes } from './validator';
 import { LengthValidationError } from './max-length';
 
