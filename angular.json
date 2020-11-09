@@ -107,6 +107,46 @@
           }
         }
       }
+    },
+    "@stlmpp/control": {
+      "projectType": "library",
+      "root": "projects/stlmpp/control",
+      "sourceRoot": "projects/stlmpp/control/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/stlmpp/control/tsconfig.lib.json",
+            "project": "projects/stlmpp/control/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/stlmpp/control/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/stlmpp/control/src/test.ts",
+            "tsConfig": "projects/stlmpp/control/tsconfig.spec.json",
+            "karmaConfig": "projects/stlmpp/control/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/stlmpp/control/tsconfig.lib.json",
+              "projects/stlmpp/control/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

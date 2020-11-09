@@ -12,7 +12,8 @@ import {
 } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { auditTime, distinctUntilChanged, filter, map, pluck, takeUntil } from 'rxjs/operators';
-import { isEqual, isNil, isString } from 'lodash-es';
+import { isNil, isString } from '@stlmpp/utils';
+import { isEqualParams } from './util';
 
 type ParamType = 'queryParamMap' | 'paramMap';
 
@@ -83,7 +84,7 @@ export class RouterQuery implements OnDestroy {
       params$ = this._queryParams$;
     }
     return params$.pipe(
-      distinctUntilChanged(isEqual),
+      distinctUntilChanged(isEqualParams),
       map(params => convertToParamMap(params))
     );
   }
@@ -118,7 +119,7 @@ export class RouterQuery implements OnDestroy {
     } else {
       return paramMap$.pipe(
         map(paramsRoute => this.reduceParams(params, paramsRoute)),
-        distinctUntilChanged(isEqual)
+        distinctUntilChanged(isEqualParams)
       );
     }
   }

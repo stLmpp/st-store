@@ -3,9 +3,7 @@
   "dest": "../../../dist/stlmpp/router",
   "lib": {
     "entryFile": "src/public-api.ts",
-    "umdModuleIds": {
-      "lodash-es": "lodash-es"
-    }
+    "umdModuleIds": {}
   },
   "whitelistedNonPeerDependencies": ["."]
 }

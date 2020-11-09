@@ -5,3 +5,4 @@ package.json.yarn
 coverage
 coverage.yml
 .coveralls.yml
+debug.log

@@ -1,7 +1,6 @@
-import { ID, IdGetter } from '@stlmpp/utils';
+import { ID, IdGetter, isArray, isNumber, isObject, isObjectEmpty } from '@stlmpp/utils';
 import { environment } from './environment';
 import { copy } from 'copy-anything';
-import { isArray, isNumber, isObject } from 'lodash-es';
 import { MonoTypeOperatorFunction } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -53,12 +52,8 @@ export function deepFreeze<T>(object: T): T {
   return object;
 }
 
-export function isObjectEmpty(obj: any): boolean {
-  return !obj || !isObject(obj) || !Object.keys(obj).length;
-}
-
 export function predictIdType<T, S extends ID = number>(object: any, idGetter: IdGetter<T, S>): (key: ID) => S {
-  if (isObjectEmpty(object)) {
+  if (!object || isObjectEmpty(object)) {
     return key => key as S;
   }
   return isNumber(idGetter(Object.values<T>(object)[0])) ? Number : key => key as any;

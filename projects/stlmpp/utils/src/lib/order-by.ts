@@ -1,9 +1,8 @@
-import { isArray, isFunction, isString } from 'lodash-es';
-import { getDeep } from './get-deep';
 import { map } from 'rxjs/operators';
 import { MonoTypeOperatorFunction } from 'rxjs';
 import { Pipe, PipeTransform } from '@angular/core';
 import sort from 'fast-sort';
+import { getDeep, isArray, isFunction, isString } from './util';
 
 export type OrderByType<T, K extends keyof T = keyof T> =
   | K[]

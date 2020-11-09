@@ -1,8 +1,7 @@
 import { updateArray } from './update-array';
 import { addArray } from './add-array';
 import { IdGetter, IdGetterType } from '../type';
-import { isArray, isNil } from 'lodash-es';
-import { idGetterFactory } from '../util';
+import { idGetterFactory, isArray, isNil } from '../util';
 
 export function upsertArray<T>(array: T[], newItem: T | Partial<T>, idGetter?: IdGetterType<T>): T[];
 export function upsertArray<T>(array: T[], newItems: Array<T | Partial<T>>, idGetter?: IdGetterType<T>): T[];

@@ -1,6 +1,5 @@
-import { isArray, isFunction } from 'lodash-es';
 import { ID, IdGetterType } from '../type';
-import { idGetterFactory } from '../util';
+import { idGetterFactory, isArray, isFunction } from '../util';
 
 export function removeArray<T, S extends ID = number>(array: T[], id: S, idGetter?: IdGetterType<T, S>): T[];
 export function removeArray<T, S extends ID = number>(array: T[], ids: S[], idGetter?: IdGetterType<T, S>): T[];

@@ -1,0 +1,222 @@
+import { ControlGroup } from '../control-group';
+import { Control, ControlType, ControlUpdateOptions } from '../control';
+import { PartialDeep } from 'type-fest';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
+import { ControlUpdateOn } from '../control-update-on';
+import { AbstractControl, AbstractControlOptions } from '../abstract-control';
+import { takeUntil } from 'rxjs/operators';
+
+export type ControlArrayOptions = AbstractControlOptions;
+
+export class ControlArray<T = any, C extends Control | ControlGroup | ControlArray = ControlType<T>>
+  implements Iterable<C>, AbstractControl<T[]> {
+  constructor(private _controls: C[], private options?: ControlArrayOptions) {
+    this._originControls = [..._controls];
+    for (const control of _controls) {
+      this._registerParent(control);
+      if (options?.updateOn) {
+        control.setUpdateOn(options.updateOn);
+      }
+      if (options?.disabled) {
+        control.disable(options.disabled);
+      }
+    }
+    this._setValue$();
+  }
+
+  private readonly _originControls: C[];
+
+  private _destroy$ = new Subject();
+
+  private _value$ = new BehaviorSubject<T[]>([]);
+  value$ = this._value$.asObservable();
+
+  get parent(): ControlGroup | ControlArray | null | undefined {
+    return this._parent;
+  }
+  /** @internal */
+  set parent(parent: ControlGroup | ControlArray | null | undefined) {
+    this._parent = parent;
+  }
+  private _parent: ControlGroup | ControlArray | null | undefined;
+
+  *[Symbol.iterator](): Iterator<C> {
+    for (const control of this._controls) {
+      yield control;
+    }
+  }
+
+  /** @internal */
+  setUpdateOn(updateOn?: ControlUpdateOn): void {
+    if (updateOn) {
+      for (const control of this._controls) {
+        control.setUpdateOn(updateOn);
+      }
+    }
+  }
+
+  private _setValue$(): void {
+    this._destroy$.next();
+    if (this._controls.length) {
+      combineLatest(this._controls.map(control => control.value$))
+        .pipe(takeUntil(this._destroy$))
+        .subscribe(values => {
+          this._value$.next(values);
+        });
+    } else {
+      this._value$.next([]);
+    }
+  }
+
+  private _registerParent(control: C): void {
+    control.parent = this;
+  }
+
+  get value(): T[] {
+    return this._value$.value;
+  }
+
+  get invalid(): boolean {
+    return this._controls.some(control => control.invalid);
+  }
+
+  get valid(): boolean {
+    return !this.invalid;
+  }
+
+  get dirty(): boolean {
+    return this._controls.some(control => control.dirty);
+  }
+
+  get pristine(): boolean {
+    return !this.dirty;
+  }
+
+  get touched(): boolean {
+    return this._controls.some(control => control.touched);
+  }
+
+  get untouched(): boolean {
+    return !this.touched;
+  }
+
+  get pending(): boolean {
+    return this._controls.some(control => control.pending);
+  }
+
+  get controls(): Readonly<C[]> {
+    return this._controls;
+  }
+
+  get disabled(): boolean {
+    return this._controls.every(control => control.disabled);
+  }
+
+  get enabled(): boolean {
+    return !this.disabled;
+  }
+
+  get(index: number): C | undefined {
+    return this._controls[index];
+  }
+
+  push(control: C): void {
+    this._controls.push(control);
+    this._registerParent(control);
+    if (this.options?.updateOn) {
+      control.setUpdateOn(this.options.updateOn);
+    }
+    this._setValue$();
+  }
+
+  insert(index: number, control: C): void {
+    this._controls.splice(index, 0, control);
+    this._registerParent(control);
+    if (this.options?.updateOn) {
+      control.setUpdateOn(this.options.updateOn);
+    }
+    this._setValue$();
+  }
+
+  removeAt(index: number): void {
+    this._controls.splice(index, 1);
+    this._setValue$();
+  }
+
+  get length(): number {
+    return this._controls.length;
+  }
+
+  setValue(values: T[], options?: ControlUpdateOptions): void {
+    for (let index = 0, len = values.length; index < len; index++) {
+      const control = this.get(index);
+      if (control) {
+        this._controls[index].setValue(values[index] as any, options);
+      }
+    }
+  }
+
+  patchValue(values: PartialDeep<T[]> | T[], options?: ControlUpdateOptions): void {
+    for (let index = 0, len = values.length; index < len; index++) {
+      const control = this.get(index);
+      if (control) {
+        const value = values[index];
+        control.patchValue(value as any, options);
+      }
+    }
+  }
+
+  disable(disabled = true): void {
+    for (const control of this._controls) {
+      control.disable(disabled);
+    }
+  }
+
+  enable(enabled = true): void {
+    this.disable(!enabled);
+  }
+
+  reset(): void {
+    this._controls = [...this._originControls];
+    for (const control of this._controls) {
+      control.reset();
+    }
+    this._setValue$();
+  }
+
+  clear(): void {
+    this._controls = [];
+    this._setValue$();
+  }
+
+  /** @internal */
+  submit(): void {
+    for (const control of this._controls) {
+      control.submit();
+    }
+  }
+
+  markAsDirty(dirty = true): void {
+    for (const control of this._controls) {
+      control.markAsDirty(dirty);
+    }
+  }
+
+  markAsTouched(touched = true): void {
+    for (const control of this._controls) {
+      control.markAsTouched(touched);
+    }
+  }
+
+  markAsInvalid(invalid = true): void {
+    for (const control of this._controls) {
+      control.markAsInvalid(invalid);
+    }
+  }
+
+  /** @internal */
+  destroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
+}

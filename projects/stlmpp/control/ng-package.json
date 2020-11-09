@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../../dist/stlmpp/control",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "date-fns": "date-fns",
+      "@angular/cdk": "@angular/cdk",
+      "@stlmpp/utils": "@stlmpp/utils"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { isNil } from 'lodash-es';
+import { isNil } from '@stlmpp/utils';
 
 export class StorePersistLocalStorageStrategy<T> implements StorePersistStrategy<T> {
   get(key: string): string | null | undefined {

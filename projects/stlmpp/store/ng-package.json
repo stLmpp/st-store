@@ -5,7 +5,6 @@
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
       "copy-anything": "copy-anything",
-      "lodash-es": "lodash-es",
       "@stlmpp/utils": "@stlmpp/utils"
     }
   },

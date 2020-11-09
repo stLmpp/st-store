@@ -1,6 +1,5 @@
-import { isArray, isFunction } from 'lodash-es';
-import { predictIdType, isObjectEmpty, toEntities } from './util';
-import { ID, IdGetter, idGetterFactory, IdGetterType, isID } from '@stlmpp/utils';
+import { ID, IdGetter, idGetterFactory, IdGetterType, isArray, isFunction, isID, isObjectEmpty } from '@stlmpp/utils';
+import { predictIdType, toEntities } from './util';
 import {
   EntityMergeFn,
   EntityPartialUpdate,
@@ -179,7 +178,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   fromObject(entities: { [K in S]?: T }, idIsNumber?: boolean): this {
-    if (isObjectEmpty(entities)) {
+    if (!entities || isObjectEmpty(entities)) {
       this.__state = {};
       this.__keys.clear();
       return this;

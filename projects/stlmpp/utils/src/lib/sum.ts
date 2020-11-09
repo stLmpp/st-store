@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { isArray, isString } from 'lodash-es';
+import { isArray, isString } from './util';
 
 export function sum(values: number[]): number {
   if (!values?.length) {

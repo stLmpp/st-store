@@ -12,10 +12,9 @@ import {
 } from '../type';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { StMap } from '../map';
-import { isArray, isFunction, isNil } from 'lodash-es';
+import { ID, IdGetter, idGetterFactory, isArray, isFunction, isID, isNil } from '@stlmpp/utils';
 import { devCopy } from '../util';
 import { environment } from '../environment';
-import { ID, IdGetter, idGetterFactory, isID } from '@stlmpp/utils';
 
 export class EntityStore<
   State extends EntityState<T, S, E> = any,

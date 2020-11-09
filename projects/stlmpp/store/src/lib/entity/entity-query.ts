@@ -1,8 +1,7 @@
 import { EntityStore } from './entity-store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck, switchMap } from 'rxjs/operators';
-import { isArray, isFunction, isString } from 'lodash-es';
-import { ID } from '@stlmpp/utils';
+import { ID, isArray, isFunction, isString } from '@stlmpp/utils';
 import { DistinctUntilChangedFn, EntityState, EntityType, Entries, ErrorType, IdType } from '../type';
 import { distinctUntilManyChanged } from '../util';
 

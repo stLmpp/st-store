@@ -11,11 +11,32 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2015",
-    "lib": ["es2018", "dom"],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@stlmpp/control": [
+        "dist/stlmpp/control/stlmpp-control",
+        "dist/stlmpp/control"
+      ],
+      "@stlmpp/utils": [
+        "dist/stlmpp/utils/stlmpp-utils",
+        "dist/stlmpp/utils"
+      ],
+      "@stlmpp/store": [
+        "dist/stlmpp/store/stlmpp-store",
+        "dist/stlmpp/store"
+      ],
+      "@stlmpp/router": [
+        "dist/stlmpp/router/stlmpp-router",
+        "dist/stlmpp/router"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

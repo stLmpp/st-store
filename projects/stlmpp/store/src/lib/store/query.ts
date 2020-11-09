@@ -2,7 +2,7 @@ import { Store } from './store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { KeyValue } from '../type';
-import { isString } from 'lodash-es';
+import { isString } from '@stlmpp/utils';
 
 export class Query<T, E = any> {
   constructor(private __store: Store<T, E>) {}

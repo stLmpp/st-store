@@ -3,7 +3,7 @@ import { EntityStore } from './entity/entity-store';
 import { catchError, finalize } from 'rxjs/operators';
 import { Store } from './store/store';
 
-export function setLoading<T>(store: EntityStore<any> | Store<any>): OperatorFunction<T, T> {
+export function setLoading<T>(store: EntityStore | Store<any>): OperatorFunction<T, T> {
   return (source: Observable<T>) =>
     defer(() => {
       store.setLoading(true);
@@ -15,14 +15,14 @@ export function setLoading<T>(store: EntityStore<any> | Store<any>): OperatorFun
     });
 }
 
-export function setError<T>(store: EntityStore<any> | Store<any>): OperatorFunction<T, T> {
+export function setError<T>(store: EntityStore | Store<any>): OperatorFunction<T, T> {
   return catchError(err => {
     store.setError(err);
     return throwError(err);
   });
 }
 
-export function useCache<T>(store: EntityStore<any> | Store<any>): OperatorFunction<T, T> {
+export function useCache<T>(store: EntityStore | Store<any>): OperatorFunction<T, T> {
   return (source: Observable<T>) =>
     new Observable<T>(subscriber => {
       if (store.hasCache()) {
