@@ -11,10 +11,13 @@ before_script:
   - yarn install
   - cd ../router
   - yarn install
+  - cd ../control
+  - yarn install
 script:
   - cd ../../../
   - yarn coverage-store
   - yarn coverage-utils
   - yarn coverage-router
+  - yarn coverage-control
   - yarn combine-coverage
 after_success: 'yarn coveralls'
