@@ -2,13 +2,12 @@
 # yarn lockfile v1
 
 
-"@stlmpp/utils@~2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.0.3.tgz#3c061d27cdb2671fd508cc553ddf8f1e4cf41cfa"
-  integrity sha512-XnecvYkb3wt3AKp3cOvl87/OrUqRKHKfZBXOehuPEU34onTlzqvolP5A/diZdRc94BV8QUEpS3Pn7JWnfPUwpg==
+"@stlmpp/utils@~2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.1.0.tgz#64d322f669d03cea0a49dc37c4316cdad1866f70"
+  integrity sha512-74nxFIcQSM9l/t8dMeTPiBgiVxfrvMvVHPJrtI87WLHunQp0mZDnieUfmch2eZVFMAO+A+j2PBTh7TVIf/wDlQ==
   dependencies:
     fast-sort "~2.2.0"
-    lodash-es "~4.17.15"
     tslib "~2.0.3"
 
 copy-anything@~2.0.1:
@@ -27,11 +26,6 @@ is-what@^3.7.1:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.8.0.tgz#610bc46a524355f2424eb85eedc6ebbbf7e1ff8c"
   integrity sha512-UKeBoQfV8bjlM4pmx1FLDHdxslW/1mTksEs8ReVsilPmUv5cORd4+2/wFcviI3cUjrLybxCjzc8DnodAzJ/Wrg==
-
-lodash-es@~4.17.15:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
-  integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
 tslib@~2.0.3:
   version "2.0.3"
