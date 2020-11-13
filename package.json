@@ -21,7 +21,7 @@
     "coverage-store": "ng test @stlmpp/store --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
     "coverage-utils": "ng test @stlmpp/utils --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
     "coverage-router": "ng test @stlmpp/router --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
-    "coverage-control": "ng teste @stlmpp/control --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
+    "coverage-control": "ng test @stlmpp/control --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
     "combine-coverage": "node combine-coverage.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
