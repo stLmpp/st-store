@@ -49,11 +49,15 @@ export function isFunction(value: any): value is (...args: any[]) => any {
 }
 
 export function isObject(value: any): value is Record<any, any> {
-  return typeof value === 'object';
+  return !isNull(value) && typeof value === 'object';
 }
 
 export function isUndefined(value: any): value is undefined {
   return typeof value === 'undefined';
+}
+
+export function isNull(value: any): value is null {
+  return value === null;
 }
 
 export function isNil(value: any): value is null | undefined {
