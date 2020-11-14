@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@stlmpp/utils@~2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.1.0.tgz#64d322f669d03cea0a49dc37c4316cdad1866f70"
-  integrity sha512-74nxFIcQSM9l/t8dMeTPiBgiVxfrvMvVHPJrtI87WLHunQp0mZDnieUfmch2eZVFMAO+A+j2PBTh7TVIf/wDlQ==
+"@stlmpp/utils@~2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.1.1.tgz#1cbc55329e7f57a93b8075317fd637a42a256723"
+  integrity sha512-9L/dx2qGlNYpFl/zpO+tuoYB+dys9cAo++ikb+lBaATYo9UgOWXKYGfYGy/Ee7DORrD53Jd2kxkUgfVLSubHzQ==
   dependencies:
     fast-sort "~2.2.0"
     tslib "~2.0.3"
