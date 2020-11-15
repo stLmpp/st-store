@@ -420,4 +420,27 @@ describe('control', () => {
   it('should return null if there are no errors', () => {
     expect(component.control.getErrors()).toBeNull();
   });
+
+  it('should check if has any error', () => {
+    component.control.setValidator(Validators.required);
+    fixture.detectChanges();
+    expect(component.control.hasErrors()).toBeTrue();
+    triggerEvent(input, 'input', 'A');
+    triggerEvent(input, 'blur');
+    fixture.detectChanges();
+    expect(component.control.hasErrors()).toBeFalse();
+  });
+
+  it('should emit if has any error', () => {
+    component.control.setValidator(Validators.required);
+    fixture.detectChanges();
+    const sub = jasmine.createSpy('sub');
+    component.control.hasErrors$.subscribe(sub);
+    expect(sub).toHaveBeenCalledWith(true);
+    triggerEvent(input, 'input', 'A');
+    triggerEvent(input, 'blur');
+    fixture.detectChanges();
+    expect(sub).toHaveBeenCalledWith(false);
+  });
+
 });

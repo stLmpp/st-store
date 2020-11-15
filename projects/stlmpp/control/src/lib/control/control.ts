@@ -78,6 +78,7 @@ export class Control<T = any> implements AbstractControl<T> {
   > = this.errors$.pipe(
     map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
   );
+  readonly hasErrors$ = this.errors$.pipe(map(errors => !isObjectEmpty(errors)));
   readonly validationCancel: Record<keyof ValidatorsModel, Subject<void>> = {};
 
   private readonly _disabledChanged$ = new BehaviorSubject<void>(undefined);
@@ -389,6 +390,10 @@ export class Control<T = any> implements AbstractControl<T> {
     for (const validator of names) {
       this.runValidator(validator);
     }
+  }
+
+  hasErrors(): boolean {
+    return !!this.getErrors();
   }
 
   hasError(name: keyof ValidatorsModel): boolean {
