@@ -16,6 +16,7 @@ export interface AbstractControl<T = any> {
   pending: boolean;
   disabled: boolean;
   enabled: boolean;
+  /** @internal */
   setUpdateOn(updateOn: ControlUpdateOn): void;
   markAsDirty(dirty?: boolean): void;
   markAsTouched(touched?: boolean): void;
@@ -25,6 +26,7 @@ export interface AbstractControl<T = any> {
   disable(disabled?: boolean): void;
   enable(enabled?: boolean): void;
   reset(): void;
+  /** @internal */
   submit(): void;
 }
 

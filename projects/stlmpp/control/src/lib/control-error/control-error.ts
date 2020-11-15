@@ -13,7 +13,7 @@ import { ControlParent } from '../control-parent';
 import { isNil } from '@stlmpp/utils';
 import { ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Subject } from 'rxjs';
-import { filter, pairwise, startWith, takeUntil } from 'rxjs/operators';
+import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { isID } from '@stlmpp/utils';
@@ -108,11 +108,16 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
         takeUntil(this._destroy$),
         startWith(this.control.getState()),
         pairwise(),
-        filter(([oldState, newState]) => oldState.touched !== newState.touched || oldState.dirty !== newState.dirty)
+        filter(([oldState, newState]) => oldState.touched !== newState.touched || oldState.dirty !== newState.dirty),
+        map(([, newState]) => newState)
       )
-      .subscribe(() => {
-        differ = this.keyValueDiffers.find({}).create();
-        checkError(this.lastErrors);
+      .subscribe(state => {
+        if (this.showWhen && !state[this.showWhen]) {
+          this.init();
+        } else {
+          differ = this.keyValueDiffers.find({}).create();
+          checkError(this.lastErrors);
+        }
       });
   }
 

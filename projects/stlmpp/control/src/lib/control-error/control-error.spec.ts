@@ -154,4 +154,15 @@ describe('control error', () => {
     // @ts-ignore
     expect(fix.componentInstance.controlErrorDirective.control).toBeInstanceOf(Control);
   });
+
+  it('should clear errors when control is reseted', () => {
+    compControl.showWhen = 'touched';
+    fixControl.detectChanges();
+    compControl.control.markAsTouched();
+    fixControl.detectChanges();
+    compControl.control.reset();
+    fixControl.detectChanges();
+    const smallRequired = fixControl.debugElement.query(By.css('.required'));
+    expect(smallRequired).toBeNull();
+  });
 });

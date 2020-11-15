@@ -83,9 +83,7 @@ export class Control<T = any> implements AbstractControl<T> {
 
   private readonly _disabledChanged$ = new BehaviorSubject<void>(undefined);
   private readonly _stateChanged$ = new Subject<ControlState>();
-  /** @internal */
   readonly disabledChanged$ = this._disabledChanged$.asObservable();
-  /** @internal */
   readonly stateChanged$ = this._stateChanged$.asObservable();
 
   private readonly _value$: BehaviorSubject<T | null | undefined>;

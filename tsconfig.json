@@ -24,7 +24,8 @@
         "dist/stlmpp/utils/stlmpp-utils",
         "dist/stlmpp/utils"
       ]
-    }
+    },
+    "stripInternal": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
