@@ -10,7 +10,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/stlmpp/store/tsconfig.lib.json",
             "project": "projects/stlmpp/store/ng-package.json"
@@ -45,7 +45,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/stlmpp/utils/tsconfig.lib.json",
             "project": "projects/stlmpp/utils/ng-package.json"
@@ -80,7 +80,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/stlmpp/router/tsconfig.lib.json",
             "project": "projects/stlmpp/router/ng-package.json"

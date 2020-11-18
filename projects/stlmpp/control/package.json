@@ -1,14 +1,14 @@
 {
   "name": "@stlmpp/control",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": ">= 8 < 11",
-    "@angular/core": ">= 8 < 11"
+    "@angular/common": ">= 9 < 12",
+    "@angular/core": ">= 9 < 12"
   },
   "dependencies": {
     "tslib": "~2.0.3",
     "date-fns": "~2.16.1",
-    "@angular/cdk": "~10.2.5",
-    "@stlmpp/utils": "~2.1.1"
+    "@angular/cdk": "~11.0.0",
+    "@stlmpp/utils": "~3.0.0"
   }
 }

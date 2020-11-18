@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@angular/cdk@~10.2.5":
-  version "10.2.5"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-10.2.5.tgz#768204ff4db1282297d15f382970f151f87434ec"
-  integrity sha512-SI/YdaxfkttG92A0uGRixyJkfTKHn0GIU+7BCSRq0d31ru3Ugfln+jr+5/xttxWr88CNPTfpGaUt0ZuSqYCzqw==
+"@angular/cdk@~11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-11.0.0.tgz#7ec0fc8b5051c54f4a3910e61f1ee7d30796c2d2"
+  integrity sha512-kfgEE/LDYMZB4NICChzWn/nTEeoZ3wxrYsDDcy2Qj+57zUmJcxBLL1h+tawYCy3a1g7ypDLYX7yrbPEBE7/EXQ==
   dependencies:
     tslib "^2.0.0"
   optionalDependencies:
     parse5 "^5.0.0"
 
-"@stlmpp/utils@~2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-2.1.1.tgz#1cbc55329e7f57a93b8075317fd637a42a256723"
-  integrity sha512-9L/dx2qGlNYpFl/zpO+tuoYB+dys9cAo++ikb+lBaATYo9UgOWXKYGfYGy/Ee7DORrD53Jd2kxkUgfVLSubHzQ==
+"@stlmpp/utils@~3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-3.0.0.tgz#396c16171d258b9a0be4c9147586083b745f8f7e"
+  integrity sha512-IThGiKWme9lxN+VXXVVwOdG9o51lvlKsiS4e0m+ySc8HSrZGH7nZeHjrTs26vNhp4NcSRl+5fbVRXQtHLuhJ7Q==
   dependencies:
     fast-sort "~2.2.0"
     tslib "~2.0.3"
