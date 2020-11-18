@@ -1,9 +1,8 @@
 import { ControlValidator } from './validator';
 import { Control } from '../control/control';
 import { combineLatest, isObservable, Observable, of } from 'rxjs';
-import { coerceArray } from '@angular/cdk/coercion';
 import { map } from 'rxjs/operators';
-import { isNil } from '@stlmpp/utils';
+import { coerceArray, isNil } from '@stlmpp/utils';
 
 function toObservable(value: any): Observable<any> {
   return isObservable(value) ? value : of(value);

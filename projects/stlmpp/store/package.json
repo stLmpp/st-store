@@ -1,13 +1,13 @@
 {
   "name": "@stlmpp/store",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "peerDependencies": {
     "@angular/common": ">= 9 < 12",
     "@angular/core": ">= 9 < 12"
   },
   "dependencies": {
     "copy-anything": "~2.0.1",
-    "@stlmpp/utils": "~3.0.0",
+    "@stlmpp/utils": "~3.1.1",
     "tslib": "~2.0.3"
   }
 }
