@@ -103,3 +103,7 @@ export function getDeep<T = any, R = any>(obj: T, path: string | string[], defau
   }
   return path.reduce((acc, key) => (acc as any)?.[key], obj) ?? defaultValue;
 }
+
+export function coerceArray<T>(arrayOrValue: T | T[]): T[] {
+  return isArray(arrayOrValue) ? arrayOrValue : [arrayOrValue];
+}

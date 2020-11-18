@@ -1,4 +1,5 @@
 import {
+  coerceArray,
   idGetterFactory,
   isArray,
   isDate,
@@ -177,5 +178,10 @@ describe('Util', () => {
     expect(
       uniqBy([{ id: 1 }, { id: 1 }, { id: 2 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 4 }], 'id')
     ).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }]);
+  });
+
+  it('should coerce the array', () => {
+    expect(coerceArray('')).toEqual(['']);
+    expect(coerceArray([''])).toEqual(['']);
   });
 });
