@@ -27,4 +27,6 @@ export {
   isRegExp,
   isUndefined,
   uniqBy,
+  coerceArray,
+  isNull,
 } from './lib/util';

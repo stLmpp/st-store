@@ -21,9 +21,8 @@ import { Subject } from 'rxjs';
 import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
 import { Control } from './control';
-import { coerceArray } from '@angular/cdk/coercion';
 import { AbstractControlDirective } from '../abstract-control';
-import { isNil } from '@stlmpp/utils';
+import { coerceArray, isNil } from '@stlmpp/utils';
 
 @Directive({ selector: '[control]' })
 export class ControlDirective<T = any> extends AbstractControlDirective implements OnDestroy, OnChanges {

@@ -1,7 +1,6 @@
 import { ControlValidator } from './validator';
 import { Control } from '../control/control';
-import { coerceArray } from '@angular/cdk/coercion';
-import { isNil } from '@stlmpp/utils';
+import { coerceArray, isNil } from '@stlmpp/utils';
 import { isObjectEmpty } from '@stlmpp/utils';
 
 export class ComposeValidator implements ControlValidator<any, Record<string, any>> {
