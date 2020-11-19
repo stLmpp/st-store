@@ -5,11 +5,21 @@ import { KeyValue } from '../type';
 import { isString } from '@stlmpp/utils';
 
 export class Query<T, E = any> {
-  constructor(private __store: Store<T, E>) {}
+  constructor(store: Store<T, E>) {
+    this.__store = store;
+    this.state$ = this.__store.selectState();
+    this.loading$ = this.__store.selectLoading();
+    this.error$ = this.__store.selectError();
+    this.hasCache$ = this.__store.selectCache();
+  }
 
-  state$: Observable<T> = this.__store.selectState();
-  loading$: Observable<boolean> = this.__store.selectLoading();
-  error$: Observable<E | null> = this.__store.selectError();
+  /** @internal */
+  protected __store: Store<T, E>;
+
+  state$: Observable<T>;
+  loading$: Observable<boolean>;
+  error$: Observable<E | null>;
+  hasCache$: Observable<boolean>;
 
   getState(): T {
     return this.__store.getState();
@@ -23,6 +33,10 @@ export class Query<T, E = any> {
     return this.__store.getLoading();
   }
 
+  getHasCache(): boolean {
+    return this.__store.hasCache();
+  }
+
   select(): Observable<T>;
   select<K extends keyof T>(key: K): Observable<T[K]>;
   select<R>(callback: (state: T) => R): Observable<R>;
@@ -33,7 +47,7 @@ export class Query<T, E = any> {
       if (isKey(callbackOrKey)) {
         state$ = state$.pipe(pluck(callbackOrKey));
       } else {
-        state$ = state$.pipe(map(callbackOrKey as any));
+        state$ = state$.pipe(map(callbackOrKey));
       }
     }
     return state$.pipe(distinctUntilChanged());

@@ -15,6 +15,8 @@ export {
   EntityPartialUpdate,
   EntityPredicate,
   Entries,
+  EntityFilter,
+  EntityFilterOptions,
 } from './lib/type';
 export { StMap } from './lib/map';
 export { EntityStore } from './lib/entity/entity-store';
