@@ -1,9 +1,18 @@
 import { EntityStore } from './entity-store';
 import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, pluck, switchMap } from 'rxjs/operators';
-import { ID, isArray, isFunction, isString } from '@stlmpp/utils';
-import { DistinctUntilChangedFn, EntityState, EntityType, Entries, ErrorType, IdType } from '../type';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { ID, isArray, isFunction, orderByOperator } from '@stlmpp/utils';
+import {
+  DistinctUntilChangedFn,
+  EntityFilterOptions,
+  EntityState,
+  EntityType,
+  Entries,
+  ErrorType,
+  IdType,
+} from '../type';
 import { distinctUntilManyChanged } from '../util';
+import { Query } from '../store/query';
 
 export function isEqualEntity<T = any>(entityA: T, entityB: T): boolean {
   if (entityA === entityB) {
@@ -50,39 +59,36 @@ export class EntityQuery<
   T = EntityType<State>,
   S extends ID = IdType<State>,
   E = ErrorType<State>
-> {
+> extends Query<State> {
   constructor(
-    private __store: EntityStore<State, T, S, E>,
+    store: EntityStore<State, T, S, E>,
     private __distinctUntilChangedFn: DistinctUntilChangedFn<T | undefined> = isEqualEntity
   ) {
+    super(store);
     this.__distinctUntilManyChangedFn = isEqualEntitiesFactory(__distinctUntilChangedFn);
   }
 
   private readonly __distinctUntilManyChangedFn: DistinctUntilChangedFn<T[]>;
-  private __state$ = this.__store.selectState();
-  private __entities$ = this.__state$.pipe(pluck('entities'));
-  private get __entities(): State['entities'] {
-    return this.__store.getState().entities;
-  }
-  private get __keys(): Set<S> {
-    return this.__entities.keys as Set<S>;
-  }
+  private readonly __entities$ = this.select('entities');
+
   private get __state(): EntityState<T, S, E> {
     return this.__store.getState();
   }
 
+  private get __entities(): State['entities'] {
+    return this.__state.entities;
+  }
+
   all$: Observable<T[]> = this.__entities$.pipe(map(entities => entities.values));
 
-  activeId$: Observable<S[]> = this.select('activeKeys').pipe(
+  activeIds$: Observable<S[]> = this.select('activeKeys').pipe(
     map(active => [...active] as S[]),
     distinctUntilManyChanged()
   );
 
-  active$: Observable<T[]> = this.activeId$.pipe(switchMap(ids => this.selectMany(ids)));
+  active$: Observable<T[]> = this.activeIds$.pipe(switchMap(ids => this.selectMany(ids)));
 
-  loading$: Observable<boolean> = this.select('loading');
-  error$: Observable<E | null> = this.select('error');
-  hasCache$ = this.__store.selectCache();
+  hasActive$: Observable<boolean> = this.select('activeKeys').pipe(map(activeKeys => !!activeKeys.size));
 
   getAll(): T[] {
     return this.__entities.values;
@@ -91,18 +97,6 @@ export class EntityQuery<
   getActive(): T[] {
     const activeKeys = this.__state.activeKeys;
     return this.__entities.filter((_, key) => activeKeys.has(key)).values;
-  }
-
-  getLoading(): boolean {
-    return this.__state.loading;
-  }
-
-  getError(): E | null {
-    return this.__state.error;
-  }
-
-  getHasCache(): boolean {
-    return this.__store.hasCache();
   }
 
   exists(id: S): boolean;
@@ -123,25 +117,12 @@ export class EntityQuery<
     return !!this.__state.activeKeys.size;
   }
 
-  select(): Observable<State>;
-  select<K extends keyof State>(key: K): Observable<State[K]>;
-  select<R>(callback: (state: State) => R): Observable<R>;
-  select<K extends keyof State, R>(callbackOrKey?: K | ((state: State) => R)): Observable<State | R | State[K]> {
-    let state$: Observable<any> = this.__state$;
-    if (callbackOrKey) {
-      const isKey = (key: any): key is keyof State => isString(key);
-      if (isKey(callbackOrKey)) {
-        state$ = state$.pipe(pluck(callbackOrKey));
-      } else {
-        state$ = state$.pipe(map(callbackOrKey));
-      }
-    }
-    return state$.pipe(distinctUntilChanged());
-  }
-
-  selectEntity(id: S): Observable<T>;
+  selectEntity(id: S): Observable<T | undefined>;
   selectEntity(callback: (entity: T, key: S) => boolean): Observable<T | undefined>;
-  selectEntity<K extends keyof T>(idOrCallback: S | ((entity: T, key: S) => boolean), property: K): Observable<T[K]>;
+  selectEntity<K extends keyof T>(
+    idOrCallback: S | ((entity: T, key: S) => boolean),
+    property: K
+  ): Observable<T[K] | undefined>;
   selectEntity<K extends keyof T>(
     idOrCallback: S | ((entity: T, key: S) => boolean),
     property?: K
@@ -176,5 +157,32 @@ export class EntityQuery<
       map(entities => entities.filter(callback).values),
       distinctUntilChanged(this.__distinctUntilManyChangedFn)
     );
+  }
+
+  selectAll(): Observable<T[]>;
+  selectAll(options: EntityFilterOptions<T, S, E>): Observable<T[]>;
+  selectAll(options?: EntityFilterOptions<T, S, E>): Observable<T[]> {
+    let entities$ = this.__entities$;
+    if (!options) {
+      return this.all$;
+    }
+    const { filterBy, limit, orderBy, orderByDirection } = options;
+    if (filterBy) {
+      const predicate = isFunction(filterBy)
+        ? filterBy
+        : (entity: T) => {
+            const [key, value] = filterBy;
+            return entity[key] === value;
+          };
+      entities$ = entities$.pipe(map(entities => entities.filter(predicate)));
+    }
+    let all$ = entities$.pipe(map(entities => entities.values));
+    if (limit && limit > 0) {
+      all$ = all$.pipe(map(entities => entities.slice(0, limit)));
+    }
+    if (orderBy) {
+      all$ = all$.pipe(orderByOperator(orderBy as any, orderByDirection));
+    }
+    return all$;
   }
 }

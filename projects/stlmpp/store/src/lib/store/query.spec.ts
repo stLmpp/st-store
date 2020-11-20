@@ -20,9 +20,9 @@ describe('Query', () => {
     expect(query).toBeDefined();
     expect(store).toBeDefined();
     expect(query.getState()).toBeDefined();
-    expect(query.getState()).toEqual(simpleInitialState);
+    expect(query.getState()).toEqual(simpleInitialState());
     takeOne().subscribe(state => {
-      expect(state).toEqual(simpleInitialState);
+      expect(state).toEqual(simpleInitialState());
     });
   });
 
@@ -31,7 +31,7 @@ describe('Query', () => {
       .select()
       .pipe(take(1))
       .subscribe(state => {
-        expect(state).toEqual(simpleInitialState);
+        expect(state).toEqual(simpleInitialState());
       });
     query
       .select('id')

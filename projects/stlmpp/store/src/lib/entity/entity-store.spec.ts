@@ -1,6 +1,5 @@
-import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState } from '../util-test';
+import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState, wait } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { take } from 'rxjs/operators';
 import { EntityStore } from './entity-store';
 import { EntityState } from '../type';
 import { environment } from '../environment';
@@ -9,14 +8,16 @@ import { StStoreModule } from '../st-store.module';
 describe('Entity Store', () => {
   let store: SimpleEntityStore;
 
-  const takeOne = () => store.selectState().pipe(take(1));
-
   beforeEach(() => {
+    environment.reset();
     TestBed.configureTestingModule({
       imports: [StStoreModule.forRoot()],
       providers: [SimpleEntityStore],
     });
     store = TestBed.inject(SimpleEntityStore);
+  });
+
+  afterAll(() => {
     environment.reset();
   });
 
@@ -24,40 +25,31 @@ describe('Entity Store', () => {
     expect(store).toBeDefined();
     expect(store.getState()).toBeDefined();
     expect(store.getState().entities.length).toBe(1);
-    expect(store.getState().entities.values).toEqual(entityInitialState);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual(entityInitialState);
-    });
+    expect(store.getState().entities.values).toEqual(entityInitialState());
   });
 
   it('should use custom merge function', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
       name: 'teste',
-      initialState: entityInitialState,
+      initialState: entityInitialState(),
       mergeFn: (a, b) => ({ ...b, ...a }),
     });
-    newStore.update(1, { name: '2' });
+    newStore.updateEntity(1, { name: '2' });
     expect(newStore.getState().entities.get(1)?.name).toBe('Guilherme');
   });
 
   it('should set the state', () => {
     const newState = [{ id: 1, name: '1' }];
-    store.set(newState);
+    store.setEntities(newState);
     expect(store.getState().entities.length).toBe(1);
     expect(store.getState().entities.values).toEqual(newState);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual(newState);
-    });
   });
 
   it('should add (one)', () => {
     const newItem = { id: 2, name: '2' };
     store.add(newItem);
     expect(store.getState().entities.length).toBe(2);
-    expect(store.getState().entities.values).toEqual([...entityInitialState, newItem]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([...entityInitialState, newItem]);
-    });
+    expect(store.getState().entities.values).toEqual([...entityInitialState(), newItem]);
   });
 
   it('should add (many)', () => {
@@ -67,10 +59,7 @@ describe('Entity Store', () => {
     ];
     store.add(newItens);
     expect(store.getState().entities.length).toBe(3);
-    expect(store.getState().entities.values).toEqual([...entityInitialState, ...newItens]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([...entityInitialState, ...newItens]);
-    });
+    expect(store.getState().entities.values).toEqual([...entityInitialState(), ...newItens]);
   });
 
   it('should remove (id)', () => {
@@ -80,9 +69,6 @@ describe('Entity Store', () => {
     store.remove(1);
     expect(store.getState().entities.length).toBe(1);
     expect(store.getState().entities.values).toEqual([newItem]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([newItem]);
-    });
   });
 
   it('should remove (ids)', () => {
@@ -95,9 +81,6 @@ describe('Entity Store', () => {
     store.remove([1, 2]);
     expect(store.getState().entities.length).toBe(1);
     expect(store.getState().entities.values).toEqual([newItems[1]]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([newItems[1]]);
-    });
   });
 
   it('shoud remove (callback)', () => {
@@ -106,57 +89,36 @@ describe('Entity Store', () => {
     expect(store.getState().entities.length).toBe(2);
     store.remove(entity => entity.name === '2');
     expect(store.getState().entities.length).toBe(1);
-    expect(store.getState().entities.values).toEqual(entityInitialState);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual(entityInitialState);
-    });
+    expect(store.getState().entities.values).toEqual(entityInitialState());
   });
 
   it('should update (id)', () => {
-    store.update(1, { name: 'Guilherme' });
+    store.updateEntity(1, { name: 'Guilherme' });
     expect(store.getState().entities.get(1)?.name).toBe('Guilherme');
-    takeOne().subscribe(state => {
-      expect(state.entities.get(1)?.name).toBe('Guilherme');
-    });
-    store.update(1, entity => ({ ...entity, name: '1' }));
+    store.updateEntity(1, entity => ({ ...entity, name: '1' }));
     expect(store.getState().entities.get(1)?.name).toBe('1');
-    takeOne().subscribe(state => {
-      expect(state.entities.get(1)?.name).toBe('1');
-    });
   });
 
   it('should update (callback)', () => {
-    store.add({ id: 2, name: simpleInitialState.name });
-    store.update(entity => entity.name === simpleInitialState.name, { name: 'T' });
+    store.add({ id: 2, name: simpleInitialState().name });
+    store.updateEntity(entity => entity.name === simpleInitialState().name, { name: 'T' });
     expect(store.getState().entities.length).toBe(2);
     expect(store.getState().entities.values).toEqual([
       { id: 1, name: 'T' },
       { id: 2, name: 'T' },
     ]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([
-        { id: 1, name: 'T' },
-        { id: 2, name: 'T' },
-      ]);
-    });
-    store.update(entity => entity.name === 'T', { name: 'U' });
+    store.updateEntity(entity => entity.name === 'T', { name: 'U' });
     expect(store.getState().entities.values).toEqual([
       { id: 1, name: 'U' },
       { id: 2, name: 'U' },
     ]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([
-        { id: 1, name: 'U' },
-        { id: 2, name: 'U' },
-      ]);
-    });
   });
 
   it('should not update', () => {
-    store.update(4, { name: '1' });
+    store.updateEntity(4, { name: '1' });
     expect(store.getState().entities.length).toBe(1);
 
-    store.update(entity => entity.name === 'NOT EXISTS', { name: '1' });
+    store.updateEntity(entity => entity.name === 'NOT EXISTS', { name: '1' });
     expect(store.getState().entities.length).toBe(1);
   });
 
@@ -164,15 +126,9 @@ describe('Entity Store', () => {
     store.upsert(1, { id: 1, name: 'U' });
     expect(store.getState().entities.length).toBe(1);
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: 'U' });
-    takeOne().subscribe(state => {
-      expect(state.entities.get(1)).toEqual({ id: 1, name: 'U' });
-    });
     store.upsert(2, { id: 2, name: '2' });
     expect(store.getState().entities.length).toBe(2);
     expect(store.getState().entities.get(2)).toEqual({ id: 2, name: '2' });
-    takeOne().subscribe(state => {
-      expect(state.entities.get(2)).toEqual({ id: 2, name: '2' });
-    });
   });
 
   it('should upsert (many)', () => {
@@ -185,18 +141,12 @@ describe('Entity Store', () => {
       { id: 1, name: 'Guilherme', other: 'T' },
       { id: 2, name: '2' },
     ]);
-    takeOne().subscribe(state => {
-      expect(state.entities.values).toEqual([
-        { id: 1, name: 'Guilherme', other: 'T' },
-        { id: 2, name: '2' },
-      ]);
-    });
   });
 
   it('should not upsert many if id is null or undefined', () => {
     store.upsert([{ name: '1' }]);
     expect(store.getState().entities.length).toBe(1);
-    expect(store.getState().entities.get(1)).toEqual(simpleInitialState);
+    expect(store.getState().entities.get(1)).toEqual(simpleInitialState());
     expect(store.getState().entities.some(entity => entity.name === '1')).toBeFalse();
   });
 
@@ -208,10 +158,6 @@ describe('Entity Store', () => {
     store.setActive(1);
     expect(store.getState().activeKeys.size).toBe(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(1);
-      expect(state.activeKeys.has(1)).toBeTrue();
-    });
   });
 
   it('should set active (entity)', () => {
@@ -223,10 +169,6 @@ describe('Entity Store', () => {
     store.setActive(newItens[0]);
     expect(store.getState().activeKeys.size).toBe(1);
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(1);
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should set active (many id)', () => {
@@ -239,11 +181,6 @@ describe('Entity Store', () => {
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(2);
-      expect(state.activeKeys.has(1)).toBeTrue();
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should add active (id)', () => {
@@ -251,39 +188,21 @@ describe('Entity Store', () => {
     store.addActive(1);
     expect(store.getState().activeKeys.size).toBe(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(1);
-      expect(state.activeKeys.has(1)).toBeTrue();
-    });
     store.addActive(2);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(2);
-      expect(state.activeKeys.has(1)).toBeTrue();
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should add active (entity)', () => {
     store.add({ id: 2, name: '2' });
-    store.addActive(simpleInitialState);
+    store.addActive(simpleInitialState());
     expect(store.getState().activeKeys.size).toBe(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(1);
-      expect(state.activeKeys.has(1)).toBeTrue();
-    });
     store.addActive(store.getState().entities.get(2)!);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(2);
-      expect(state.activeKeys.has(1)).toBeTrue();
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should add active (many id)', () => {
@@ -296,11 +215,6 @@ describe('Entity Store', () => {
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(2);
-      expect(state.activeKeys.has(1)).toBeTrue();
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should add active (many entity)', () => {
@@ -309,15 +223,10 @@ describe('Entity Store', () => {
       { id: 3, name: '3' },
     ];
     store.add(newItens);
-    store.addActive([simpleInitialState, newItens[0]]);
+    store.addActive([simpleInitialState(), newItens[0]]);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.size).toBe(2);
-      expect(state.activeKeys.has(1)).toBeTrue();
-      expect(state.activeKeys.has(2)).toBeTrue();
-    });
   });
 
   it('should remove active (removeActive)', () => {
@@ -328,14 +237,8 @@ describe('Entity Store', () => {
     store.add(newItens);
     store.addActive(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.has(1)).toBeTrue();
-    });
     store.removeActive(1);
     expect(store.getState().activeKeys.has(1)).toBeFalse();
-    takeOne().subscribe(state => {
-      expect(state.activeKeys.has(1)).toBeFalse();
-    });
     store.addActive([1, 2, 3]);
     expect(store.getState().activeKeys.size).toBe(3);
     store.removeActive([1, 2]);
@@ -388,7 +291,7 @@ describe('Entity Store', () => {
   });
 
   it('should replace', () => {
-    store.update(1, { other: '1' });
+    store.updateEntity(1, { other: '1' });
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: 'Guilherme', other: '1' });
     store.replace(1, { id: 1, name: '1' });
     expect(store.getState().entities.get(1)).toEqual({ id: 1, name: '1' });
@@ -407,15 +310,15 @@ describe('Entity Store', () => {
     ]);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     store.reset();
-    expect(store.getState().entities.values).toEqual(entityInitialState);
+    expect(store.getState().entities.values).toEqual(entityInitialState());
     expect(store.getState().activeKeys.has(1)).toBeFalse();
   });
 
   it('should pass through preAdd', () => {
-    spyOn(store, 'preAdd').and.callThrough();
+    spyOn(store, 'preAddEntity').and.callThrough();
     store.add({ id: 2, name: '2' });
     store.upsert(3, { id: 3, name: '3' });
-    expect(store.preAdd).toHaveBeenCalledTimes(2);
+    expect(store.preAddEntity).toHaveBeenCalledTimes(2);
     store.add([
       { id: 4, name: '4' },
       { id: 5, name: '5' },
@@ -424,12 +327,12 @@ describe('Entity Store', () => {
       { id: 4, name: '4two' },
       { id: 6, name: '6' },
     ]);
-    expect(store.preAdd).toHaveBeenCalledTimes(5);
+    expect(store.preAddEntity).toHaveBeenCalledTimes(5);
   });
 
-  it('should pass through preUpdate', () => {
-    spyOn(store, 'preUpdate').and.callThrough();
-    store.update(1, { name: '1' });
+  it('should pass through preUpdateEntity', () => {
+    spyOn(store, 'preUpdateEntity').and.callThrough();
+    store.updateEntity(1, { name: '1' });
     store.upsert([
       {
         id: 1,
@@ -437,21 +340,19 @@ describe('Entity Store', () => {
       },
       { id: 2, name: '2' },
     ]);
-    expect(store.preUpdate).toHaveBeenCalledTimes(2);
+    expect(store.preUpdateEntity).toHaveBeenCalledTimes(2);
     store.upsert([
       { id: 1, name: '1' },
       { id: 2, name: '32' },
     ]);
-    expect(store.preUpdate).toHaveBeenCalledTimes(4);
+    expect(store.preUpdateEntity).toHaveBeenCalledTimes(4);
   });
 
-  it('should have cache', done => {
+  it('should have cache', async () => {
     store.setHasCache(true);
     expect(store.hasCache()).toBeTrue();
-    setTimeout(() => {
-      expect(store.hasCache()).toBeFalse();
-      done();
-    }, 1001);
+    await wait(15);
+    expect(store.hasCache()).toBeFalse();
   });
 
   it('should not have cache', () => {
@@ -479,12 +380,12 @@ describe('Entity Store', () => {
   });
 
   it('should update the state (partial)', () => {
-    store.updateState({ loadingNames: true });
+    store.update({ loadingNames: true });
     expect(store.getState().loadingNames).toBe(true);
   });
 
   it('should update the state (callback)', () => {
-    store.updateState(state => {
+    store.update(state => {
       return {
         ...state,
         list: [1, 2, 3],
@@ -533,32 +434,34 @@ describe('Entity Store', () => {
 
   it('should dev copy', () => {
     environment.isDev = true;
-    store.updateState({ loadingNames: true });
-    const entity = store.getState().entities.get(1)!;
+    const newStore = new SimpleEntityStore();
+    newStore.update({ loadingNames: true });
+    const entity = newStore.getState().entities.get(1)!;
     expect(Object.isFrozen(entity)).toBeTrue();
     expect(() => (entity.name = '1')).toThrow();
   });
 
   it('should not dev copy', () => {
     environment.isDev = false;
-    const oldEntity = store.getState().entities.get(1)!;
-    store.updateState({ loadingNames: true });
-    const newEntity = store.getState().entities.get(1)!;
+    const newStore = new SimpleEntityStore();
+    const oldEntity = newStore.getState().entities.get(1)!;
+    newStore.update({ loadingNames: true });
+    const newEntity = newStore.getState().entities.get(1)!;
     expect(oldEntity === newEntity).toBeTrue();
     expect(Object.isFrozen(newEntity)).toBeFalse();
   });
 
   it('should set loading', () => {
     store.setLoading(true);
-    expect(store.getState().loading).toBeTrue();
+    expect(store.getLoading()).toBeTrue();
     store.setLoading(false);
-    expect(store.getState().loading).toBeFalse();
+    expect(store.getLoading()).toBeFalse();
   });
 
   it('should set error', () => {
     store.setError({ code: 1 });
-    expect(store.getState().error?.code).toBe(1);
+    expect(store.getError()?.code).toBe(1);
     store.setError(null);
-    expect(store.getState().error).toBeNull();
+    expect(store.getError()).toBeNull();
   });
 });

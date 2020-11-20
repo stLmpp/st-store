@@ -1,19 +1,17 @@
 import { Store } from './store';
 import { TestBed } from '@angular/core/testing';
-import { debounceTime, take } from 'rxjs/operators';
 import {
   IdName,
   simpleInitialState,
   SimpleStore,
   SimpleStoreCustomPersist,
   StorePersistCustomStrategy,
+  wait,
 } from '../util-test';
 
 describe('Store', () => {
   let store: SimpleStore;
   let storeCustomPersist: SimpleStoreCustomPersist;
-
-  const takeOne = () => store.selectState().pipe(take(1));
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [SimpleStore, SimpleStoreCustomPersist] });
@@ -27,25 +25,11 @@ describe('Store', () => {
     expect(store.getState()).toEqual({ id: 1, name: 'Guilherme' });
   });
 
-  it('should have cache', done => {
+  it('should have cache', async () => {
     store.setHasCache(true);
     expect(store.hasCache()).toBeTrue();
-    store
-      .selectCache()
-      .pipe(take(1))
-      .subscribe(hasCache => {
-        expect(hasCache).toBeTrue();
-      });
-    store
-      .selectCache()
-      .pipe(debounceTime(1001), take(1))
-      .subscribe(hasCache => {
-        expect(hasCache).toBeFalse();
-      });
-    setTimeout(() => {
-      expect(store.hasCache()).toBeFalse();
-      done();
-    }, 1002);
+    await wait(15);
+    expect(store.hasCache()).toBeFalse();
   });
 
   it('should not set cache', () => {
@@ -53,46 +37,25 @@ describe('Store', () => {
     store.__options.cache = undefined;
     store.setHasCache(true);
     expect(store.hasCache()).toBeFalse();
-    store
-      .selectCache()
-      .pipe(take(1))
-      .subscribe(hasCache => {
-        expect(hasCache).toBeFalse();
-      });
   });
 
   it('should set the state', () => {
     store.set({ id: 2, name: '2' });
     expect(store.getState()).toEqual({ id: 2, name: '2' });
-    store.selectState().subscribe(state => {
-      expect(state).toEqual({ id: 2, name: '2' });
-    });
   });
 
   it('should update the state', () => {
     store.update({ name: '1' });
     expect(store.getState()).toEqual({ id: 1, name: '1' });
-    takeOne().subscribe(state => {
-      expect(state).toEqual({ id: 1, name: '1' });
-    });
     store.update(state => ({ ...state, name: 'Guilherme' }));
     expect(store.getState()).toEqual({ id: 1, name: 'Guilherme' });
-    takeOne().subscribe(state => {
-      expect(state).toEqual({ id: 1, name: 'Guilherme' });
-    });
   });
 
   it('should reset the state', () => {
     store.update({ id: 3, name: '3' });
     expect(store.getState()).toEqual({ id: 3, name: '3' });
-    takeOne().subscribe(state => {
-      expect(state).toEqual({ id: 3, name: '3' });
-    });
     store.reset();
-    expect(store.getState()).toEqual(simpleInitialState);
-    takeOne().subscribe(state => {
-      expect(state).toEqual(simpleInitialState);
-    });
+    expect(store.getState()).toEqual(simpleInitialState());
   });
 
   it('should call preUpdate', () => {
@@ -127,7 +90,7 @@ describe('Store', () => {
       constructor() {
         super({
           name: 'simple-custom-persist',
-          initialState: simpleInitialState,
+          initialState: simpleInitialState(),
           persistStrategy: new StorePersistCustomStrategy(),
         });
       }

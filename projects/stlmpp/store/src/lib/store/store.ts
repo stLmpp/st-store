@@ -18,6 +18,13 @@ export class Store<T, E = any> {
   private __timeout: any;
   private __cache$ = new BehaviorSubject(false);
 
+  /** @internal */
+  protected __useDevCopy = true;
+
+  protected updateInitialState(initialState: T): void {
+    this.__options = { ...this.__options, initialState };
+  }
+
   hasCache(): boolean {
     return !!this.__options.cache && this.__cache$.value;
   }
@@ -96,7 +103,10 @@ export class Store<T, E = any> {
 
   set(state: T): void {
     this.persist(state);
-    this.__state$.next(devCopy(state));
+    if (this.__useDevCopy) {
+      state = devCopy(state);
+    }
+    this.__state$.next(state);
   }
 
   update(partial: Partial<T>): void;

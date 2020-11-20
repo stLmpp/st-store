@@ -26,7 +26,10 @@ export function useCache<T>(store: EntityStore | Store<any>): OperatorFunction<T
   return (source: Observable<T>) =>
     new Observable<T>(subscriber => {
       if (store.hasCache()) {
-        const currentState = store instanceof Store ? store.getState() : store.getState().entities.values;
+        let currentState = store.getState();
+        if (store instanceof EntityStore) {
+          currentState = currentState.entities.values;
+        }
         subscriber.next(currentState);
         subscriber.complete();
         store.setLoading(false);

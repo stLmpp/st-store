@@ -89,6 +89,10 @@ describe('Utils', () => {
       environment.reset();
     });
 
+    afterAll(() => {
+      environment.reset();
+    });
+
     it('should not dev copy', () => {
       environment.isDev = false;
       const obj = { a: 1 };

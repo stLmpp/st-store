@@ -19,13 +19,13 @@ export interface IdNameEntity {
   other?: string;
 }
 
-export const simpleInitialState: IdName = { id: 1, name: 'Guilherme' };
-export const entityInitialState: IdNameEntity[] = [simpleInitialState];
+export const simpleInitialState = (): IdName => ({ id: 1, name: 'Guilherme' });
+export const entityInitialState = (): IdNameEntity[] => [simpleInitialState()];
 
 @Injectable()
 export class SimpleStore extends Store<IdName> {
   constructor() {
-    super({ name: 'simple', initialState: simpleInitialState, cache: 1000, persistKey: 'name' });
+    super({ name: 'simple', initialState: simpleInitialState(), cache: 10, persistKey: 'name' });
   }
 }
 
@@ -36,7 +36,7 @@ export class SimpleStoreCustomPersist extends Store<IdName> {
     persistStrategy.state[`__ST_STORE__simple-custom-persist.`] = '2';
     super({
       name: 'simple-custom-persist',
-      initialState: simpleInitialState,
+      initialState: simpleInitialState(),
       cache: 1000,
       persistStrategy,
     });
@@ -58,7 +58,7 @@ export interface IdNameEntityState extends EntityState<IdNameEntity, number, { c
 @Injectable()
 export class SimpleEntityStore extends EntityStore<IdNameEntityState> {
   constructor() {
-    super({ name: 'simple-entity', cache: 1000, initialState: entityInitialState });
+    super({ name: 'simple-entity', cache: 10, initialState: entityInitialState() });
   }
 }
 
@@ -94,4 +94,12 @@ export class StorePersistCustomStrategy implements StorePersistStrategy<IdName> 
   setStore(state: IdName, value: any, key?: keyof IdName): IdName {
     return { ...state, id: value };
   }
+}
+
+export function wait(ms = 1000): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
 }

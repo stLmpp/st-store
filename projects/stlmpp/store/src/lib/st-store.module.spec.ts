@@ -7,6 +7,10 @@ describe('StStore Module', () => {
     environment.reset();
   });
 
+  afterAll(() => {
+    environment.reset();
+  });
+
   it('should have set default values', () => {
     TestBed.configureTestingModule({ imports: [StStoreModule.forRoot()] });
     expect(environment.isDev).toBeTrue();

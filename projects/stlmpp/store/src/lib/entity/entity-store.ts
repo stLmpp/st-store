@@ -10,31 +10,30 @@ import {
   ErrorType,
   IdType,
 } from '../type';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { StMap } from '../map';
 import { ID, IdGetter, idGetterFactory, isArray, isFunction, isID, isNil } from '@stlmpp/utils';
 import { devCopy } from '../util';
 import { environment } from '../environment';
+import { Store } from '../store/store';
 
 export class EntityStore<
   State extends EntityState<T, S, E> = any,
   T = EntityType<State>,
   S extends ID = IdType<State>,
   E = ErrorType<State>
-> {
+> extends Store<State> {
   constructor(private options: EntityStoreOptions<T, S>) {
+    super({ ...options, initialState: {} as any });
+    this.__useDevCopy = false;
     this.idGetter = idGetterFactory(options.idGetter);
     this.merger = options.mergeFn ?? ((entityA, entityB) => ({ ...entityA, ...entityB }));
-    this.setInitialState();
+    const initialState = this.getInitialState();
+    this.updateInitialState(initialState);
+    this.update(initialState);
   }
 
-  idGetter: IdGetter<T, S>;
-  merger: EntityMergeFn<T>;
-
-  private __timeout: any;
-  private __cache$ = new BehaviorSubject(false);
-
-  private state$!: BehaviorSubject<State>;
+  readonly idGetter: IdGetter<T, S>;
+  readonly merger: EntityMergeFn<T>;
 
   private createMap(): State['entities'] {
     return new StMap(this.idGetter, this.merger);
@@ -44,7 +43,7 @@ export class EntityStore<
     return new Set(values);
   }
 
-  private setInitialState(): void {
+  private getInitialState(): State {
     const entities = this.createMap();
     let activeKeys = this.createSet();
     if (this.options.initialState) {
@@ -57,62 +56,35 @@ export class EntityStore<
     if (this.options.initialActive && this.options.initialState) {
       activeKeys = this.createSet(this.options.initialActive.filter(key => entities.has(key)));
     }
-    const state: EntityState<T, S, E> = {
+    return {
       entities,
       loading: false,
       error: null,
       activeKeys,
-    };
-    this.state$ = new BehaviorSubject<State>(state as any);
+    } as any;
   }
 
-  getState(): State {
-    return this.state$.value;
+  update(partial: Partial<State>): void;
+  update(state: State): void;
+  update(callback: (state: State) => State): void;
+  update(state: State | Partial<State> | ((state: State) => State)): void {
+    const callback = isFunction(state) ? state : (oldState: State) => ({ ...oldState, ...state });
+    super.update(oldState => {
+      let newState = callback(oldState);
+      if (environment.isDev) {
+        newState = {
+          ...newState,
+          entities: newState.entities.map(entity => devCopy(entity)),
+          activeKeys: this.createSet([...newState.activeKeys]),
+        } as any;
+      }
+      return newState;
+    });
   }
 
-  selectState(): Observable<State> {
-    return this.state$.asObservable();
-  }
-
-  selectCache(): Observable<boolean> {
-    return this.__cache$.asObservable();
-  }
-
-  hasCache(): boolean {
-    return !!this.options.cache && this.__cache$.value;
-  }
-
-  setHasCache(hasCache: boolean): void {
-    if (this.options.cache) {
-      clearTimeout(this.__timeout);
-      this.__cache$.next(hasCache);
-      this.__timeout = setTimeout(() => {
-        this.setHasCache(false);
-      }, this.options.cache);
-    }
-  }
-
-  private setState(state: State): void {
-    if (environment.isDev) {
-      state = {
-        ...state,
-        entities: state.entities.map(entity => devCopy(entity)),
-        error: devCopy(state.error),
-        activeKeys: this.createSet([...state.activeKeys]),
-      };
-    }
-    this.state$.next(state);
-  }
-
-  updateState(stateOrCallback: EntityPartialUpdate<State>): void {
-    const currentState = this.getState();
-    const newState = isFunction(stateOrCallback) ? stateOrCallback(currentState) : stateOrCallback;
-    this.setState({ ...currentState, ...newState });
-  }
-
-  set(array: T[]): void {
-    array = array.map(entry => this.preAdd(entry));
-    this.updateState(state => ({ ...state, entities: state.entities.fromArray(array) }));
+  setEntities(array: T[]): void {
+    array = array.map(entry => this.preAddEntity(entry));
+    this.update(state => ({ ...state, entities: state.entities.fromArray(array) }));
   }
 
   add(entity: T): void;
@@ -123,15 +95,15 @@ export class EntityStore<
     } else {
       this.addOne(entityOrEntities);
     }
-    this.postAdd();
+    this.postAddEntity();
   }
 
   private addMany(entities: T[]): void {
     const newEntities = entities.map(entity => {
-      entity = this.preAdd(entity);
+      entity = this.preAddEntity(entity);
       return entity;
     });
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.setMany(newEntities),
@@ -140,8 +112,8 @@ export class EntityStore<
   }
 
   private addOne(entity: T): void {
-    const newEntity = this.preAdd(entity);
-    this.updateState(state => {
+    const newEntity = this.preAddEntity(entity);
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.set(this.idGetter(newEntity), newEntity),
@@ -159,7 +131,7 @@ export class EntityStore<
       ? (_, key) => idOrIdsOrCallback.includes(key)
       : (_, key) => key === idOrIdsOrCallback;
     const entities = this.getState().entities.filter(callback);
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.remove(idOrIdsOrCallback),
@@ -167,14 +139,14 @@ export class EntityStore<
       };
     });
     const entitiesRemoved = entities.values;
-    this.postRemove(entitiesRemoved);
+    this.postRemoveEntity(entitiesRemoved);
   }
 
-  update(id: S, partial: Partial<T>): void;
-  update(id: S, callback: EntityUpdate<T>): void;
-  update(predicate: EntityPredicate<T, S>, partial: Partial<T>): void;
-  update(predicate: EntityPredicate<T, S>, callback: EntityUpdate<T>): void;
-  update(idOrPredicate: S | EntityPredicate<T, S>, partialOrCallback: EntityPartialUpdate<T>): void {
+  updateEntity(id: S, partial: Partial<T>): void;
+  updateEntity(id: S, callback: EntityUpdate<T>): void;
+  updateEntity(predicate: EntityPredicate<T, S>, partial: Partial<T>): void;
+  updateEntity(predicate: EntityPredicate<T, S>, callback: EntityUpdate<T>): void;
+  updateEntity(idOrPredicate: S | EntityPredicate<T, S>, partialOrCallback: EntityPartialUpdate<T>): void {
     const updateCallback = isFunction(partialOrCallback)
       ? partialOrCallback
       : (entity: T) => this.merger(entity, partialOrCallback);
@@ -183,8 +155,8 @@ export class EntityStore<
       if (!entity) {
         return;
       }
-      const newEntity = this.preUpdate(updateCallback(entity));
-      this.updateState(state => {
+      const newEntity = this.preUpdateEntity(updateCallback(entity));
+      this.update(state => {
         return { ...state, entities: state.entities.update(idOrPredicate, newEntity) };
       });
     } else {
@@ -194,29 +166,29 @@ export class EntityStore<
       }
       let entities = entitiesMap.values;
       entities = entities.map(entity => {
-        return this.preUpdate(updateCallback(entity));
+        return this.preUpdateEntity(updateCallback(entity));
       });
-      this.updateState(state => {
+      this.update(state => {
         return {
           ...state,
           entities: state.entities.merge(entities),
         };
       });
     }
-    this.postUpdate();
+    this.postUpdateEntity();
   }
 
   upsert(entities: Array<T | Partial<T>>): void;
   upsert(key: S, entity: T | Partial<T>): void;
   upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): void {
     const newEntities = this.preUpsert(keyOrEntities, entity);
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.upsert(newEntities),
       };
     });
-    this.postUpsert();
+    this.postUpsertEntity();
   }
 
   private preUpsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): T[] {
@@ -224,10 +196,10 @@ export class EntityStore<
     if (isID(keyOrEntities)) {
       if (currentEntities.has(keyOrEntities)) {
         const entityStored = currentEntities.get(keyOrEntities)!;
-        const newEntity = this.preUpdate(this.merger(entityStored, entity as T));
+        const newEntity = this.preUpdateEntity(this.merger(entityStored, entity as T));
         return [newEntity];
       } else {
-        const newEntity = this.preAdd(entity as T);
+        const newEntity = this.preAddEntity(entity as T);
         return [newEntity];
       }
     } else {
@@ -238,10 +210,10 @@ export class EntityStore<
         }
         if (currentEntities.has(id)) {
           const currentEntity = currentEntities.get(id)!;
-          const updated = this.preUpdate(this.merger(currentEntity, item));
+          const updated = this.preUpdateEntity(this.merger(currentEntity, item));
           return [...acc, updated];
         } else {
-          const newEntity = this.preAdd(item as T);
+          const newEntity = this.preAddEntity(item as T);
           return [...acc, newEntity];
         }
       }, [] as T[]);
@@ -268,7 +240,7 @@ export class EntityStore<
   }
 
   setActive(idOrEntity: S | T | Array<S | T>): void {
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         activeKeys: this.formatActive(idOrEntity),
@@ -278,7 +250,7 @@ export class EntityStore<
 
   addActive(idOrEntity: S | T | Array<S | T>): void {
     const formatted = this.formatActive(idOrEntity);
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         activeKeys: this.createSet([...state.activeKeys, ...formatted]),
@@ -288,7 +260,7 @@ export class EntityStore<
 
   removeActive(idOrEntity: S | T | Array<S | T>): void {
     const formatted = this.formatActive(idOrEntity);
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         activeKeys: this.createSet([...state.activeKeys].filter(key => !formatted.has(key))),
@@ -311,7 +283,7 @@ export class EntityStore<
   }
 
   replace(id: S, entity: T): void {
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.set(id, entity),
@@ -320,7 +292,7 @@ export class EntityStore<
   }
 
   map(callback: EntityUpdateWithId<T, S>): void {
-    this.updateState(state => {
+    this.update(state => {
       return {
         ...state,
         entities: state.entities.map(callback),
@@ -328,31 +300,19 @@ export class EntityStore<
     });
   }
 
-  setLoading(loading: boolean): void {
-    this.updateState(state => ({ ...state, loading }));
-  }
-
-  setError(error: E | null): void {
-    this.updateState(state => ({ ...state, error }));
-  }
-
-  reset(): void {
-    this.setInitialState();
-  }
-
-  preAdd(entity: T): T {
+  preAddEntity(entity: T): T {
     return entity;
   }
 
-  postAdd(): void {}
+  postAddEntity(): void {}
 
-  preUpdate(entity: T): T {
+  preUpdateEntity(entity: T): T {
     return entity;
   }
 
-  postUpdate(): void {}
+  postUpdateEntity(): void {}
 
-  postUpsert(): void {}
+  postUpsertEntity(): void {}
 
-  postRemove(entitiesRemoved: T[]): void {}
+  postRemoveEntity(entitiesRemoved: T[]): void {}
 }
