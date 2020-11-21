@@ -1,10 +1,11 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { Component, Directive, Input, Self, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlGroup } from './control-group';
 import { ControlGroupNameDirective } from './control-group-name.directive';
 import { Control } from '../control/control';
 import { ControlNameDirective } from '../control/control-name.directive';
+import { ControlGroupDirective } from './control-group.directive';
 
 @Component({ template: '<div controlGroupName="not exists"></div>' })
 class WithoutParent {}
@@ -15,8 +16,11 @@ class WithoutChild {
 }
 
 @Component({
-  template:
-    '<div [controlGroup]="controlGroup"><div [controlGroupName]="controlGroupName" #groupRef="controlGroupName"><input controlName="control"></div></div>',
+  template: ` <div [controlGroup]="controlGroup">
+    <div [controlGroupName]="controlGroupName" #groupRef="controlGroupName">
+      <input controlName="control" />
+    </div>
+  </div>`,
 })
 class ChangeControlName {
   @ViewChild('groupRef') groupNameDirective!: ControlGroupNameDirective;
@@ -35,11 +39,34 @@ class ControlGroupNameNotGroup {
   controlGroup = new ControlGroup({ notGroup: new Control() });
 }
 
+@Directive({ selector: '[customDir]', exportAs: 'customDir' })
+class CustomDirective {
+  constructor(@Self() public controlGroupDirective: ControlGroupDirective) {}
+}
+
+@Component({
+  template:
+    '<div [controlGroup]="controlGroup"><div controlGroupName="controlGroup" customDir #customDir="customDir"><input controlName="control"></div></div>',
+})
+class CustomDirComponent {
+  @ViewChild('customDir') customDirective!: CustomDirective;
+  controlGroup = new ControlGroup<{ controlGroup: { control: string } }>({
+    controlGroup: new ControlGroup({ control: new Control() }),
+  });
+}
+
 describe('control group name directive', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [WithoutParent, WithoutChild, ChangeControlName, ControlGroupNameNotGroup],
+      declarations: [
+        WithoutParent,
+        WithoutChild,
+        ChangeControlName,
+        ControlGroupNameNotGroup,
+        CustomDirective,
+        CustomDirComponent,
+      ],
     }).compileComponents();
   });
 
@@ -78,5 +105,15 @@ describe('control group name directive', () => {
     fix.detectChanges();
     // @ts-ignore
     expect(fix.componentInstance.groupNameDirective).toBe(fix.componentInstance.controlNameDirective.controlParent);
+  });
+
+  it('should provide ControlGroupDirective', () => {
+    let customInputFixture: ComponentFixture<CustomDirComponent>;
+    customInputFixture = TestBed.createComponent(CustomDirComponent);
+    customInputFixture.detectChanges();
+    expect(customInputFixture.componentInstance.customDirective.controlGroupDirective).toBeDefined();
+    expect(customInputFixture.componentInstance.customDirective.controlGroupDirective).toBeInstanceOf(
+      ControlGroupDirective
+    );
   });
 });

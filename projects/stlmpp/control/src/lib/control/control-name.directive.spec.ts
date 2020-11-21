@@ -1,9 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Directive, Input, Self, ViewChild } from '@angular/core';
 import { Control } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlNameDirective } from './control-name.directive';
 import { ControlGroup } from '../control-group/control-group';
+import { ControlDirective } from './control.directive';
 
 @Component({
   template:
@@ -23,6 +24,20 @@ class ControlNameNotControl {
   controlGroup = new ControlGroup({ notControl: new ControlGroup({}) });
 }
 
+@Directive({ selector: '[customInput]', exportAs: 'customInput' })
+class CustomInputDirective {
+  constructor(@Self() public controlDirective: ControlDirective) {}
+}
+
+@Component({
+  template:
+    '<div [controlGroup]="controlGroup"><input controlName="control" customInput #customInput="customInput"></div>',
+})
+class CustomInputComponent {
+  @ViewChild('customInput') customInput!: CustomInputDirective;
+  controlGroup = new ControlGroup({ control: new Control() });
+}
+
 describe('control name', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -30,7 +45,13 @@ describe('control name', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent, ControlWithoutParent, ControlNameNotControl],
+      declarations: [
+        ControlComponent,
+        ControlWithoutParent,
+        ControlNameNotControl,
+        CustomInputDirective,
+        CustomInputComponent,
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -61,5 +82,13 @@ describe('control name', () => {
     expect(() => {
       TestBed.createComponent(ControlNameNotControl).detectChanges();
     }).toThrow();
+  });
+
+  it('should provide ControlDirective', () => {
+    let customInputFixture: ComponentFixture<CustomInputComponent>;
+    customInputFixture = TestBed.createComponent(CustomInputComponent);
+    customInputFixture.detectChanges();
+    expect(customInputFixture.componentInstance.customInput.controlDirective).toBeDefined();
+    expect(customInputFixture.componentInstance.customInput.controlDirective).toBeInstanceOf(ControlNameDirective);
   });
 });
