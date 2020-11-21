@@ -23,7 +23,10 @@ import { ControlChild } from '../control-child';
 @Directive({
   selector: '[controlName]',
   exportAs: 'controlName',
-  providers: [{ provide: ControlChild, useExisting: forwardRef(() => ControlNameDirective) }],
+  providers: [
+    { provide: ControlChild, useExisting: forwardRef(() => ControlNameDirective) },
+    { provide: ControlDirective, useExisting: forwardRef(() => ControlNameDirective) },
+  ],
 })
 export class ControlNameDirective<T = any> extends ControlDirective<T> implements OnInit {
   constructor(

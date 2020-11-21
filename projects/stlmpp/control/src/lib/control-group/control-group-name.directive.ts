@@ -11,6 +11,7 @@ import { ControlChild } from '../control-child';
   providers: [
     { provide: ControlParent, useExisting: forwardRef(() => ControlGroupNameDirective) },
     { provide: ControlChild, useExisting: forwardRef(() => ControlGroupNameDirective) },
+    { provide: ControlGroupDirective, useExisting: forwardRef(() => ControlGroupNameDirective) },
   ],
 })
 export class ControlGroupNameDirective<T = any> extends ControlGroupDirective<T> implements OnInit {
