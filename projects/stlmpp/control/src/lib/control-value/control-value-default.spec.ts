@@ -10,6 +10,12 @@ class ControlComponent {
   control = new Control();
 }
 
+@Component({ template: '<input [type]="type" [control]="control">' })
+class ControlTypeDynamicComponent {
+  control = new Control();
+  type = 'password';
+}
+
 describe('control value text', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -18,7 +24,7 @@ describe('control value text', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ControlTypeDynamicComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -31,5 +37,11 @@ describe('control value text', () => {
     triggerEvent(input, 'blur');
     fixture.detectChanges();
     expect(component.control.value).toBe('12');
+  });
+
+  it('should work with dynamic type', () => {
+    expect(() => {
+      TestBed.createComponent(ControlTypeDynamicComponent).detectChanges();
+    }).not.toThrow();
   });
 });

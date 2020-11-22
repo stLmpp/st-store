@@ -18,7 +18,7 @@ import { ControlValueCheckbox } from './control-value/control-value-checkbox';
 import { ControlValueSelectMultiple } from './control-value/control-value-select-multiple';
 import { ControlValueColor } from './control-value/control-value-color';
 import { ControlValueNumber } from './control-value/control-value-number';
-import { ControlValueText } from './control-value/control-value-text';
+import { ControlValueDefault } from './control-value/control-value-default';
 import { ControlValueSelect } from './control-value/control-value-select';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { ControlValueSelect } from './control-value/control-value-select';
     ControlValueSelect,
     ControlValueSelectMultiple,
     ControlValueSelectOption,
-    ControlValueText,
+    ControlValueDefault,
     FormSubmitDirective,
   ],
   exports: [
@@ -63,7 +63,7 @@ import { ControlValueSelect } from './control-value/control-value-select';
     ControlValueSelect,
     ControlValueSelectMultiple,
     ControlValueSelectOption,
-    ControlValueText,
+    ControlValueDefault,
     FormSubmitDirective,
   ],
 })

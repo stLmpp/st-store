@@ -35,7 +35,7 @@ export { ControlValueRadioStandalone } from './lib/control-value/control-value-r
 export { ControlValueSelect } from './lib/control-value/control-value-select';
 export { ControlValueSelectMultiple } from './lib/control-value/control-value-select-multiple';
 export { ControlValueSelectOption } from './lib/control-value/control-value-select-option';
-export { ControlValueText } from './lib/control-value/control-value-text';
+export { ControlValueDefault } from './lib/control-value/control-value-default';
 
 export { BetweenValidator, BetweenError } from './lib/validator/between';
 export { ComposeValidator } from './lib/validator/compose';
