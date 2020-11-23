@@ -54,7 +54,11 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
     this._destroy$.next();
     this.attrDiffer = this.keyValueDiffers.find({}).create();
     this.classesDiffer = this.iterableDiffers.find([]).create();
-    let valueStored: T | null | undefined;
+    for (const controlValue of this.controlValues) {
+      controlValue.setValue(this.control.value);
+    }
+    let valueStored: T | null | undefined = this.control.value;
+    let lastValueControlValue = false;
     for (const controlValue of this.controlValues) {
       controlValue.onChange$.pipe(takeUntil(this._destroy$)).subscribe(value => {
         if (this.control.updateOn === 'change') {
@@ -62,9 +66,10 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
             this.control.markAsDirty();
           }
           this.control.markAsTouched();
-          this.control.setValue(value);
+          this.control.setValue(value, { __emit__value$: false });
         } else {
           valueStored = value;
+          lastValueControlValue = true;
         }
       });
       controlValue.onTouched$.pipe(takeUntil(this._destroy$)).subscribe(() => {
@@ -73,7 +78,7 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
           if (!isEmptyValue(valueStored)) {
             this.control.markAsDirty();
           }
-          this.control.setValue(valueStored);
+          this.control.setValue(valueStored, { __emit__value$: false });
         }
       });
     }
@@ -86,14 +91,14 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
         if (!isEmptyValue(valueStored)) {
           this.control.markAsDirty();
         }
-        this.control.setValue(valueStored);
+        this.control.setValue(valueStored, { __emit__value$: !lastValueControlValue });
       });
-    this.control.value$.pipe(takeUntil(this._destroy$)).subscribe(value => {
+    this.control.__value$.pipe(takeUntil(this._destroy$)).subscribe(value => {
       for (const controlValue of this.controlValues) {
         controlValue.setValue(value);
       }
       valueStored = value;
-      this.control.runValidators();
+      lastValueControlValue = false;
     });
     this.control.disabledChanged$.pipe(takeUntil(this._destroy$)).subscribe(() => {
       for (const controlValue of this.controlValues) {

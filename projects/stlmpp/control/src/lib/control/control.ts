@@ -16,10 +16,12 @@ export interface ControlOptions<T = any> extends AbstractControlOptions {
 
 export interface ControlUpdateOptions {
   emitChange?: boolean;
+  /** @internal */
+  __emit__value$?: boolean;
 }
 
 function controlUpdateOptions(options?: ControlUpdateOptions): ControlUpdateOptions {
-  return { emitChange: true, ...options };
+  return { emitChange: true, __emit__value$: true, ...options };
 }
 
 function isControlValidator(value: ControlOptions | ControlValidator | undefined): value is ControlValidator {
@@ -63,6 +65,7 @@ export class Control<T = any> implements AbstractControl<T> {
     }
     this.setInitialValidators(this._initialOptions.validators);
     this._value$ = new BehaviorSubject<T | null | undefined>(value);
+    this.__value$.next(value);
     this.value$ = this._value$.asObservable();
     this._valueChanges$.next(value);
   }
@@ -90,6 +93,9 @@ export class Control<T = any> implements AbstractControl<T> {
   readonly value$: Observable<T | null | undefined>;
   private readonly _valueChanges$ = new Subject<T | null | undefined>();
   readonly valueChanges$ = this._valueChanges$.asObservable();
+
+  /** @internal */
+  readonly __value$ = new Subject<T | null | undefined>();
 
   private readonly _attributesChanged$ = new Subject<Record<string, string>>();
   private readonly _classesChanged$ = new Subject<string[]>();
@@ -188,6 +194,7 @@ export class Control<T = any> implements AbstractControl<T> {
     if (this._initialOptions.disabled) {
       this.disable(this._initialOptions.disabled);
     }
+    this.runValidators();
   }
 
   /** @internal */
@@ -326,11 +333,15 @@ export class Control<T = any> implements AbstractControl<T> {
     if (options.emitChange) {
       this._valueChanges$.next(value);
     }
+    if (options.__emit__value$) {
+      this.__value$.next(value);
+    }
   }
 
   setValue(value: T | null | undefined, options?: ControlUpdateOptions): void {
     this._value$.next(value);
     this._emitChange(value, options);
+    this.runValidators();
   }
 
   patchValue(value: T | null | undefined, options?: ControlUpdateOptions): void {
