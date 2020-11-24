@@ -1,5 +1,6 @@
 import {
   coerceArray,
+  coerceBooleanProperty,
   idGetterFactory,
   isArray,
   isDate,
@@ -183,5 +184,12 @@ describe('Util', () => {
   it('should coerce the array', () => {
     expect(coerceArray('')).toEqual(['']);
     expect(coerceArray([''])).toEqual(['']);
+  });
+
+  it('should coerce boolean property', () => {
+    expect(coerceBooleanProperty(null)).toBeFalse();
+    expect(coerceBooleanProperty(undefined)).toBeFalse();
+    expect(coerceBooleanProperty('')).toBeTrue();
+    expect(coerceBooleanProperty('false')).toBeFalse();
   });
 });
