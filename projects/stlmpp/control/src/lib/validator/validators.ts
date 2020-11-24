@@ -1,20 +1,20 @@
-import { RequiredValidator } from './required';
-import { LengthValidationError, MaxLengthValidator } from './max-length';
-import { MinLengthValidator } from './min-length';
-import { MaxMinValidationError, MaxValidator } from './max';
-import { MinValidator } from './min';
-import { EmailValidator } from './email';
-import { PatternValidationError, PatternValidator } from './pattern';
+import { RequiredValidator } from './required/required';
+import { LengthValidationError, MaxLengthValidator } from './length/max-length';
+import { MinLengthValidator } from './length/min-length';
+import { MaxMinValidationError, MaxValidator } from './max-min/max';
+import { MinValidator } from './max-min/min';
+import { EmailValidator } from './pattern/email';
+import { PatternValidationError, PatternValidator } from './pattern/pattern';
 import { ControlValidator } from './validator';
-import { ComposeValidator } from './compose';
-import { ComposeAsyncValidator } from './compose-async';
-import { ContainsValidator } from './contains';
-import { SibblingEqualsValidator, SibblingEqualsValidationError } from './sibbling-equals';
-import { UrlValidator } from './url';
-import { GreaterValidationError, GreaterValidator } from './greater';
-import { LesserValidationError, LesserValidator } from './lesser';
-import { BetweenValidator } from './between';
-import { RequiredTrueValidator } from './required-true';
+import { ComposeValidator } from './compose/compose';
+import { ComposeAsyncValidator } from './compose/compose-async';
+import { ContainsValidator } from './contains/contains';
+import { SibblingEqualsValidator, SibblingEqualsValidationError } from './other/sibbling-equals';
+import { UrlValidator } from './pattern/url';
+import { GreaterValidationError, GreaterValidator } from './greater-lesser/greater';
+import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';
+import { BetweenValidator } from './between/between';
+import { RequiredTrueValidator } from './required/required-true';
 
 // @dynamic
 export class Validators {

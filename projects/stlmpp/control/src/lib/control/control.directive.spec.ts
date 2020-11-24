@@ -172,7 +172,7 @@ describe('control directive', () => {
   });
 
   it('should change the attribute of validators (if equals)', () => {
-    class NewRequiredValidator implements ControlValidator {
+    class NewRequiredValidator extends ControlValidator {
       name = 'newRequired';
       attrs = { required: 'required' };
       validate(): null {
@@ -193,7 +193,7 @@ describe('control directive', () => {
   });
 
   it('should remove classes if validator is removed', () => {
-    class ClassValidator implements ControlValidator {
+    class ClassValidator extends ControlValidator {
       name = 'classValidator';
       classes = ['a'];
       validate(): null {

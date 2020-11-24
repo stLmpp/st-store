@@ -3,7 +3,6 @@ import {
   Directive,
   ElementRef,
   Inject,
-  Input,
   IterableDiffer,
   IterableDiffers,
   KeyValueDiffer,
@@ -15,24 +14,24 @@ import {
   Self,
   SimpleChanges,
 } from '@angular/core';
+import { AbstractControlDirective } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValueNotFound } from '../error';
+import { coerceArray, isNil } from '@stlmpp/utils';
 import { Subject } from 'rxjs';
+import { Control } from './control';
 import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
-import { Control } from './control';
-import { AbstractControlDirective } from '../abstract-control';
-import { coerceArray, isNil } from '@stlmpp/utils';
 
-@Directive({ selector: '[control]' })
-export class ControlDirective<T = any> extends AbstractControlDirective implements OnDestroy, OnChanges {
+@Directive()
+export abstract class BaseControlDirective<T = any> extends AbstractControlDirective implements OnDestroy, OnChanges {
   constructor(
     private elementRef: ElementRef,
     private renderer2: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     private keyValueDiffers: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
-    @Self() @Optional() @Inject(ControlValue) controlValues?: ControlValue | ControlValue[]
+    @Self() @Optional() @Inject(ControlValue) controlValues?: ControlValue<T> | ControlValue<T>[]
   ) {
     super();
     if (!controlValues) {
@@ -44,11 +43,11 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
   private attrDiffer!: KeyValueDiffer<string, string>;
   private classesDiffer!: IterableDiffer<string>;
 
-  private readonly controlValues: ControlValue[];
+  private readonly controlValues: ControlValue<T>[];
 
-  private _destroy$ = new Subject();
+  protected _destroy$ = new Subject();
 
-  @Input() control!: Control<T>;
+  control!: Control<T>;
 
   protected init(): void {
     this._destroy$.next();
@@ -58,7 +57,7 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
       controlValue.setValue(this.control.value);
     }
     let valueStored: T | null | undefined = this.control.value;
-    let lastValueControlValue = false;
+    let lastValueSetByControlValue = false;
     for (const controlValue of this.controlValues) {
       controlValue.onChange$.pipe(takeUntil(this._destroy$)).subscribe(value => {
         if (this.control.updateOn === 'change') {
@@ -69,7 +68,7 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
           this.control.setValue(value, { __emit__value$: false });
         } else {
           valueStored = value;
-          lastValueControlValue = true;
+          lastValueSetByControlValue = true;
         }
       });
       controlValue.onTouched$.pipe(takeUntil(this._destroy$)).subscribe(() => {
@@ -91,14 +90,14 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
         if (!isEmptyValue(valueStored)) {
           this.control.markAsDirty();
         }
-        this.control.setValue(valueStored, { __emit__value$: !lastValueControlValue });
+        this.control.setValue(valueStored, { __emit__value$: !lastValueSetByControlValue });
       });
     this.control.__value$.pipe(takeUntil(this._destroy$)).subscribe(value => {
       for (const controlValue of this.controlValues) {
         controlValue.setValue(value);
       }
       valueStored = value;
-      lastValueControlValue = false;
+      lastValueSetByControlValue = false;
     });
     this.control.disabledChanged$.pipe(takeUntil(this._destroy$)).subscribe(() => {
       for (const controlValue of this.controlValues) {
@@ -153,3 +152,6 @@ export class ControlDirective<T = any> extends AbstractControlDirective implemen
     this._destroy$.complete();
   }
 }
+
+@Directive({ selector: '[control]', inputs: ['control'] })
+export class ControlDirective<T = any> extends BaseControlDirective<T> {}
