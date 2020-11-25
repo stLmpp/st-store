@@ -22,9 +22,6 @@ export abstract class AbstractMaxLengthValidator<T extends string | any[] = any>
     this._maxLength = maxLength;
     this.attrs = { maxLength };
   }
-  get maxLength(): number {
-    return this._maxLength;
-  }
   private _maxLength!: number;
 
   name = 'maxLength';

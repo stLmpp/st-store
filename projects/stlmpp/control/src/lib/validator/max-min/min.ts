@@ -12,7 +12,7 @@ export abstract class AbstractMinValidator<T extends Date | number> extends Cont
 > {
   @HostBinding('attr.min')
   get minAttr(): string {
-    return this.attrs.min ? '' + this.attrs.min : '';
+    return '' + this.attrs.min;
   }
 
   @Input()

@@ -3,7 +3,7 @@ import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
-  selector: 'input[type=radio][control],input[type=radio][controlName]',
+  selector: 'input[type=radio][control],input[type=radio][controlName],input[type=radio][model]',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueRadioStandalone), multi: true }],
 })
 export class ControlValueRadioStandalone extends AbstractControlValue {

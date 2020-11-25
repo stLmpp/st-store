@@ -3,7 +3,7 @@ import { ControlValue } from './control-value';
 import { ControlValueDefault } from './control-value-default';
 
 @Directive({
-  selector: 'input[type=color][control],input[type=color][controlName]',
+  selector: 'input[type=color][control],input[type=color][controlName],input[type=color][model]',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueColor), multi: true }],
 })
 export class ControlValueColor extends ControlValueDefault implements AfterViewInit {

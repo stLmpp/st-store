@@ -1,9 +1,15 @@
 import { AbstractRequiredTrueValidator } from './required-true';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
 import { Control } from '../../control/control';
+import { ControlValidator } from '../validator';
 
-@Directive({ selector: '[model][requiredTrue]:not([control]):not([controlName])' })
+@Directive({
+  selector: '[model][requiredTrue]:not([control]):not([controlName])',
+  providers: [
+    { provide: ControlValidator, useExisting: forwardRef(() => RequiredTrueValidatorDirective), multi: true },
+  ],
+})
 export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidator {
   static ngAcceptInputType_requiredTrue: BooleanInput;
 

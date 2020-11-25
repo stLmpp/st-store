@@ -18,9 +18,6 @@ export abstract class AbstractMinLengthValidator<T extends string | any[] = any>
     this._minLength = minLength;
     this.attrs = { minLength };
   }
-  get minLength(): number {
-    return this._minLength;
-  }
   private _minLength!: number;
 
   name = 'minLength';

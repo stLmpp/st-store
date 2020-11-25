@@ -27,7 +27,7 @@ export abstract class AbstractMaxValidator<T extends Date | number> extends Cont
 > {
   @HostBinding('attr.max')
   get maxAttr(): string {
-    return this.attrs.max ? '' + this.attrs.max : '';
+    return '' + this.attrs.max;
   }
 
   @Input()

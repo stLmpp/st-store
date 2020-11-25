@@ -10,7 +10,7 @@ export abstract class AbstractContainsValidators<
 > extends ControlValidator<T, boolean> {
   name = 'contains';
 
-  @Input() contains!: U;
+  @Input() contains!: string | U;
   @Input() compareWith: (valueA: U, valueB: U) => boolean = Object.is;
 
   validate({ value }: Control<T>): boolean | null {
@@ -18,7 +18,7 @@ export abstract class AbstractContainsValidators<
       return null;
     }
     if (isArray(value)) {
-      return !value.some(v => this.compareWith(v, this.contains)) || null;
+      return !value.some(v => this.compareWith(v, this.contains as any)) || null;
     } else {
       return !value.includes(this.contains as any) || null;
     }

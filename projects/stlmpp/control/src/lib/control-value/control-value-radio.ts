@@ -1,14 +1,4 @@
-import {
-  AfterViewInit,
-  Directive,
-  ElementRef,
-  Host,
-  HostListener,
-  Input,
-  OnDestroy,
-  Optional,
-  Renderer2,
-} from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Host, Input, OnDestroy, Optional, Renderer2 } from '@angular/core';
 import { ControlValueRadioParent } from './control-value-radio-parent';
 
 @Directive({
@@ -24,6 +14,7 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
   @Input() value: any;
 
   private changeListener?: () => void;
+  private touchedListener?: () => void;
 
   private onChange($event: Event): void {
     const target = $event.target as HTMLInputElement;
@@ -32,8 +23,7 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('blur')
-  onBlur(): void {
+  private onBlur(): void {
     this.controlValueRadioStandaloneParent?.onTouched$.next();
   }
 
@@ -42,6 +32,9 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
       this.changeListener = this.renderer2.listen(this.elementRef.nativeElement, 'change', ($event: Event) =>
         this.onChange($event)
       );
+      this.touchedListener = this.renderer2.listen(this.elementRef.nativeElement, 'blur', () => {
+        this.onBlur();
+      });
       this.renderer2.setAttribute(
         this.elementRef.nativeElement,
         'name',
