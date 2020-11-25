@@ -45,5 +45,6 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.changeListener?.();
+    this.touchedListener?.();
   }
 }
