@@ -9,7 +9,7 @@ import { ControlValidator } from '../validator';
   providers: [{ provide: ControlValidator, useExisting: forwardRef(() => EmailValidatorDirective), multi: true }],
 })
 export class EmailValidatorDirective extends AbstractEmailValidator {
-  static ngAcceptBooleanInput: BooleanInput;
+  static ngAcceptInputType_email: BooleanInput;
 
   @HostBinding('attr.email')
   get emailAttr(): string | null {
