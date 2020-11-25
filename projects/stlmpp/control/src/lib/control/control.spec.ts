@@ -161,14 +161,14 @@ describe('control', () => {
   });
 
   it('should send classes of validators', () => {
-    class CustomValidator implements ControlValidator {
+    class CustomValidator extends ControlValidator {
       name = 'custom';
       classes = ['validator', 'validator2'];
       validate(): null {
         return null;
       }
     }
-    class CustomValidatorTwo implements ControlValidator {
+    class CustomValidatorTwo extends ControlValidator {
       name = 'custom2';
       classes = 'validator3';
       validate(): null {
@@ -442,5 +442,4 @@ describe('control', () => {
     fixture.detectChanges();
     expect(sub).toHaveBeenCalledWith(false);
   });
-
 });

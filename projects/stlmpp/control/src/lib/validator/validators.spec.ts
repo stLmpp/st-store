@@ -1,21 +1,21 @@
 import { Validators } from './validators';
-import { RequiredValidator } from './required';
+import { RequiredValidator } from './required/required';
 import { AsyncValidator } from '../util-tests';
-import { RequiredTrueValidator } from './required-true';
-import { BetweenValidator } from './between';
-import { LesserValidator } from './lesser';
-import { GreaterValidator } from './greater';
-import { UrlValidator } from './url';
-import { MaxLengthValidator } from './max-length';
-import { MinLengthValidator } from './min-length';
-import { MaxValidator } from './max';
-import { MinValidator } from './min';
-import { EmailValidator } from './email';
-import { PatternValidator } from './pattern';
-import { ComposeValidator } from './compose';
-import { ComposeAsyncValidator } from './compose-async';
-import { ContainsValidator } from './contains';
-import { SibblingEqualsValidator } from './sibbling-equals';
+import { RequiredTrueValidator } from './required/required-true';
+import { BetweenValidator } from './between/between';
+import { LesserValidator } from './greater-lesser/lesser';
+import { GreaterValidator } from './greater-lesser/greater';
+import { UrlValidator } from './pattern/url';
+import { MaxLengthValidator } from './length/max-length';
+import { MinLengthValidator } from './length/min-length';
+import { MaxValidator } from './max-min/max';
+import { MinValidator } from './max-min/min';
+import { EmailValidator } from './pattern/email';
+import { PatternValidator } from './pattern/pattern';
+import { ComposeValidator } from './compose/compose';
+import { ComposeAsyncValidator } from './compose/compose-async';
+import { ContainsValidator } from './contains/contains';
+import { SibblingEqualsValidator } from './other/sibbling-equals';
 
 describe('validators', () => {
   it('should return required validator', () => {

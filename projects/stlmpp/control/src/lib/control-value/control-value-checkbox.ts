@@ -3,7 +3,7 @@ import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
-  selector: 'input[type=checkbox][control],input[type=checkbox][controlName]',
+  selector: 'input[type=checkbox][control],input[type=checkbox][controlName],input[type=checkbox][model]',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueCheckbox), multi: true }],
 })
 export class ControlValueCheckbox extends AbstractControlValue<boolean> {

@@ -101,8 +101,11 @@ const transformer: Record<
 export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'datetime-local';
 
 @Directive({
-  selector:
-    'input[type=datetime-local][control],input[type=datetime-local][controlName],input[type=date][control],input[type=date][controlName],input[type=week][control],input[type=week][controlName],input[type=time][control],input[type=time][controlName],input[type=month][control],input[type=month][controlName]',
+  selector: `input[type=datetime-local][control],input[type=datetime-local][controlName],input[type=datetime-local][model],
+    input[type=date][control],input[type=date][controlName],input[type=date][model],
+    input[type=week][control],input[type=week][controlName],input[type=week][model],
+    input[type=time][control],input[type=time][controlName],input[type=time][model],
+    input[type=month][control],input[type=month][controlName],input[type=month][model]`,
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDate), multi: true }],
 })
 export class ControlValueDate extends AbstractControlValue<string | Date> {

@@ -14,7 +14,7 @@ import { ControlValueSelectOption } from './control-value-select-option';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
-  selector: 'select[multiple][control],select[multiple][controlName]',
+  selector: 'select[multiple][control],select[multiple][controlName],select[multiple][model]',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelectMultiple), multi: true }],
 })
 export class ControlValueSelectMultiple extends AbstractControlValue<any[]> implements AfterContentInit {

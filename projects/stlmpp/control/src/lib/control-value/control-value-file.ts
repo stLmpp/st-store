@@ -4,7 +4,7 @@ import { isNil } from '@stlmpp/utils';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
-  selector: 'input[type=file][control],input[type=file][controlName]',
+  selector: 'input[type=file][control],input[type=file][controlName],input[type=file][model]',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueFile), multi: true }],
 })
 export class ControlValueFile extends AbstractControlValue<FileList> {

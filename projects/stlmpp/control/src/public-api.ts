@@ -37,24 +37,40 @@ export { ControlValueSelectMultiple } from './lib/control-value/control-value-se
 export { ControlValueSelectOption } from './lib/control-value/control-value-select-option';
 export { ControlValueDefault } from './lib/control-value/control-value-default';
 
-export { BetweenValidator, BetweenError } from './lib/validator/between';
-export { ComposeValidator } from './lib/validator/compose';
-export { ComposeAsyncValidator } from './lib/validator/compose-async';
-export { ContainsValidator } from './lib/validator/contains';
-export { EmailValidator } from './lib/validator/email';
-export { GreaterValidationError, GreaterValidator } from './lib/validator/greater';
-export { LesserValidationError, LesserValidator } from './lib/validator/lesser';
-export { MaxMinValidationError, MaxValidator } from './lib/validator/max';
-export { LengthValidationError, MaxLengthValidator } from './lib/validator/max-length';
-export { MinValidator } from './lib/validator/min';
-export { MinLengthValidator } from './lib/validator/min-length';
-export { PatternValidationError, PatternValidator } from './lib/validator/pattern';
-export { RequiredValidator } from './lib/validator/required';
-export { RequiredTrueValidator } from './lib/validator/required-true';
-export { SibblingEqualsValidationError, SibblingEqualsValidator } from './lib/validator/sibbling-equals';
-export { UrlValidator } from './lib/validator/url';
+export { BetweenValidator, BetweenError } from './lib/validator/between/between';
+export { ComposeValidator } from './lib/validator/compose/compose';
+export { ComposeAsyncValidator } from './lib/validator/compose/compose-async';
+export { ContainsValidator } from './lib/validator/contains/contains';
+export { EmailValidator } from './lib/validator/pattern/email';
+export { GreaterValidationError, GreaterValidator } from './lib/validator/greater-lesser/greater';
+export { LesserValidationError, LesserValidator } from './lib/validator/greater-lesser/lesser';
+export { MaxMinValidationError, MaxValidator } from './lib/validator/max-min/max';
+export { LengthValidationError, MaxLengthValidator } from './lib/validator/length/max-length';
+export { MinValidator } from './lib/validator/max-min/min';
+export { MinLengthValidator } from './lib/validator/length/min-length';
+export { PatternValidationError, PatternValidator } from './lib/validator/pattern/pattern';
+export { RequiredValidator } from './lib/validator/required/required';
+export { RequiredTrueValidator } from './lib/validator/required/required-true';
+export { SibblingEqualsValidationError, SibblingEqualsValidator } from './lib/validator/other/sibbling-equals';
+export { UrlValidator } from './lib/validator/pattern/url';
 export { ControlValidator, ControlValidatorAttributes } from './lib/validator/validator';
 export { Validators, ValidatorsModel } from './lib/validator/validators';
+
+export { BetweenValidatorDirective } from './lib/validator/between/between.directive';
+export { ContainsValidatorDirective } from './lib/validator/contains/contains.directive';
+export { EmailValidatorDirective } from './lib/validator/pattern/email.directive';
+export { GreaterValidatorDirective } from './lib/validator/greater-lesser/greater.directive';
+export { LesserValidatorDirective } from './lib/validator/greater-lesser/lesser.directive';
+export { MaxValidatorDirective } from './lib/validator/max-min/max.directive';
+export { MaxLengthValidatorDirective } from './lib/validator/length/max-length.directive';
+export { MinValidatorDirective } from './lib/validator/max-min/min.directive';
+export { MinLengthValidatorDirective } from './lib/validator/length/min-length.directive';
+export { PatternValidatorDirective } from './lib/validator/pattern/pattern.directive';
+export { RequiredValidatorDirective } from './lib/validator/required/required.directive';
+export { RequiredTrueValidatorDirective } from './lib/validator/required/required-true.directive';
+export { UrlValidatorDirective } from './lib/validator/pattern/url.directive';
+
+export { ModelDirective, ModelOptions } from './lib/model/model.directive';
 
 export {
   ControlBuilder,

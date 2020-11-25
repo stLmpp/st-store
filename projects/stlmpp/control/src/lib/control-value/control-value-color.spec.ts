@@ -10,6 +10,11 @@ class ControlComponent {
   control = new Control();
 }
 
+@Component({ template: '<input type="color" [(model)]="model">' })
+class ModelComponent {
+  model = '';
+}
+
 describe('control value color', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -18,7 +23,7 @@ describe('control value color', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -29,5 +34,11 @@ describe('control value color', () => {
   it('should set value if any', async () => {
     await wait(10);
     expect(component.control.value).toBeDefined();
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

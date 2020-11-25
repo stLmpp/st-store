@@ -9,6 +9,11 @@ class ControlComponent {
   control = new Control<FileList>();
 }
 
+@Component({ template: '<input type="file" [(model)]="model">' })
+class ModelComponent {
+  model = null;
+}
+
 describe('control value file', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -17,7 +22,7 @@ describe('control value file', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -35,5 +40,11 @@ describe('control value file', () => {
     component.control.setValue('TESTE' as any);
     fixture.detectChanges();
     expect(input.nativeElement.value).toBe('');
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

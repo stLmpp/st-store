@@ -22,8 +22,10 @@ export function triggerEvent(input: DebugElement, event: string, value?: any, pr
   input.triggerEventHandler(event, { target: input.nativeElement });
 }
 
-export class AsyncValidator implements ControlValidator {
-  constructor(private result: any = true, private throwError = false) {}
+export class AsyncValidator extends ControlValidator {
+  constructor(private result: any = true, private throwError = false) {
+    super();
+  }
 
   name = 'asyncValidator';
   async = true;
