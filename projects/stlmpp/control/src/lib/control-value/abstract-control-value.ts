@@ -3,7 +3,7 @@ import { ControlValue } from './control-value';
 
 @Directive()
 export abstract class AbstractControlValue<T = any> extends ControlValue<T> {
-  protected constructor(protected renderer2: Renderer2, protected elementRef: ElementRef) {
+  constructor(protected renderer2: Renderer2, protected elementRef: ElementRef) {
     super();
   }
 

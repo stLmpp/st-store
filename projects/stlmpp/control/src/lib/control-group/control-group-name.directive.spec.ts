@@ -1,5 +1,5 @@
 import { Component, Directive, Input, Self, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlGroup } from './control-group';
 import { ControlGroupNameDirective } from './control-group-name.directive';
@@ -45,8 +45,11 @@ class CustomDirective {
 }
 
 @Component({
-  template:
-    '<div [controlGroup]="controlGroup"><div controlGroupName="controlGroup" customDir #customDir="customDir"><input controlName="control"></div></div>',
+  template: ` <div [controlGroup]="controlGroup">
+    <div controlGroupName="controlGroup" customDir #customDir="customDir">
+      <input controlName="control" />
+    </div>
+  </div>`,
 })
 class CustomDirComponent {
   @ViewChild('customDir') customDirective!: CustomDirective;
@@ -108,8 +111,7 @@ describe('control group name directive', () => {
   });
 
   it('should provide ControlGroupDirective', () => {
-    let customInputFixture: ComponentFixture<CustomDirComponent>;
-    customInputFixture = TestBed.createComponent(CustomDirComponent);
+    const customInputFixture = TestBed.createComponent(CustomDirComponent);
     customInputFixture.detectChanges();
     expect(customInputFixture.componentInstance.customDirective.controlGroupDirective).toBeDefined();
     expect(customInputFixture.componentInstance.customDirective.controlGroupDirective).toBeInstanceOf(

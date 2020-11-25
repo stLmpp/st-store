@@ -150,9 +150,9 @@ describe('control error', () => {
     const fix = TestBed.createComponent(ControlWithName);
     fix.detectChanges();
     // @ts-ignore
-    expect(fix.componentInstance.controlErrorDirective.control).toBeDefined();
+    expect(fix.componentInstance.controlErrorDirective._control).toBeDefined();
     // @ts-ignore
-    expect(fix.componentInstance.controlErrorDirective.control).toBeInstanceOf(Control);
+    expect(fix.componentInstance.controlErrorDirective._control).toBeInstanceOf(Control);
   });
 
   it('should clear errors when control is reseted', () => {

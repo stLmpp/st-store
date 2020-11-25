@@ -6,7 +6,7 @@ describe('StMap', () => {
     { id: 1, name: 'Guilherme' },
     { id: 2, name: 'Teste' },
   ];
-  const idGetter = (entity: IdName) => entity.id;
+  const idGetter = (entity: IdName): number => entity.id;
   let map: StMap<IdName>;
 
   beforeEach(() => {
@@ -134,18 +134,15 @@ describe('StMap', () => {
   });
 
   it('should reduce', () => {
-    const reduced1 = map.reduce((acc, [key, value]) => {
-      return {
+    const reduced1 = map.reduce(
+      (acc, [key, value]) => ({
         ...acc,
         [key]: value,
-      };
-    }, {});
-    const reduced2 = map.reduce((acc, [key, value]) => {
-      return acc + value.id;
-    }, 0);
-    const reduced3 = map.reduce((acc, [key]) => {
-      return [...acc, key];
-    }, [] as number[]);
+      }),
+      {}
+    );
+    const reduced2 = map.reduce((acc, [key, value]) => acc + value.id, 0);
+    const reduced3 = map.reduce((acc, [key]) => [...acc, key], [] as number[]);
     expect(reduced1).toBeDefined();
     expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
     expect(reduced2).toBeDefined();

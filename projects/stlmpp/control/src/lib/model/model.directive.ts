@@ -42,6 +42,7 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
   }
 
   private readonly _controlValidators: ControlValidator<T>[] = [];
+  private _updateOn: ControlUpdateOn = 'change';
 
   @Input()
   set model(value: T | null | undefined) {
@@ -57,7 +58,6 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
     this.control?.setUpdateOn(updateOn);
     this._updateOn = updateOn;
   }
-  private _updateOn: ControlUpdateOn = 'change';
 
   ngOnInit(): void {
     this.control = new Control<T>(this._model, { updateOn: this._updateOn, validators: this._controlValidators });

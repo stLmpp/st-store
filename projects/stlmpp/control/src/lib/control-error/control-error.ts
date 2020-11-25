@@ -27,101 +27,21 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
 
   private _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
   private _destroy$ = new Subject();
+  private _control!: Control;
+  private _lastErrors: Partial<ValidatorsModel> = {};
 
   @Input() controlError!: Control | string | number;
 
   @Input() showWhen: ControlErrorShowWhen = 'touched';
 
-  private control!: Control;
-
-  private lastErrors: Partial<ValidatorsModel> = {};
-
-  private validateShowWhen(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): boolean {
+  private _validateShowWhen(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): boolean {
     return (
       (isNil(error.errorShowWhen) && isNil(this.showWhen)) ||
-      this.control[(error.errorShowWhen ?? this.showWhen) as 'dirty' | 'touched']
+      this._control[(error.errorShowWhen ?? this.showWhen) as 'dirty' | 'touched']
     );
   }
 
-  addCase(errorCase: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
-    this._cases.set(errorCase.error, errorCase);
-    if (this.lastErrors[errorCase.error]) {
-      this.showError(errorCase.error, this.lastErrors[errorCase.error]);
-    }
-  }
-
-  removeCase(errorCase: keyof ValidatorsModel): void {
-    if (this.lastErrors[errorCase]) {
-      this.removeError(errorCase);
-    }
-    this._cases.delete(errorCase);
-  }
-
-  showError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
-    const errorCase = this._cases.get(errorName);
-    if (errorCase && this.validateShowWhen(errorCase)) {
-      errorCase.show(error);
-    }
-  }
-
-  removeError(errorName: keyof ValidatorsModel): void {
-    const errorCase = this._cases.get(errorName);
-    if (errorCase) {
-      errorCase.remove();
-    }
-  }
-
-  updateError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
-    const errorCase = this._cases.get(errorName);
-    if (errorCase && this.validateShowWhen(errorCase)) {
-      errorCase.update(error);
-    }
-  }
-
-  childHasUpdate(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
-    this.removeError(error.error);
-    this.addCase(error);
-  }
-
-  subToErrorChanges(): void {
-    let differ = this.keyValueDiffers.find({}).create();
-    const checkError = (errors: Partial<ValidatorsModel>) => {
-      const changes = differ.diff(errors);
-      if (changes) {
-        changes.forEachAddedItem(error => {
-          this.showError(error.key, error.currentValue);
-        });
-        changes.forEachRemovedItem(error => {
-          this.removeError(error.key);
-        });
-        changes.forEachChangedItem(error => {
-          this.updateError(error.key, error.currentValue);
-        });
-      }
-    };
-    this.control.errors$.pipe(takeUntil(this._destroy$)).subscribe(errors => {
-      this.lastErrors = errors;
-      checkError(errors);
-    });
-    this.control.stateChanged$
-      .pipe(
-        takeUntil(this._destroy$),
-        startWith(this.control.getState()),
-        pairwise(),
-        filter(([oldState, newState]) => oldState.touched !== newState.touched || oldState.dirty !== newState.dirty),
-        map(([, newState]) => newState)
-      )
-      .subscribe(state => {
-        if (this.showWhen && !state[this.showWhen]) {
-          this.init();
-        } else {
-          differ = this.keyValueDiffers.find({}).create();
-          checkError(this.lastErrors);
-        }
-      });
-  }
-
-  private init(): void {
+  private _init(): void {
     for (const [errorName] of this._cases) {
       this.removeError(errorName);
     }
@@ -137,15 +57,93 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
       if (!(control instanceof Control)) {
         throw new Error(`controlError with name ${this.controlError} is not a Control`);
       }
-      this.control = control;
+      this._control = control;
     } else {
-      this.control = this.controlError;
+      this._control = this.controlError;
     }
     this.subToErrorChanges();
   }
 
+  addCase(errorCase: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
+    this._cases.set(errorCase.error, errorCase);
+    if (this._lastErrors[errorCase.error]) {
+      this.showError(errorCase.error, this._lastErrors[errorCase.error]);
+    }
+  }
+
+  removeCase(errorCase: keyof ValidatorsModel): void {
+    if (this._lastErrors[errorCase]) {
+      this.removeError(errorCase);
+    }
+    this._cases.delete(errorCase);
+  }
+
+  showError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
+    const errorCase = this._cases.get(errorName);
+    if (errorCase && this._validateShowWhen(errorCase)) {
+      errorCase.show(error);
+    }
+  }
+
+  removeError(errorName: keyof ValidatorsModel): void {
+    const errorCase = this._cases.get(errorName);
+    if (errorCase) {
+      errorCase.remove();
+    }
+  }
+
+  updateError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
+    const errorCase = this._cases.get(errorName);
+    if (errorCase && this._validateShowWhen(errorCase)) {
+      errorCase.update(error);
+    }
+  }
+
+  childHasUpdate(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
+    this.removeError(error.error);
+    this.addCase(error);
+  }
+
+  subToErrorChanges(): void {
+    let differ = this.keyValueDiffers.find({}).create();
+    const checkError = (errors: Partial<ValidatorsModel>): void => {
+      const changes = differ.diff(errors);
+      if (changes) {
+        changes.forEachAddedItem(error => {
+          this.showError(error.key, error.currentValue);
+        });
+        changes.forEachRemovedItem(error => {
+          this.removeError(error.key);
+        });
+        changes.forEachChangedItem(error => {
+          this.updateError(error.key, error.currentValue);
+        });
+      }
+    };
+    this._control.errors$.pipe(takeUntil(this._destroy$)).subscribe(errors => {
+      this._lastErrors = errors;
+      checkError(errors);
+    });
+    this._control.stateChanged$
+      .pipe(
+        takeUntil(this._destroy$),
+        startWith(this._control.getState()),
+        pairwise(),
+        filter(([oldState, newState]) => oldState.touched !== newState.touched || oldState.dirty !== newState.dirty),
+        map(([, newState]) => newState)
+      )
+      .subscribe(state => {
+        if (this.showWhen && !state[this.showWhen]) {
+          this._init();
+        } else {
+          differ = this.keyValueDiffers.find({}).create();
+          checkError(this._lastErrors);
+        }
+      });
+  }
+
   ngOnInit(): void {
-    this.init();
+    this._init();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -153,7 +151,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
       (changes.controlError && !changes.controlError.isFirstChange()) ||
       (changes.showWhen && !changes.showWhen.isFirstChange())
     ) {
-      this.init();
+      this._init();
     }
   }
 

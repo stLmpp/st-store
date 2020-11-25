@@ -37,35 +37,33 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
     if (!controlValues) {
       throw new ControlValueNotFound();
     }
-    this.controlValues = coerceArray(controlValues);
+    this._controlValues = coerceArray(controlValues);
   }
 
-  private attrDiffer!: KeyValueDiffer<string, string>;
-  private classesDiffer!: IterableDiffer<string>;
-
-  private readonly controlValues: ControlValue<T>[];
-
+  private _attrDiffer!: KeyValueDiffer<string, string>;
+  private _classesDiffer!: IterableDiffer<string>;
+  private readonly _controlValues: ControlValue<T>[];
   protected _destroy$ = new Subject();
 
   control!: Control<T>;
 
   protected init(): void {
     this._destroy$.next();
-    this.attrDiffer = this.keyValueDiffers.find({}).create();
-    this.classesDiffer = this.iterableDiffers.find([]).create();
-    for (const controlValue of this.controlValues) {
+    this._attrDiffer = this.keyValueDiffers.find({}).create();
+    this._classesDiffer = this.iterableDiffers.find([]).create();
+    for (const controlValue of this._controlValues) {
       controlValue.setValue(this.control.value);
     }
     let valueStored: T | null | undefined = this.control.value;
     let lastValueSetByControlValue = false;
-    for (const controlValue of this.controlValues) {
+    for (const controlValue of this._controlValues) {
       controlValue.onChange$.pipe(takeUntil(this._destroy$)).subscribe(value => {
         if (this.control.updateOn === 'change') {
           if (!isEmptyValue(value)) {
             this.control.markAsDirty();
           }
           this.control.markAsTouched();
-          this.control.setValue(value, { __emit__value$: false });
+          this.control.setValue(value, { emitInternalValue$: false });
         } else {
           valueStored = value;
           lastValueSetByControlValue = true;
@@ -77,7 +75,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
           if (!isEmptyValue(valueStored)) {
             this.control.markAsDirty();
           }
-          this.control.setValue(valueStored, { __emit__value$: false });
+          this.control.setValue(valueStored, { emitInternalValue$: false });
         }
       });
     }
@@ -90,28 +88,28 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
         if (!isEmptyValue(valueStored)) {
           this.control.markAsDirty();
         }
-        this.control.setValue(valueStored, { __emit__value$: !lastValueSetByControlValue });
+        this.control.setValue(valueStored, { emitInternalValue$: !lastValueSetByControlValue });
       });
-    this.control.__value$.pipe(takeUntil(this._destroy$)).subscribe(value => {
-      for (const controlValue of this.controlValues) {
+    this.control.internalValueChanges$.pipe(takeUntil(this._destroy$)).subscribe(value => {
+      for (const controlValue of this._controlValues) {
         controlValue.setValue(value);
       }
       valueStored = value;
       lastValueSetByControlValue = false;
     });
     this.control.disabledChanged$.pipe(takeUntil(this._destroy$)).subscribe(() => {
-      for (const controlValue of this.controlValues) {
+      for (const controlValue of this._controlValues) {
         controlValue.setDisabled?.(this.control.disabled);
       }
     });
     this.control.stateChanged$.pipe(takeUntil(this._destroy$), auditTime(0)).subscribe(state => {
-      for (const controlValue of this.controlValues) {
+      for (const controlValue of this._controlValues) {
         controlValue.stateChanged?.(state);
       }
       this.changeDetectorRef.markForCheck();
     });
     this.control.attributesChanged$.pipe(takeUntil(this._destroy$)).subscribe(attrs => {
-      const differs = this.attrDiffer.diff(attrs);
+      const differs = this._attrDiffer.diff(attrs);
       if (differs) {
         differs.forEachAddedItem(change => {
           this.renderer2.setAttribute(this.elementRef.nativeElement, change.key, change.currentValue ?? '');
@@ -125,7 +123,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
       }
     });
     this.control.classesChanged$.pipe(takeUntil(this._destroy$)).subscribe(classes => {
-      const differs = this.classesDiffer.diff(classes);
+      const differs = this._classesDiffer.diff(classes);
       if (differs) {
         differs.forEachAddedItem(change => {
           this.renderer2.addClass(this.elementRef.nativeElement, change.item);

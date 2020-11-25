@@ -45,10 +45,10 @@ describe('control value radio', () => {
 
   it('should remove listener when destroyed', () => {
     // @ts-ignore
-    spyOn(component.controlValueRadio, 'changeListener');
+    spyOn(component.controlValueRadio, '_changeListener');
     fixture.destroy();
     // @ts-ignore
-    expect(component.controlValueRadio.changeListener).toHaveBeenCalledTimes(1);
+    expect(component.controlValueRadio._changeListener).toHaveBeenCalledTimes(1);
   });
 
   it('should not add listener if outside of radioGroup', () => {
@@ -57,12 +57,12 @@ describe('control value radio', () => {
     const comp = fix.componentInstance;
     const input = fix.debugElement.query(By.css('input'));
     // @ts-ignore
-    spyOn(comp.controlValueRadio, 'onChange');
+    spyOn(comp.controlValueRadio, '_onChange');
     triggerEvent(input, 'change');
     triggerEvent(input, 'blur');
     fix.detectChanges();
     // @ts-ignore
-    expect(comp.controlValueRadio.onChange).toHaveBeenCalledTimes(0);
+    expect(comp.controlValueRadio._onChange).toHaveBeenCalledTimes(0);
   });
 
   it('should trigger onChange', () => {

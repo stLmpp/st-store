@@ -20,7 +20,7 @@ type ParamType = 'queryParamMap' | 'paramMap';
 @Injectable()
 export class RouterQuery implements OnDestroy {
   constructor(activatedRoute: ActivatedRoute, private router: Router) {
-    this.listenToRouteChanges();
+    this._listenToRouteChanges();
     this._lastSnapshot = activatedRoute.snapshot;
   }
 
@@ -32,7 +32,7 @@ export class RouterQuery implements OnDestroy {
   private _queryParams$ = new BehaviorSubject<Params>({});
   private _data$ = new BehaviorSubject<Data>({});
 
-  private listenToRouteChanges(): void {
+  private _listenToRouteChanges(): void {
     this.router.events
       .pipe(
         takeUntil(this._destroy$),
@@ -46,7 +46,7 @@ export class RouterQuery implements OnDestroy {
         const params: Params = {};
         const queryParams: Params = {};
         let data: Data = {};
-        const fill = (_state: ActivatedRouteSnapshot) => {
+        const fill = (_state: ActivatedRouteSnapshot): void => {
           for (const key of state.paramMap.keys) {
             params[key] = state.paramMap.get(key);
           }
@@ -66,7 +66,7 @@ export class RouterQuery implements OnDestroy {
       });
   }
 
-  private getParamMap(type: ParamType): ParamMap {
+  private _getParamMap(type: ParamType): ParamMap {
     let params: Params;
     if (type === 'paramMap') {
       params = this._params$.value;
@@ -76,7 +76,7 @@ export class RouterQuery implements OnDestroy {
     return convertToParamMap(params);
   }
 
-  private selectParamMap(type: ParamType): Observable<ParamMap> {
+  private _selectParamMap(type: ParamType): Observable<ParamMap> {
     let params$: Observable<Params>;
     if (type === 'paramMap') {
       params$ = this._params$;
@@ -89,28 +89,28 @@ export class RouterQuery implements OnDestroy {
     );
   }
 
-  private reduceParams(params: string[], paramMap: ParamMap): Params {
+  private _reduceParams(params: string[], paramMap: ParamMap): Params {
     return params.reduce((acc, param) => (paramMap.has(param) ? { ...acc, [param]: paramMap.get(param) } : acc), {});
   }
 
-  private getParamsBase(type: ParamType, params?: string | string[]): string | Params | null {
-    const paramMap = this.getParamMap(type);
+  private _getParamsBase(type: ParamType, params?: string | string[]): string | Params | null {
+    const paramMap = this._getParamMap(type);
     if (!params) {
-      return this.reduceParams(paramMap.keys, paramMap);
+      return this._reduceParams(paramMap.keys, paramMap);
     } else if (isString(params)) {
       return paramMap.get(params);
     } else {
-      return this.reduceParams(params, paramMap);
+      return this._reduceParams(params, paramMap);
     }
   }
 
-  private selectParamsBase(
+  private _selectParamsBase(
     type: ParamType,
     params?: string | string[]
   ): Observable<string | null> | Observable<Params> {
-    const paramMap$ = this.selectParamMap(type);
+    const paramMap$ = this._selectParamMap(type);
     if (!params) {
-      return paramMap$.pipe(map(paramsRoute => this.reduceParams(paramsRoute.keys, paramsRoute)));
+      return paramMap$.pipe(map(paramsRoute => this._reduceParams(paramsRoute.keys, paramsRoute)));
     } else if (isString(params)) {
       return paramMap$.pipe(
         map(paramRoute => paramRoute.get(params)),
@@ -118,7 +118,7 @@ export class RouterQuery implements OnDestroy {
       );
     } else {
       return paramMap$.pipe(
-        map(paramsRoute => this.reduceParams(params, paramsRoute)),
+        map(paramsRoute => this._reduceParams(params, paramsRoute)),
         distinctUntilChanged(isEqualParams)
       );
     }
@@ -128,7 +128,7 @@ export class RouterQuery implements OnDestroy {
   getParams(param: string): string | null;
   getParams(params: string[]): Params;
   getParams(params?: string | string[]): string | null | Params {
-    return this.getParamsBase('paramMap', params);
+    return this._getParamsBase('paramMap', params);
   }
 
   getAllParams(param: string): string[] {
@@ -150,21 +150,21 @@ export class RouterQuery implements OnDestroy {
   selectParams(param: string): Observable<string | null>;
   selectParams(params: string[]): Observable<Params>;
   selectParams(params?: string[] | string): Observable<string | null | Params> {
-    return this.selectParamsBase('paramMap', params);
+    return this._selectParamsBase('paramMap', params);
   }
 
   getQueryParams(): Params;
   getQueryParams(param: string): string | null;
   getQueryParams(params: string[]): Params;
   getQueryParams(params?: string | string[]): string | null | Params {
-    return this.getParamsBase('queryParamMap', params);
+    return this._getParamsBase('queryParamMap', params);
   }
 
   selectQueryParams(): Observable<Params>;
   selectQueryParams(param: string): Observable<string>;
   selectQueryParams(params: string[]): Observable<Params>;
   selectQueryParams(params?: string[] | string): Observable<string | null | Params> {
-    return this.selectParamsBase('queryParamMap', params);
+    return this._selectParamsBase('queryParamMap', params);
   }
 
   getData(): Data;

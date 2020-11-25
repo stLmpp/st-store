@@ -26,7 +26,7 @@ export function orderBy<T, K extends keyof T>(
   keyOrCommand?: OrderByType<T>,
   order: OrderByDirection = 'asc'
 ): T[] {
-  if (!values?.length || (!order && !keyOrCommand)) {
+  if (!values?.length) {
     return values;
   }
   values = [...values];

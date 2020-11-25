@@ -11,7 +11,7 @@ import { ControlValidator } from '../validator';
   ],
 })
 export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidator {
-  static ngAcceptInputType_requiredTrue: BooleanInput;
+  private _requiredTrue = false;
 
   @HostBinding('attr.required')
   get requiredAttr(): string | null {
@@ -31,7 +31,6 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
       this.attrs = {};
     }
   }
-  private _requiredTrue = false;
 
   validate(control: Control<boolean>): boolean | null {
     if (!this._requiredTrue) {
@@ -39,4 +38,6 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
     }
     return super.validate(control);
   }
+
+  static ngAcceptInputType_requiredTrue: BooleanInput;
 }

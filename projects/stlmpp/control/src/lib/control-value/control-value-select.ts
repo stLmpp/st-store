@@ -19,22 +19,17 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelect), multi: true }],
 })
 export class ControlValueSelect extends AbstractControlValue implements AfterContentInit {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }
 
-  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
-
-  @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
-
   private _valueAfterContentInit: any;
   private _setValueAfterContentInit = false;
 
-  @HostListener('change', ['$event'])
-  onChange($event: Event): void {
-    const index = ($event.target as HTMLSelectElement).selectedIndex;
-    this.onChange$.next(this.options.toArray()[index].value);
-  }
+  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
+
+  @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
   private _setValue(value: any): void {
     if (isNil(value)) {
@@ -47,6 +42,12 @@ export class ControlValueSelect extends AbstractControlValue implements AfterCon
     } else {
       this.renderer2.setProperty(this.elementRef.nativeElement, 'selectedIndex', -1);
     }
+  }
+
+  @HostListener('change', ['$event'])
+  onChange($event: Event): void {
+    const index = ($event.target as HTMLSelectElement).selectedIndex;
+    this.onChange$.next(this.options.toArray()[index].value);
   }
 
   setValue(value: any | null | undefined): void {

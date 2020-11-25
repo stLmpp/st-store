@@ -7,6 +7,7 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueCheckbox), multi: true }],
 })
 export class ControlValueCheckbox extends AbstractControlValue<boolean> {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }

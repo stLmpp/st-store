@@ -6,8 +6,8 @@ import { isObjectEmpty } from '@stlmpp/utils';
 export class ComposeValidator extends ControlValidator<any, Record<string, any>> {
   constructor(validators: ControlValidator[]) {
     super();
-    this.validators = validators.filter(validator => !validator.async);
-    for (const validator of this.validators) {
+    this._validators = validators.filter(validator => !validator.async);
+    for (const validator of this._validators) {
       if (validator.attrs) {
         this.attrs = { ...this.attrs, ...validator.attrs };
       }
@@ -17,13 +17,14 @@ export class ComposeValidator extends ControlValidator<any, Record<string, any>>
     }
   }
 
-  private readonly validators: ControlValidator[];
+  private readonly _validators: ControlValidator[];
+
   attrs: Record<string, string | number | boolean | undefined> = {};
   classes: string[] = [];
   name = 'compose';
 
   validate(control: Control): Record<string, any> | null {
-    const errors = this.validators.reduce((acc, validator) => {
+    const errors = this._validators.reduce((acc, validator) => {
       const error = validator.validate(control);
       if (!isNil(error)) {
         return { ...acc, [validator.name]: error };

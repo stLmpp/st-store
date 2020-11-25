@@ -5,123 +5,123 @@ import { isFunction } from '@stlmpp/utils';
 import { StorePersistStrategy, StorePersistLocalStorageStrategy } from './store-persist';
 
 export class Store<T, E = any> {
-  constructor(private __options: StoreOptions<T>) {
-    this.__persist = this.__options.persistStrategy ?? new StorePersistLocalStorageStrategy();
-    this.__state$ = new BehaviorSubject(this.setPersist(this.__options.initialState));
+  constructor(private _options: StoreOptions<T>) {
+    this._persist = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
+    this._state$ = new BehaviorSubject(this._mergePersistedValue(this._options.initialState));
   }
 
-  private __state$: BehaviorSubject<T>;
-  private __error$ = new BehaviorSubject<E | null>(null);
-  private __loading$ = new BehaviorSubject<boolean>(false);
-  private __persist: StorePersistStrategy<T>;
+  private _state$: BehaviorSubject<T>;
+  private _error$ = new BehaviorSubject<E | null>(null);
+  private _loading$ = new BehaviorSubject<boolean>(false);
+  private _persist: StorePersistStrategy<T>;
 
-  private __timeout: any;
-  private __cache$ = new BehaviorSubject(false);
+  private _timeout: any;
+  private _cache$ = new BehaviorSubject(false);
 
   /** @internal */
-  protected __useDevCopy = true;
+  protected _useDevCopy = true;
 
-  protected updateInitialState(initialState: T): void {
-    this.__options = { ...this.__options, initialState };
+  private _getPersistKey(): string {
+    return '__ST_STORE__' + this._options.name + '.' + (this._options.persistKey ?? '');
   }
 
-  hasCache(): boolean {
-    return !!this.__options.cache && this.__cache$.value;
-  }
-
-  setHasCache(hasCache: boolean): void {
-    if (this.__options.cache) {
-      clearTimeout(this.__timeout);
-      this.__cache$.next(hasCache);
-      if (hasCache) {
-        this.__timeout = setTimeout(() => {
-          this.setHasCache(false);
-        }, this.__options.cache);
-      }
-    }
-  }
-
-  selectCache(): Observable<boolean> {
-    return this.__cache$.asObservable();
-  }
-
-  selectState(): Observable<T> {
-    return this.__state$.asObservable();
-  }
-
-  selectError(): Observable<E | null> {
-    return this.__error$.asObservable();
-  }
-
-  selectLoading(): Observable<boolean> {
-    return this.__loading$.asObservable();
-  }
-
-  getState(): T {
-    return this.__state$.value;
-  }
-
-  getError(): E | null {
-    return this.__error$.value;
-  }
-
-  getLoading(): boolean {
-    return this.__loading$.value;
-  }
-
-  setLoading(loading: boolean): void {
-    this.__loading$.next(loading);
-  }
-
-  setError(error: E): void {
-    this.__error$.next(error);
-  }
-
-  private getPersistKey(): string {
-    return '__ST_STORE__' + this.__options.name + '.' + (this.__options.persistKey ?? '');
-  }
-
-  private setPersist(state: T): T {
-    if (this.__options.persistStrategy) {
-      const key = this.getPersistKey();
-      let value = this.__persist.get(key);
+  private _mergePersistedValue(state: T): T {
+    if (this._options.persistStrategy) {
+      const key = this._getPersistKey();
+      let value = this._persist.get(key);
       if (value) {
-        value = this.__persist.deserialize(value);
-        return this.__persist.setStore(state, value, this.__options.persistKey);
+        value = this._persist.deserialize(value);
+        return this._persist.setStore(state, value, this._options.persistKey);
       }
     }
     return state;
   }
 
-  private persist(state: T): void {
-    if (this.__options.persistStrategy) {
-      const key = this.getPersistKey();
-      const value = this.__persist.getStore(state, this.__options.persistKey);
-      this.__persist.set(key, this.__persist.serialize(value));
+  private _setPersist(state: T): void {
+    if (this._options.persistStrategy) {
+      const key = this._getPersistKey();
+      const value = this._persist.getStore(state, this._options.persistKey);
+      this._persist.set(key, this._persist.serialize(value));
     }
   }
 
+  protected updateInitialState(initialState: T): void {
+    this._options = { ...this._options, initialState };
+  }
+
+  hasCache(): boolean {
+    return !!this._options.cache && this._cache$.value;
+  }
+
+  setHasCache(hasCache: boolean): void {
+    if (this._options.cache) {
+      clearTimeout(this._timeout);
+      this._cache$.next(hasCache);
+      if (hasCache) {
+        this._timeout = setTimeout(() => {
+          this.setHasCache(false);
+        }, this._options.cache);
+      }
+    }
+  }
+
+  selectCache(): Observable<boolean> {
+    return this._cache$.asObservable();
+  }
+
+  selectState(): Observable<T> {
+    return this._state$.asObservable();
+  }
+
+  selectError(): Observable<E | null> {
+    return this._error$.asObservable();
+  }
+
+  selectLoading(): Observable<boolean> {
+    return this._loading$.asObservable();
+  }
+
+  getState(): T {
+    return this._state$.value;
+  }
+
+  getError(): E | null {
+    return this._error$.value;
+  }
+
+  getLoading(): boolean {
+    return this._loading$.value;
+  }
+
+  setLoading(loading: boolean): void {
+    this._loading$.next(loading);
+  }
+
+  setError(error: E): void {
+    this._error$.next(error);
+  }
+
   set(state: T): void {
-    this.persist(state);
-    if (this.__useDevCopy) {
+    this._setPersist(state);
+    if (this._useDevCopy) {
       state = devCopy(state);
     }
-    this.__state$.next(state);
+    this._state$.next(state);
   }
 
   update(partial: Partial<T>): void;
   update(state: T): void;
-  update(callback: (state: T) => T): void;
-  update(state: T | Partial<T> | ((state: T) => T)): void {
+  update(callback: (oldState: T) => T): void;
+  update(state: T | Partial<T> | ((oldState: T) => T)): void {
     const currentState = this.getState();
-    const callback = isFunction(state) ? state : (s: T) => ({ ...s, ...state });
+    const callback = isFunction(state) ? state : (oldState: T) => ({ ...oldState, ...state });
     const newState = this.preUpdate(callback(currentState));
     this.set(newState);
     this.postUpdate();
   }
 
   reset(): void {
-    this.__state$.next(this.__options.initialState);
+    this._state$.next(this._options.initialState);
   }
 
   preUpdate(newState: T): T {

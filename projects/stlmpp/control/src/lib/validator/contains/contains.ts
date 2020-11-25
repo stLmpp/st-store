@@ -8,10 +8,10 @@ export abstract class AbstractContainsValidators<
   T extends string | any[] = any,
   U = T extends Array<infer RealType> ? RealType : string
 > extends ControlValidator<T, boolean> {
-  name = 'contains';
-
   @Input() contains!: string | U;
   @Input() compareWith: (valueA: U, valueB: U) => boolean = Object.is;
+
+  name = 'contains';
 
   validate({ value }: Control<T>): boolean | null {
     if (!value) {

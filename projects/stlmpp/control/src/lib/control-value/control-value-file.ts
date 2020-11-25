@@ -1,4 +1,4 @@
-import { Directive, ElementRef, forwardRef, HostListener, Renderer2 } from '@angular/core';
+import { Directive, forwardRef, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
 import { isNil } from '@stlmpp/utils';
 import { AbstractControlValue } from './abstract-control-value';
@@ -8,10 +8,6 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueFile), multi: true }],
 })
 export class ControlValueFile extends AbstractControlValue<FileList> {
-  constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
-    super(renderer2, elementRef);
-  }
-
   @HostListener('change', ['$event'])
   onChange($event: Event): void {
     const target = $event.target as HTMLInputElement;

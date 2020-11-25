@@ -296,10 +296,10 @@ describe('control', () => {
   it(`should not run validator if it does not exists`, () => {
     const control = component.control;
     // @ts-ignore
-    spyOn(control, 'getValidationError');
+    spyOn(control, '_getValidationError');
     control.runValidator('do not exists');
     // @ts-ignore
-    expect(control.getValidationError).toHaveBeenCalledTimes(0);
+    expect(control._getValidationError).toHaveBeenCalledTimes(0);
   });
 
   it('should return the error of a validator', () => {

@@ -27,9 +27,10 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
 
   private readonly _originControls: C[];
 
+  private _parent: ControlGroup | ControlArray | null | undefined;
   private _destroy$ = new Subject();
-
   private _value$ = new BehaviorSubject<T[]>([]);
+
   value$ = this._value$.asObservable();
 
   get parent(): ControlGroup | ControlArray | null | undefined {
@@ -38,22 +39,6 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
   /** @internal */
   set parent(parent: ControlGroup | ControlArray | null | undefined) {
     this._parent = parent;
-  }
-  private _parent: ControlGroup | ControlArray | null | undefined;
-
-  *[Symbol.iterator](): Iterator<C> {
-    for (const control of this._controls) {
-      yield control;
-    }
-  }
-
-  /** @internal */
-  setUpdateOn(updateOn?: ControlUpdateOn): void {
-    if (updateOn) {
-      for (const control of this._controls) {
-        control.setUpdateOn(updateOn);
-      }
-    }
   }
 
   private _setValue$(): void {
@@ -71,6 +56,21 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
 
   private _registerParent(control: C): void {
     control.parent = this;
+  }
+
+  *[Symbol.iterator](): Iterator<C> {
+    for (const control of this._controls) {
+      yield control;
+    }
+  }
+
+  /** @internal */
+  setUpdateOn(updateOn?: ControlUpdateOn): void {
+    if (updateOn) {
+      for (const control of this._controls) {
+        control.setUpdateOn(updateOn);
+      }
+    }
   }
 
   get value(): T[] {

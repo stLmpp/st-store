@@ -19,16 +19,16 @@ export class ControlGroupNameDirective<T = any> extends ControlGroupDirective<T>
     super();
   }
 
+  private _controlGroupName!: string | number;
+  private _initialized = false;
+
   @Input()
   set controlGroupName(controlGroupName: string | number) {
     this._controlGroupName = controlGroupName;
     this.init();
   }
-  private _controlGroupName!: string | number;
 
-  private _initialized = false;
-
-  private init(): void {
+  init(): void {
     if (this._initialized) {
       if (!this.controlParent) {
         throw new ControlParentNotFound('controlGroupName', this._controlGroupName);

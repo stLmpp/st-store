@@ -17,29 +17,23 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     if (!_idGetter) {
       throw new Error('IdGetter is required');
     }
-    this.idGetter = idGetterFactory(_idGetter);
+    this._idGetter = idGetterFactory(_idGetter);
   }
 
-  private readonly idGetter: IdGetter<T, S>;
-  private __state: { [K in S]?: T } = {};
-  private __keys = new Set<S>();
-
-  *[Symbol.iterator](): Iterator<[S, T]> {
-    for (const key of this.__keys) {
-      yield [key, this.get(key)!];
-    }
-  }
+  private readonly _idGetter: IdGetter<T, S>;
+  private _state: { [K in S]?: T } = {};
+  private _keys = new Set<S>();
 
   get state(): { [K in S]?: T } {
-    return { ...this.__state };
+    return { ...this._state };
   }
 
   get length(): number {
-    return this.__keys.size;
+    return this._keys.size;
   }
 
   get keys(): Set<S> {
-    return this.__keys;
+    return this._keys;
   }
 
   get entries(): [S, T][] {
@@ -47,15 +41,63 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   get keysArray(): S[] {
-    return [...this.__keys];
+    return [...this._keys];
   }
 
   get values(): T[] {
     return this.keysArray.map(key => this.get(key)!);
   }
 
+  private _formatEntities(entities: StMap<T, S> | T[] | { [K in S]?: T }): T[] | undefined {
+    if (!entities) {
+      return;
+    }
+    if (entities instanceof StMap || isArray(entities)) {
+      if (!entities.length) {
+        return;
+      }
+      if (entities instanceof StMap) {
+        entities = entities.values;
+      }
+    } else {
+      if (isObjectEmpty(entities)) {
+        return;
+      }
+      entities = Object.values(entities);
+    }
+    return entities;
+  }
+
+  private _upsertOne(key: S, entity: T): this;
+  private _upsertOne(key: S, entity: Partial<T>): this;
+  private _upsertOne(key: S, entity: T | Partial<T>): this {
+    if (this.has(key)) {
+      return this.update(key, entity as Partial<T>);
+    } else {
+      return this.set(key, entity as T);
+    }
+  }
+
+  private _upsertMany(newEntities: T[] | Partial<T>[]): this {
+    const [newEntites, newKeys] = toEntities(newEntities as T[], this._idGetter);
+    const allKeys = new Set([...this._keys, ...newKeys]);
+    this._state = [...allKeys].reduce((entities, key) => {
+      const currentItem = this.get(key);
+      const newItem = newEntites[key];
+      return { ...entities, [key]: this.merger(currentItem, newItem) };
+    }, {});
+    this._keys = allKeys;
+    return this;
+  }
+
+  *[Symbol.iterator](): Iterator<[S, T]> {
+    for (const key of this._keys) {
+      yield [key, this.get(key)!];
+    }
+  }
+
   filter(callback: EntityPredicate<T, S>): StMap<T, S> {
-    const stMap = new StMap<T, S>(this.idGetter);
+    const stMap = new StMap<T, S>(this._idGetter);
     for (const [key, entity] of this) {
       if (callback(entity, key)) {
         stMap.set(key, entity);
@@ -65,7 +107,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   map(callback: EntityUpdateWithId<T, S>): StMap<T, S> {
-    const stMap = new StMap<T, S>(this.idGetter);
+    const stMap = new StMap<T, S>(this._idGetter);
     for (const [key, entity] of this) {
       stMap.set(key, callback(entity, key));
     }
@@ -135,16 +177,16 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   has(key: S): boolean {
-    return this.__keys.has(key);
+    return this._keys.has(key);
   }
 
   get(key: S): T | undefined {
-    return this.__state[key];
+    return this._state[key];
   }
 
   set(key: S, value: T): this {
-    this.__state = { ...this.__state, [key]: value };
-    this.__keys.add(key);
+    this._state = { ...this._state, [key]: value };
+    this._keys.add(key);
     return this;
   }
 
@@ -152,7 +194,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   setMany(entities: StMap<T, S>): this;
   setMany(entities: { [K in S]?: T }): this;
   setMany(entities: T[] | StMap<T, S> | { [K in S]?: T }): this {
-    const newEntities = this.formatEntities(entities);
+    const newEntities = this._formatEntities(entities);
     if (!newEntities) {
       return this;
     }
@@ -161,47 +203,47 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   }
 
   fromEntity(entity: T): this {
-    this.set(this.idGetter(entity), entity);
+    this.set(this._idGetter(entity), entity);
     return this;
   }
 
   fromArray(entities: T[]): this {
     if (!entities?.length) {
-      this.__state = {};
-      this.__keys.clear();
+      this._state = {};
+      this._keys.clear();
       return this;
     }
-    const [newEntities, keys] = toEntities(entities, this.idGetter);
-    this.__state = newEntities;
-    this.__keys = keys;
+    const [newEntities, keys] = toEntities(entities, this._idGetter);
+    this._state = newEntities;
+    this._keys = keys;
     return this;
   }
 
   fromObject(entities: { [K in S]?: T }, idIsNumber?: boolean): this {
     if (!entities || isObjectEmpty(entities)) {
-      this.__state = {};
-      this.__keys.clear();
+      this._state = {};
+      this._keys.clear();
       return this;
     }
     let format: (key: any) => any;
     if (idIsNumber) {
       format = Number as any;
     } else {
-      format = predictIdType(entities, this.idGetter);
+      format = predictIdType(entities, this._idGetter);
     }
-    this.__state = entities;
-    this.__keys = new Set(Object.keys(entities).map(format));
+    this._state = entities;
+    this._keys = new Set(Object.keys(entities).map(format));
     return this;
   }
 
   fromTuple(entities: [S, T][]): this {
     if (!entities?.length) {
-      this.__state = {};
-      this.__keys.clear();
+      this._state = {};
+      this._keys.clear();
       return this;
     }
-    this.__state = [...entities].reduce((obj, [key, entity]) => ({ [key]: entity }), {});
-    this.__keys = new Set(entities.map(([key]) => key));
+    this._state = [...entities].reduce((obj, [key, entity]) => ({ [key]: entity }), {});
+    this._keys = new Set(entities.map(([key]) => key));
     return this;
   }
 
@@ -209,35 +251,15 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   merge(entities: StMap<T, S>, options?: StMapMergeOptions): this;
   merge(entities: { [K in S]?: T }, options?: StMapMergeOptions): this;
   merge(entities: StMap<T, S> | T[] | { [K in S]?: T }, options: StMapMergeOptions = {}): this {
-    let newEntities = this.formatEntities(entities);
+    let newEntities = this._formatEntities(entities);
     if (!newEntities) {
       return this;
     }
     if (!options.upsert) {
-      newEntities = newEntities.filter(entity => this.has(this.idGetter(entity)));
+      newEntities = newEntities.filter(entity => this.has(this._idGetter(entity)));
     }
-    this.upsertMany(newEntities);
+    this._upsertMany(newEntities);
     return this;
-  }
-
-  private formatEntities(entities: StMap<T, S> | T[] | { [K in S]?: T }): T[] | undefined {
-    if (!entities) {
-      return;
-    }
-    if (entities instanceof StMap || isArray(entities)) {
-      if (!entities.length) {
-        return;
-      }
-      if (entities instanceof StMap) {
-        entities = entities.values;
-      }
-    } else {
-      if (isObjectEmpty(entities)) {
-        return;
-      }
-      entities = Object.values(entities);
-    }
-    return entities;
   }
 
   update(key: S, partial: Partial<T>): this;
@@ -250,8 +272,8 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     const callback = isFunction(partialOrCallback)
       ? partialOrCallback
       : (entity1: T) => this.merger(entity1, partialOrCallback);
-    this.__state = {
-      ...this.__state,
+    this._state = {
+      ...this._state,
       [key]: callback(entity),
     };
     return this;
@@ -262,32 +284,10 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this;
   upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this {
     if (entity && isID(keyOrEntities)) {
-      return this.upsertOne(keyOrEntities, entity as any);
+      return this._upsertOne(keyOrEntities, entity as any);
     } else {
-      return this.upsertMany(keyOrEntities as any[]);
+      return this._upsertMany(keyOrEntities as any[]);
     }
-  }
-
-  private upsertOne(key: S, entity: T): this;
-  private upsertOne(key: S, entity: Partial<T>): this;
-  private upsertOne(key: S, entity: T | Partial<T>): this {
-    if (this.has(key)) {
-      return this.update(key, entity as Partial<T>);
-    } else {
-      return this.set(key, entity as T);
-    }
-  }
-
-  private upsertMany(newEntities: T[] | Partial<T>[]): this {
-    const [newEntites, newKeys] = toEntities(newEntities as T[], this.idGetter);
-    const allKeys = new Set([...this.__keys, ...newKeys]);
-    this.__state = [...allKeys].reduce((entities, key) => {
-      const currentItem = this.get(key);
-      const newItem = newEntites[key];
-      return { ...entities, [key]: this.merger(currentItem, newItem) };
-    }, {});
-    this.__keys = allKeys;
-    return this;
   }
 
   remove(id: S): this;
@@ -301,8 +301,8 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
       ? (_, key) => !idOrIdsOrCallback.includes(key)
       : (_, key) => key !== idOrIdsOrCallback;
     const newMap = this.filter(callback);
-    this.__state = newMap.state;
-    this.__keys = newMap.keys;
+    this._state = newMap.state;
+    this._keys = newMap.keys;
     return this;
   }
 }

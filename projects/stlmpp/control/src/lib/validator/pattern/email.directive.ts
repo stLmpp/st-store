@@ -9,7 +9,7 @@ import { ControlValidator } from '../validator';
   providers: [{ provide: ControlValidator, useExisting: forwardRef(() => EmailValidatorDirective), multi: true }],
 })
 export class EmailValidatorDirective extends AbstractEmailValidator {
-  static ngAcceptInputType_email: BooleanInput;
+  private _email = true;
 
   @HostBinding('attr.email')
   get emailAttr(): string | null {
@@ -25,7 +25,6 @@ export class EmailValidatorDirective extends AbstractEmailValidator {
       this.attrs = {};
     }
   }
-  private _email = true;
 
   validate(control: Control<string>): boolean | null {
     if (!this._email) {
@@ -33,4 +32,6 @@ export class EmailValidatorDirective extends AbstractEmailValidator {
     }
     return super.validate(control);
   }
+
+  static ngAcceptInputType_email: BooleanInput;
 }

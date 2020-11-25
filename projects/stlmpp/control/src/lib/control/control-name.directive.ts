@@ -50,7 +50,7 @@ export class ControlNameDirective<T = any> extends ControlDirective<T> implement
   }
   private _controlName!: string | number;
 
-  protected init(): void {
+  init(): void {
     if (this._initialized) {
       if (!this.controlParent) {
         throw new ControlParentNotFound('controlName', this._controlName);

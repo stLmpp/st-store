@@ -14,7 +14,7 @@ const WEEK_FORMAT_REG = /^\d+-W([0-4]\d|5[0-4])$/;
 
 const transformer: Record<
   ControlValueDateInputType,
-  { toValue: (value: any, dateFormat?: string) => any; toControl: (value: any) => any }
+  { toValue(value: any, dateFormat?: string): any; toControl(value: any): any }
 > = {
   date: {
     toControl(value: string): Date | null | undefined {
@@ -109,6 +109,7 @@ export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'da
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDate), multi: true }],
 })
 export class ControlValueDate extends AbstractControlValue<string | Date> {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }

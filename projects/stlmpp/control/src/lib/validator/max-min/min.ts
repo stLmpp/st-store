@@ -18,12 +18,12 @@ export abstract class AbstractMinValidator<T extends Date | number> extends Cont
   @Input()
   set min(min: T | string) {
     const [type, newMin, attr] = getTypeAndValue(min);
-    this.type = type;
+    this._type = type;
     this._min = newMin as any;
     this.attrs = { min: attr };
   }
   private _min!: T;
-  private type!: MaxMinType;
+  private _type!: MaxMinType;
 
   attrs: ControlValidatorAttributes = {};
 
@@ -33,7 +33,7 @@ export abstract class AbstractMinValidator<T extends Date | number> extends Cont
     if (isNil(value)) {
       return null;
     }
-    switch (this.type) {
+    switch (this._type) {
       case 'number': {
         return value < this._min ? { actual: value, required: this._min } : null;
       }

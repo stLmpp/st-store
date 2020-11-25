@@ -22,7 +22,7 @@ describe('Util', () => {
   const str = 'string';
   const nro = 1;
   const array: any[] = [];
-  const fn = () => {};
+  const fn = (): void => {};
   const obj = {};
   const undef = undefined;
   const nll = null;

@@ -20,16 +20,12 @@ export type ControlGroupOptions = AbstractControlOptions;
 
 export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements AbstractControl<RealT> {
   constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
-    const values$ = this.values().map(value => value.value$);
-    const keys = this.keys();
+    const values$ = this._values().map(value => value.value$);
+    const keys = this._keys();
     this.value$ = combineLatest(values$).pipe(
-      map(values => {
-        return values.reduce((acc, item, index) => {
-          return { ...acc, [keys[index]]: item };
-        }, {});
-      })
+      map(values => values.reduce((acc, item, index) => ({ ...acc, [keys[index]]: item }), {}))
     );
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.parent = this;
       if (options?.updateOn) {
         control.setUpdateOn(options.updateOn);
@@ -40,12 +36,12 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
     }
   }
 
+  private _parent: ControlGroup | ControlArray | null | undefined;
+
   value$!: Observable<RealT>;
 
   /** @internal */
   submitted = false;
-
-  private _parent: ControlGroup | ControlArray | null | undefined;
 
   get parent(): ControlGroup | ControlArray | null | undefined {
     return this._parent;
@@ -55,35 +51,33 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
     this._parent = parent;
   }
 
+  private _entries(): [keyof T, Control | ControlGroup | ControlArray][] {
+    return Object.entries(this.controls) as [keyof T, Control | ControlGroup | ControlArray][];
+  }
+
+  private _values(): (Control | ControlGroup | ControlArray)[] {
+    return Object.values(this.controls);
+  }
+
+  private _keys(): (keyof T)[] {
+    return Object.keys(this.controls) as (keyof T)[];
+  }
+
   /** @internal */
   setUpdateOn(updateOn?: ControlUpdateOn): void {
     if (updateOn) {
-      for (const control of this.values()) {
+      for (const control of this._values()) {
         control.setUpdateOn(updateOn);
       }
     }
   }
 
-  private entries(): [keyof T, Control | ControlGroup | ControlArray][] {
-    return Object.entries(this.controls) as [keyof T, Control | ControlGroup | ControlArray][];
-  }
-
-  private values(): (Control | ControlGroup | ControlArray)[] {
-    return Object.values(this.controls);
-  }
-
-  private keys(): (keyof T)[] {
-    return Object.keys(this.controls) as (keyof T)[];
-  }
-
   get value(): RealT {
-    return this.entries().reduce((acc, [key, value]) => {
-      return { ...acc, [key]: value.value };
-    }, {}) as any;
+    return this._entries().reduce((acc, [key, value]) => ({ ...acc, [key]: value.value }), {}) as any;
   }
 
   get invalid(): boolean {
-    return this.values().some(value => value.invalid);
+    return this._values().some(value => value.invalid);
   }
 
   get valid(): boolean {
@@ -91,11 +85,11 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   get dirty(): boolean {
-    return this.values().some(value => value.dirty);
+    return this._values().some(value => value.dirty);
   }
 
   get touched(): boolean {
-    return this.values().some(value => value.touched);
+    return this._values().some(value => value.touched);
   }
 
   get untouched(): boolean {
@@ -107,11 +101,11 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   get pending(): boolean {
-    return this.values().some(value => value.pending);
+    return this._values().some(value => value.pending);
   }
 
   get disabled(): boolean {
-    return this.values().every(value => value.disabled);
+    return this._values().every(value => value.disabled);
   }
 
   get enabled(): boolean {
@@ -119,7 +113,7 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   disable(disabled = true): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.disable(disabled);
     }
   }
@@ -129,13 +123,13 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   setValue(value: RealT | undefined | null, options?: ControlUpdateOptions): void {
-    for (const [key, control] of this.entries()) {
+    for (const [key, control] of this._entries()) {
       control.setValue((value as any)?.[key], options);
     }
   }
 
   patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): void {
-    for (const [key, control] of this.entries()) {
+    for (const [key, control] of this._entries()) {
       const valueKey = (value as any)[key];
       if (!isNil(valueKey)) {
         control.patchValue(valueKey, options);
@@ -148,33 +142,33 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   reset(): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.reset();
     }
     this.submitted = false;
   }
 
   submit(): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.submit();
     }
     this.submitted = true;
   }
 
   markAsDirty(dirty = true): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.markAsDirty(dirty);
     }
   }
 
   markAsTouched(touched = true): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.markAsTouched(touched);
     }
   }
 
   markAsInvalid(invalid = true): void {
-    for (const control of this.values()) {
+    for (const control of this._values()) {
       control.markAsInvalid(invalid);
     }
   }

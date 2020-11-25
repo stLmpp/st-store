@@ -30,10 +30,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["projects/stlmpp/store/tsconfig.lib.json", "projects/stlmpp/store/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "projects/stlmpp/store/**/*.ts",
+              "projects/stlmpp/store/**/*.html"
+            ]
           }
         }
       }
@@ -65,10 +67,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["projects/stlmpp/utils/tsconfig.lib.json", "projects/stlmpp/utils/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "projects/stlmpp/utils/**/*.ts",
+              "projects/stlmpp/utils/**/*.html"
+            ]
           }
         }
       }
@@ -100,10 +104,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["projects/stlmpp/router/tsconfig.lib.json", "projects/stlmpp/router/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "projects/stlmpp/router/**/*.ts",
+              "projects/stlmpp/router/**/*.html"
+            ]
           }
         }
       }
@@ -135,10 +141,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["projects/stlmpp/control/tsconfig.lib.json", "projects/stlmpp/control/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "projects/stlmpp/control/**/*.ts",
+              "projects/stlmpp/control/**/*.html"
+            ]
           }
         }
       }

@@ -33,12 +33,12 @@ export abstract class AbstractMaxValidator<T extends Date | number> extends Cont
   @Input()
   set max(max: T | string) {
     const [type, newMax, attr] = getTypeAndValue(max);
-    this.type = type;
+    this._type = type;
     this._max = newMax as any;
     this.attrs = { max: attr };
   }
   private _max!: T;
-  private type!: MaxMinType;
+  private _type!: MaxMinType;
 
   attrs: ControlValidatorAttributes = {};
 
@@ -48,7 +48,7 @@ export abstract class AbstractMaxValidator<T extends Date | number> extends Cont
     if (isNil(value)) {
       return null;
     }
-    switch (this.type) {
+    switch (this._type) {
       case 'number': {
         return value > this._max ? { actual: value, required: this._max } : null;
       }
