@@ -21,6 +21,18 @@ class ControlComponent {
   controlWithValue = new Control(1);
 }
 
+@Component({
+  template: `
+    <select [(model)]="model">
+      <option class="option-1" [value]="1">1</option>
+      <option class="option-2" [value]="2">2</option>
+    </select>
+  `,
+})
+class ModelComponent {
+  model = null;
+}
+
 describe('control value select', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -30,7 +42,7 @@ describe('control value select', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -56,5 +68,11 @@ describe('control value select', () => {
   it('should create with value', () => {
     expect(selectWithValue.nativeElement.value).toBe('1');
     expect(selectWithValue.nativeElement.selectedIndex).toBe(0);
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

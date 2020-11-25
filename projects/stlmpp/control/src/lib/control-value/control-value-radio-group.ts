@@ -19,8 +19,9 @@ import { ControlValueRadio } from './control-value-radio';
 let uniqueID = 0;
 
 @Directive({
-  selector:
-    'radio-group[control],radio-group[controlName],[radioGroup][control],[radioGroup][controlName],radio-group[model],[radioGroup][model]',
+  selector: `radio-group[control],[radioGroup][control],
+    radio-group[controlName],[radioGroup][controlName],
+    radio-group[model],[radioGroup][model]`,
   providers: [
     { provide: ControlValue, useExisting: forwardRef(() => ControlValueRadioGroup), multi: true },
     { provide: ControlValueRadioParent, useExisting: forwardRef(() => ControlValueRadioGroup) },

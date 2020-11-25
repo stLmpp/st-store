@@ -14,7 +14,7 @@ class ControlComponent {
 }
 
 @Component({
-  selector: 'custom-input[control]',
+  selector: 'custom-input',
   template: '<input class="input" [control]="control">',
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => CustomInputComponent) }],
 })
@@ -46,7 +46,12 @@ class CustomComponent {
   control = new Control();
 }
 
-describe('control value number', () => {
+@Component({ template: '<custom-input [(model)]="model"></custom-input>' })
+class ModelComponent {
+  model = 1;
+}
+
+describe('abstract control value', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
   let input: DebugElement;
@@ -54,7 +59,7 @@ describe('control value number', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent, CustomInputComponent, CustomComponent],
+      declarations: [ControlComponent, CustomInputComponent, CustomComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -96,5 +101,11 @@ describe('control value number', () => {
     triggerEvent(fix.debugElement.query(By.css('.input')), 'blur');
     fix.detectChanges();
     expect(fix.componentInstance.customInputComponent.setValue).toHaveBeenCalledTimes(0);
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

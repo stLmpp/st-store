@@ -2,7 +2,7 @@ import { AfterViewInit, Directive, ElementRef, Host, Input, OnDestroy, Optional,
 import { ControlValueRadioParent } from './control-value-radio-parent';
 
 @Directive({
-  selector: 'input[type=radio]:not([control]),input[type=radio]:not([controlName])',
+  selector: `input[type=radio]:not([control]):not([controlName]):not([model])`,
 })
 export class ControlValueRadio implements AfterViewInit, OnDestroy {
   constructor(

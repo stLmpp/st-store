@@ -10,6 +10,11 @@ class ControlComponent {
   control = new Control();
 }
 
+@Component({ template: '<input type="number" [(model)]="model">' })
+class ModelComponent {
+  model = 1;
+}
+
 describe('control value number', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -18,7 +23,7 @@ describe('control value number', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -38,5 +43,11 @@ describe('control value number', () => {
     triggerEvent(input, 'blur');
     fixture.detectChanges();
     expect(component.control.value).toBeNull();
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

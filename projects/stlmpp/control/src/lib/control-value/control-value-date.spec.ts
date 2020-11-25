@@ -22,6 +22,23 @@ class ControlComponent {
   controlDatetime = new Control();
 }
 
+@Component({
+  template: `
+    <input type="week" [(model)]="modelWeek" />
+    <input type="time" [(model)]="modelTime" />
+    <input type="month" [(model)]="modelMonth" />
+    <input type="date" [(model)]="modelDate" />
+    <input type="datetime-local" [(model)]="modelDatetime" />
+  `,
+})
+class ModelComponent {
+  modelWeek = null;
+  modelTime = null;
+  modelMonth = null;
+  modelDate = null;
+  modelDatetime = null;
+}
+
 describe('control value date', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -29,11 +46,17 @@ describe('control value date', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 
   describe('date', () => {

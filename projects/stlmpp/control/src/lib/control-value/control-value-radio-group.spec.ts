@@ -29,6 +29,18 @@ class ControlDisabled {
   control = new Control();
 }
 
+@Component({
+  template: `
+    <radio-group [(model)]="model">
+      <input class="radio-1" type="radio" [value]="1" />
+      <input class="radio-2" type="radio" [value]="2" />
+    </radio-group>
+  `,
+})
+class ModelComponent {
+  model = 1;
+}
+
 describe('control value radio group', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -38,7 +50,7 @@ describe('control value radio group', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent, ControlDisabled],
+      declarations: [ControlComponent, ControlDisabled, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -78,5 +90,11 @@ describe('control value radio group', () => {
     component.control.setValue(2);
     fixture.detectChanges();
     expect(radio2.nativeElement.checked).toBeTrue();
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

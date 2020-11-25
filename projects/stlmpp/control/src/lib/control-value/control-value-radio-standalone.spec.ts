@@ -15,6 +15,16 @@ class ControlComponent {
   control = new Control(1);
 }
 
+@Component({
+  template: `
+    <input class="radio-1" type="radio" name="radio" [value]="1" [(model)]="model" />
+    <input class="radio-2" type="radio" name="radio" [value]="2" [(model)]="model" />
+  `,
+})
+class ModelComponent {
+  model = 1;
+}
+
 describe('control value radio standalone', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -24,7 +34,7 @@ describe('control value radio standalone', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -49,5 +59,11 @@ describe('control value radio standalone', () => {
     triggerEvent(radio2, 'blur');
     fixture.detectChanges();
     expect(component.control.value).toBe(1);
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

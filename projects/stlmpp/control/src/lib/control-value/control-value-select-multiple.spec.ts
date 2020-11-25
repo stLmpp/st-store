@@ -23,6 +23,20 @@ class ControlComponent {
   controlWithValue = new Control<number[]>([1]);
 }
 
+@Component({
+  template: `
+    <select [(model)]="model" multiple>
+      <option class="option-1" [value]="1">1</option>
+      <option class="option-2" [value]="2">2</option>
+      <option class="option-3" [value]="3">3</option>
+      <option class="option-4" [value]="4">4</option>
+    </select>
+  `,
+})
+class ModelComponent {
+  model = new Control<number[]>([]);
+}
+
 describe('control value select multiple', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -72,5 +86,11 @@ describe('control value select multiple', () => {
     expect(select.nativeElement.options[1].selected).toBeFalse();
     expect(select.nativeElement.options[2].selected).toBeFalse();
     expect(select.nativeElement.options[3].selected).toBeTrue();
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });

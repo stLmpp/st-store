@@ -11,6 +11,11 @@ class ControlComponent {
   indeterminate = false;
 }
 
+@Component({ template: '<input type="checkbox" [(model)]="model">' })
+class ModelComponent {
+  model = true;
+}
+
 describe('control value checkbox', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -19,7 +24,7 @@ describe('control value checkbox', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -45,5 +50,11 @@ describe('control value checkbox', () => {
     fixture.detectChanges();
     expect(input.nativeElement.checked).toBeTrue();
     expect(input.attributes['aria-checked']).toBe('true');
+  });
+
+  it('should work with model', () => {
+    expect(() => {
+      TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
   });
 });
