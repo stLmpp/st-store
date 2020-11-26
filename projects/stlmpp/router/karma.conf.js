@@ -9,17 +9,20 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma'),
       require('karma-jasmine-seed-reporter'),
     ],
     client: {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
-    coverageIstanbulReporter: {
+    jasmineHtmlReporter: {
+      suppressAll: true, // removes the duplicated traces
+    },
+    coverageReporter: {
       dir: require('path').join(__dirname, '../../../coverage/stlmpp/router'),
-      reports: ['html', 'lcovonly', 'text-summary', 'json'],
-      fixWebpackSourcePaths: true,
+      subdir: '.',
+      reporters: [{ type: 'html' }, { type: 'text-summary' }, { type: 'lcovonly' }, { type: 'json' }],
     },
     reporters: ['progress', 'kjhtml', 'jasmine-seed'],
     port: 9876,
