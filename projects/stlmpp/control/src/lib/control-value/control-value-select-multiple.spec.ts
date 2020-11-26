@@ -93,4 +93,10 @@ describe('control value select multiple', () => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
   });
+
+  it('should set empty array if value is null or undefined', () => {
+    component.control.setValue(null);
+    fixture.detectChanges();
+    expect(select.nativeElement.selectedIndex).toBe(-1);
+  });
 });

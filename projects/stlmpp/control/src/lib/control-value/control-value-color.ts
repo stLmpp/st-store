@@ -13,10 +13,8 @@ export class ControlValueColor extends ControlValueDefault implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    if (this.elementRef.nativeElement.value) {
-      setTimeout(() => {
-        this.onChange$.next(this.elementRef.nativeElement.value);
-      });
-    }
+    setTimeout(() => {
+      this.onChange$.next(this.elementRef.nativeElement.value);
+    });
   }
 }

@@ -1,11 +1,13 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, ViewChild } from '@angular/core';
 import { Control } from '../control/control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
+import { ControlValueFile } from './control-value-file';
 
 @Component({ template: `<input type="file" [control]="control" />` })
 class ControlComponent {
+  @ViewChild(ControlValueFile) controlValueFile!: ControlValueFile;
   control = new Control<FileList>();
 }
 
@@ -46,5 +48,13 @@ describe('control value file', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
+  });
+
+  it('should trigger onChange$', () => {
+    const sub = jasmine.createSpy();
+    component.controlValueFile.onChange$.subscribe(sub);
+    input.triggerEventHandler('change', { target: { files: [] } });
+    fixture.detectChanges();
+    expect(sub).toHaveBeenCalledTimes(1);
   });
 });

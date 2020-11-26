@@ -250,5 +250,11 @@ describe('control value date', () => {
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('');
     });
+
+    it('should set the value of the control to null if invalid date', () => {
+      input.triggerEventHandler('input', { target: { value: 'ASDBASD' } });
+      fixture.detectChanges();
+      expect(component.controlDatetime.value).toBeNull();
+    });
   });
 });
