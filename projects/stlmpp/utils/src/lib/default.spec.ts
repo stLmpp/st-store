@@ -5,7 +5,7 @@ import { Provider } from '@angular/core';
 describe('Default Pipe', () => {
   let pipe: DefaultPipe;
 
-  const provide = (type?: DefaultPipeType) => {
+  const provide = (type?: DefaultPipeType): void => {
     const providers: Provider[] = [DefaultPipe];
     if (type) {
       providers.push({ provide: DEFAULT_PIPE_TYPE, useValue: type });

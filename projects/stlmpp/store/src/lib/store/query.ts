@@ -6,15 +6,15 @@ import { isString } from '@stlmpp/utils';
 
 export class Query<T, E = any> {
   constructor(store: Store<T, E>) {
-    this.__store = store;
-    this.state$ = this.__store.selectState();
-    this.loading$ = this.__store.selectLoading();
-    this.error$ = this.__store.selectError();
-    this.hasCache$ = this.__store.selectCache();
+    this._store = store;
+    this.state$ = this._store.selectState();
+    this.loading$ = this._store.selectLoading();
+    this.error$ = this._store.selectError();
+    this.hasCache$ = this._store.selectCache();
   }
 
   /** @internal */
-  protected __store: Store<T, E>;
+  protected _store: Store<T, E>;
 
   state$: Observable<T>;
   loading$: Observable<boolean>;
@@ -22,19 +22,19 @@ export class Query<T, E = any> {
   hasCache$: Observable<boolean>;
 
   getState(): T {
-    return this.__store.getState();
+    return this._store.getState();
   }
 
   getError(): E | null {
-    return this.__store.getError();
+    return this._store.getError();
   }
 
   getLoading(): boolean {
-    return this.__store.getLoading();
+    return this._store.getLoading();
   }
 
   getHasCache(): boolean {
-    return this.__store.hasCache();
+    return this._store.hasCache();
   }
 
   select(): Observable<T>;

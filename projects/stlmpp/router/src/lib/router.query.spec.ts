@@ -15,9 +15,7 @@ function wrapRouterInNgZone(router: Router, ngZone: NgZone): Router {
       if (!isFunction(invokedProperty)) {
         return invokedProperty;
       }
-      return (...args: Array<unknown>) => {
-        return ngZone.run(() => invokedProperty.apply(target, args));
-      };
+      return (...args: Array<unknown>) => ngZone.run(() => invokedProperty.apply(target, args));
     },
   });
 }

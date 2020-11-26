@@ -18,34 +18,18 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelectMultiple), multi: true }],
 })
 export class ControlValueSelectMultiple extends AbstractControlValue<any[]> implements AfterContentInit {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }
 
-  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
-
-  @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
-
   private _indices = new Set<number>();
-
   private _valueAfterContentInit: any;
   private _setValueAfterContentInit = false;
 
-  @HostListener('change', ['$event'])
-  onChange($event: Event): void {
-    const target = $event.target as HTMLSelectElement;
-    const selectOptions: ControlValueSelectOption[] = [];
-    for (let index = 0, len = target.selectedOptions.length; index < len; index++) {
-      const element = target.selectedOptions.item(index);
-      if (element) {
-        const option = this.options.find(({ elementRef: { nativeElement } }) => nativeElement === element);
-        if (option) {
-          selectOptions.push(option.value);
-        }
-      }
-    }
-    this.onChange$.next(selectOptions);
-  }
+  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
+
+  @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
   private _setValue(values: any[]): void {
     if (!values.length) {
@@ -69,6 +53,22 @@ export class ControlValueSelectMultiple extends AbstractControlValue<any[]> impl
         this.renderer2.setProperty(optionsArray[index].elementRef.nativeElement, 'selected', false);
       }
     }
+  }
+
+  @HostListener('change', ['$event'])
+  onChange($event: Event): void {
+    const target = $event.target as HTMLSelectElement;
+    const selectOptions: ControlValueSelectOption[] = [];
+    for (let index = 0, len = target.selectedOptions.length; index < len; index++) {
+      const element = target.selectedOptions.item(index);
+      if (element) {
+        const option = this.options.find(({ elementRef: { nativeElement } }) => nativeElement === element);
+        if (option) {
+          selectOptions.push(option.value);
+        }
+      }
+    }
+    this.onChange$.next(selectOptions);
   }
 
   setValue(value: any[] | null | undefined): void {

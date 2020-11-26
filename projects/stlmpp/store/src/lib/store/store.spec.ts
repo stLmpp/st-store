@@ -34,7 +34,7 @@ describe('Store', () => {
 
   it('should not set cache', () => {
     // @ts-ignore
-    store.__options.cache = undefined;
+    store._options.cache = undefined;
     store.setHasCache(true);
     expect(store.hasCache()).toBeFalse();
   });
@@ -68,23 +68,23 @@ describe('Store', () => {
 
   it('should return the persist key', () => {
     // @ts-ignore
-    const key = store.getPersistKey();
+    const key = store._getPersistKey();
     expect(key).toBe('__ST_STORE__simple.name');
   });
 
   it('should create with custom persist strategy', () => {
     // @ts-ignore
-    expect(storeCustomPersist.__persist).toBeInstanceOf(StorePersistCustomStrategy);
+    expect(storeCustomPersist._persist).toBeInstanceOf(StorePersistCustomStrategy);
   });
 
   it('should persist value', () => {
     expect(storeCustomPersist.getState().id).toBe(2);
     storeCustomPersist.update({ id: 1 });
     // @ts-ignore
-    expect(storeCustomPersist.__persist.get(storeCustomPersist.getPersistKey())).toBe('1');
+    expect(storeCustomPersist._persist.get(storeCustomPersist._getPersistKey())).toBe('1');
     storeCustomPersist.update({ id: undefined });
     // @ts-ignore
-    expect(storeCustomPersist.__persist.get(storeCustomPersist.getPersistKey())).toBeUndefined();
+    expect(storeCustomPersist._persist.get(storeCustomPersist._getPersistKey())).toBeUndefined();
 
     const newStore = new (class extends Store<IdName> {
       constructor() {

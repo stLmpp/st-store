@@ -41,18 +41,14 @@ describe('control error case', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
 
-  function getRequired(): DebugElement {
-    return fixture.debugElement.query(By.css('.required'));
-  }
+  const getRequired = (): DebugElement => fixture.debugElement.query(By.css('.required'));
 
-  function getMaxLength(): DebugElement {
-    return fixture.debugElement.query(By.css('.max-length'));
-  }
+  const getMaxLength = (): DebugElement => fixture.debugElement.query(By.css('.max-length'));
 
-  function getComponent<T>(type: Type<T>): [ComponentFixture<T>, T] {
+  const getComponent = <T>(type: Type<T>): [ComponentFixture<T>, T] => {
     const fix = TestBed.createComponent(type);
     return [fix, fix.componentInstance];
-  }
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

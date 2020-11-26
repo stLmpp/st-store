@@ -385,12 +385,10 @@ describe('Entity Store', () => {
   });
 
   it('should update the state (callback)', () => {
-    store.update(state => {
-      return {
-        ...state,
-        list: [1, 2, 3],
-      };
-    });
+    store.update(state => ({
+      ...state,
+      list: [1, 2, 3],
+    }));
     expect(store.getState().list).toEqual([1, 2, 3]);
   });
 

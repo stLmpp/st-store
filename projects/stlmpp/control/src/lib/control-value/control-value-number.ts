@@ -1,4 +1,4 @@
-import { Directive, ElementRef, forwardRef, HostListener, Renderer2 } from '@angular/core';
+import { Directive, forwardRef, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
@@ -8,10 +8,6 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueNumber) }],
 })
 export class ControlValueNumber extends AbstractControlValue<number> {
-  constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
-    super(renderer2, elementRef);
-  }
-
   @HostListener('input', ['$event'])
   onInput($event: InputEvent): void {
     const value = ($event.target as HTMLInputElement).value;

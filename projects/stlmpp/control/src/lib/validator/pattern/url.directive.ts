@@ -10,7 +10,7 @@ import { ControlValidator } from '../validator';
   providers: [{ provide: ControlValidator, useExisting: forwardRef(() => UrlValidatorDirective), multi: true }],
 })
 export class UrlValidatorDirective extends AbstractUrlValidator {
-  static ngAcceptInputType_url: BooleanInput;
+  private _url = true;
 
   @HostBinding('attr.pattern')
   get attrUrl(): string | null {
@@ -26,7 +26,6 @@ export class UrlValidatorDirective extends AbstractUrlValidator {
       this.attrs = {};
     }
   }
-  private _url = true;
 
   validate(control: Control<string>): PatternValidationError | null {
     if (!this._url) {
@@ -34,4 +33,6 @@ export class UrlValidatorDirective extends AbstractUrlValidator {
     }
     return super.validate(control);
   }
+
+  static ngAcceptInputType_url: BooleanInput;
 }

@@ -6,8 +6,6 @@ describe('Query', () => {
   let query: SimpleQuery;
   let store: SimpleStore;
 
-  const takeOne = () => query.state$.pipe(take(1));
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [SimpleStore, SimpleQuery],
@@ -21,9 +19,6 @@ describe('Query', () => {
     expect(store).toBeDefined();
     expect(query.getState()).toBeDefined();
     expect(query.getState()).toEqual(simpleInitialState());
-    takeOne().subscribe(state => {
-      expect(state).toEqual(simpleInitialState());
-    });
   });
 
   it('should select', () => {

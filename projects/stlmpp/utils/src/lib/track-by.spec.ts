@@ -24,6 +24,7 @@ describe('track by', () => {
       expect(trackByFactory()(1, {})).toBe(1);
       expect(trackByFactory()(1, undefined)).toBe(1);
       expect(trackByFactory('id', 'name', 'other')(1, { id: 0, name: '', other: '' })).toBe(1);
+      expect(trackByFactory('id')(1, undefined as any)).toBe(1);
     });
   });
 

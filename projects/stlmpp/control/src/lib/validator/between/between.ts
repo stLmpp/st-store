@@ -12,10 +12,12 @@ export interface BetweenError<T extends Date | number> {
 
 @Directive()
 export abstract class AbstractBetweenValidator<T extends Date | number> extends ControlValidator<T, BetweenError<T>> {
-  name = 'between';
+  @Input() inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true];
+
   abstract start: T;
   abstract end: T;
-  @Input() inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true];
+
+  name = 'between';
 
   validate({ value }: Control<T>): BetweenError<T> | null {
     if (isNil(value)) {

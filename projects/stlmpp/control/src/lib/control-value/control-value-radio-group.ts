@@ -33,36 +33,19 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
   }
 
   private _destroy$ = new Subject();
-
-  id = uniqueID++;
-
   private _markForDisabledAfterContentInit = false;
   private _markForValueAfterContentInit = false;
   private _lastValue: any;
 
-  @ContentChildren(ControlValueRadio, { descendants: true }) _children!: QueryList<ControlValueRadio>;
-
-  children = new QueryList<ControlValueRadio>();
-
+  @ContentChildren(ControlValueRadio, { descendants: true }) allChildren!: QueryList<ControlValueRadio>;
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
+
+  id = uniqueID++;
+  children = new QueryList<ControlValueRadio>();
 
   private _disableChildren(disabled: boolean): void {
     for (const child of this.children) {
       this.renderer2.setProperty(child.elementRef.nativeElement, 'disabled', disabled);
-    }
-  }
-
-  onChange(value: any): void {
-    this.onChange$.next(value);
-    this._lastValue = value;
-  }
-
-  setDisabled(disabled: boolean): void {
-    if (!this._children && disabled) {
-      this._markForDisabledAfterContentInit = true;
-    } else {
-      this._disableChildren(disabled);
-      this._markForDisabledAfterContentInit = false;
     }
   }
 
@@ -74,8 +57,22 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     }
   }
 
+  onChange(value: any): void {
+    this.onChange$.next(value);
+    this._lastValue = value;
+  }
+
+  setDisabled(disabled: boolean): void {
+    if (!this.allChildren && disabled) {
+      this._markForDisabledAfterContentInit = true;
+    } else {
+      this._disableChildren(disabled);
+      this._markForDisabledAfterContentInit = false;
+    }
+  }
+
   setValue(value: any | null | undefined): void {
-    if (!this._children && !isNil(value)) {
+    if (!this.allChildren && !isNil(value)) {
       this._markForValueAfterContentInit = true;
       this._lastValue = value;
     } else {
@@ -86,8 +83,8 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
   }
 
   ngAfterContentInit(): void {
-    this._children.changes
-      .pipe(takeUntil(this._destroy$), startWith(this._children))
+    this.allChildren.changes
+      .pipe(takeUntil(this._destroy$), startWith(this.allChildren))
       .subscribe((children: QueryList<ControlValueRadio>) => {
         this.children.reset(children.filter(child => child.controlValueRadioStandaloneParent === this));
         this._setValue(this._lastValue);

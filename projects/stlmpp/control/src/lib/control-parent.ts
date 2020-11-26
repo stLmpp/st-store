@@ -25,7 +25,11 @@ export abstract class ControlParent<T = any>
 
   controlChilds = new QueryList<ControlChild>();
 
-  abstract get(name: keyof T | number): Control<T> | ControlGroup<T> | ControlArray<T> | undefined;
+  protected initAllChilds(): void {
+    for (const child of this.controlChilds) {
+      child.init();
+    }
+  }
 
   ngAfterContentInit(): void {
     this.controlChilds.reset(this.allControlChilds.toArray().filter(control => control.controlParent === this));
@@ -38,12 +42,6 @@ export abstract class ControlParent<T = any>
       });
   }
 
-  protected initAllChilds(): void {
-    for (const child of this.controlChilds) {
-      child.init();
-    }
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.control && !changes.control.isFirstChange()) {
       this.initAllChilds();
@@ -54,4 +52,6 @@ export abstract class ControlParent<T = any>
     this._destroy$.next();
     this._destroy$.complete();
   }
+
+  abstract get(name: keyof T | number): Control<T> | ControlGroup<T> | ControlArray<T> | undefined;
 }

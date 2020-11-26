@@ -7,6 +7,7 @@ import { ControlValueDefault } from './control-value-default';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueColor), multi: true }],
 })
 export class ControlValueColor extends ControlValueDefault implements AfterViewInit {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }

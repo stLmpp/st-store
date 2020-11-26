@@ -26,10 +26,10 @@ export abstract class AbstractPatternValidator extends ControlValidator<string, 
     }
   }
 
+  protected regExp!: RegExp;
+
   attrs: ControlValidatorAttributes = {};
   name = 'pattern';
-
-  protected regExp!: RegExp;
 
   validate({ value }: Control<string>): PatternValidationError | null {
     if (!value) {

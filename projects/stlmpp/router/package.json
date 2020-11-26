@@ -1,12 +1,12 @@
 {
   "name": "@stlmpp/router",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "peerDependencies": {
     "@angular/common": ">= 9 < 12",
     "@angular/core": ">= 9 < 12"
   },
   "dependencies": {
     "tslib": "~2.0.3",
-    "@stlmpp/utils": "~3.2.0"
+    "@stlmpp/utils": "~3.2.1"
   }
 }

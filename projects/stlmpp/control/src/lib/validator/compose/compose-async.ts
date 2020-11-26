@@ -11,7 +11,7 @@ function toObservable(value: any): Observable<any> {
 export class ComposeAsyncValidator extends ControlValidator<any, Record<string, any>> {
   constructor(validators: ControlValidator[]) {
     super();
-    this.validators = validators.filter(validator => validator.async);
+    this._validators = validators.filter(validator => validator.async);
     for (const validator of validators) {
       if (validator.attrs) {
         this.attrs = { ...this.attrs, ...validator.attrs };
@@ -21,14 +21,15 @@ export class ComposeAsyncValidator extends ControlValidator<any, Record<string, 
       }
     }
   }
-  private readonly validators: ControlValidator[];
+  private readonly _validators: ControlValidator[];
+
   async = true;
   attrs: Record<string, string | number | boolean | undefined> = {};
   classes: string[] = [];
   name = 'composeAsync';
 
   validate(control: Control): Observable<Record<string, any> | null> {
-    const errors$: Observable<any>[] = this.validators.map(validator =>
+    const errors$: Observable<any>[] = this._validators.map(validator =>
       toObservable(validator.validate(control)).pipe(map(error => (isNil(error) ? null : { [validator.name]: error })))
     );
     return combineLatest(errors$).pipe(
@@ -36,9 +37,7 @@ export class ComposeAsyncValidator extends ControlValidator<any, Record<string, 
         if (!errors.length || errors.every(isNil)) {
           return null;
         }
-        return errors.reduce((acc, error) => {
-          return { ...acc, ...error };
-        }, {});
+        return errors.reduce((acc, error) => ({ ...acc, ...error }), {});
       })
     );
   }

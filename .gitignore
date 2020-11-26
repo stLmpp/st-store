@@ -6,3 +6,5 @@ coverage
 coverage.yml
 .coveralls.yml
 debug.log
+yarn
+yarn-error.log

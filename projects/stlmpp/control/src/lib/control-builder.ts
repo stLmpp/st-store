@@ -36,15 +36,15 @@ export class ControlBuilder {
     options?: ControlValidator | ControlValidator[] | ControlOptions
   ): Control {
     if (isArray(value)) {
-      const [_value, _options] = value;
-      return new Control<T>(_value, _options as any);
+      const [realValue, realOptions] = value;
+      return new Control<T>(realValue, realOptions as any);
     } else {
       return new Control<T>(value, options as any);
     }
   }
 
   group<T>(controls: ControlBuilderGroup<T>, options?: ControlGroupOptions): ControlGroup<T> {
-    const _controls: ControlGroupType<any> = (Object.entries(controls) as Entries<ControlBuilderGroup<T>>).reduce(
+    const newControls: ControlGroupType<any> = (Object.entries(controls) as Entries<ControlBuilderGroup<T>>).reduce(
       (acc: Record<any, any>, [key, value]) => {
         if (value instanceof Control || value instanceof ControlGroup || value instanceof ControlArray) {
           acc[key] = value;
@@ -57,7 +57,7 @@ export class ControlBuilder {
       },
       {}
     );
-    return new ControlGroup<T>(_controls, options);
+    return new ControlGroup<T>(newControls, options);
   }
 
   array<T>(controls: ControlBuilderTupple<T>[], options?: ControlArrayOptions): ControlArray<T>;
@@ -72,7 +72,7 @@ export class ControlBuilder {
     if (!controls.length) {
       return new ControlArray<T>([], options);
     } else {
-      const _controls: ControlType<any>[] = controls.map(control => {
+      const newControls: ControlType<any>[] = controls.map(control => {
         if (control instanceof Control || control instanceof ControlGroup || control instanceof ControlArray) {
           return control;
         } else if (isObject(control) && !isArray(control)) {
@@ -81,7 +81,7 @@ export class ControlBuilder {
           return this.control<T>(control);
         }
       });
-      return new ControlArray<T>(_controls, options);
+      return new ControlArray<T>(newControls, options);
     }
   }
 }

@@ -75,6 +75,7 @@ export class Validators {
 }
 
 export interface ValidatorsModel {
+  [name: string]: any;
   required: boolean;
   maxLength: LengthValidationError;
   minLength: LengthValidationError;
@@ -90,5 +91,4 @@ export interface ValidatorsModel {
   greater: GreaterValidationError<Date | number>;
   lesser: LesserValidationError<Date | number>;
   requiredTrue: boolean;
-  [name: string]: any;
 }

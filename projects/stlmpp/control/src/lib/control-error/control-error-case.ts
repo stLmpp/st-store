@@ -39,19 +39,11 @@ export class ControlErrorCase<K extends keyof ValidatorsModel> implements OnInit
   }
 
   private _context = new ControlErrorCaseContext<K>(null);
+  private _hasView = false;
 
   @Input() error!: K;
 
   @Input() errorShowWhen: ControlErrorShowWhen = null;
-
-  private _hasView = false;
-
-  static ngTemplateContextGuard<K extends keyof ValidatorsModel>(
-    dir: ControlErrorCase<K>,
-    ctx: unknown
-  ): ctx is ControlErrorCaseContext<K> {
-    return true;
-  }
 
   show(error: ValidatorsModel[K]): void {
     if (!this._hasView) {
@@ -88,5 +80,12 @@ export class ControlErrorCase<K extends keyof ValidatorsModel> implements OnInit
 
   ngOnDestroy(): void {
     this.controlError.removeCase(this.error);
+  }
+
+  static ngTemplateContextGuard<K2 extends keyof ValidatorsModel>(
+    dir: ControlErrorCase<K2>,
+    ctx: unknown
+  ): ctx is ControlErrorCaseContext<K2> {
+    return true;
   }
 }

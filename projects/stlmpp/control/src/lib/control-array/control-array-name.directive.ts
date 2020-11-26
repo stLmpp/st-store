@@ -22,6 +22,9 @@ export class ControlArrayNameDirective<T = any>
     super();
   }
 
+  private _controlArrayName!: string | number;
+  private _initialized = false;
+
   protected control!: ControlArray<T>;
 
   @Input()
@@ -29,17 +32,8 @@ export class ControlArrayNameDirective<T = any>
     this._controlArrayName = controlArrayName;
     this.init();
   }
-  private _controlArrayName!: string | number;
 
-  private _initialized = false;
-
-  *[Symbol.iterator](): Iterator<ControlType<T>> {
-    for (const control of this.control) {
-      yield control;
-    }
-  }
-
-  private init(): void {
+  init(): void {
     if (this._initialized) {
       if (!this.controlParent) {
         throw new ControlParentNotFound('controlArrayName', this._controlArrayName);
@@ -52,6 +46,12 @@ export class ControlArrayNameDirective<T = any>
         throw new ControlNameDoesNotMatch('controlArrayName', this._controlArrayName);
       }
       this.initAllChilds();
+    }
+  }
+
+  *[Symbol.iterator](): Iterator<ControlType<T>> {
+    for (const control of this.control) {
+      yield control;
     }
   }
 

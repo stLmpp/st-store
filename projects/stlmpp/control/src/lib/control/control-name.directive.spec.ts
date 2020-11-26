@@ -85,8 +85,7 @@ describe('control name', () => {
   });
 
   it('should provide ControlDirective', () => {
-    let customInputFixture: ComponentFixture<CustomInputComponent>;
-    customInputFixture = TestBed.createComponent(CustomInputComponent);
+    const customInputFixture = TestBed.createComponent(CustomInputComponent);
     customInputFixture.detectChanges();
     expect(customInputFixture.componentInstance.customInput.controlDirective).toBeDefined();
     expect(customInputFixture.componentInstance.customInput.controlDirective).toBeInstanceOf(ControlNameDirective);

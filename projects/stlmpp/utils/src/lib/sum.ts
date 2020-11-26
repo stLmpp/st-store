@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { isArray, isString } from './util';
+import { OperatorFunction } from 'rxjs';
 
 export function sum(values: number[]): number {
   if (!values?.length) {
@@ -21,8 +22,9 @@ export function sumBy<T = any>(values: T[], key: keyof T | (keyof T)[]): number 
   return values.reduce((acc, item) => acc + +(get(item) ?? 0), 0);
 }
 
-export const sumOperator = () => map<number[], number>(sum);
-export const sumByOperator = <T>(key: keyof T | (keyof T)[]) => map<T[], number>(values => sumBy(values, key));
+export const sumOperator = (): OperatorFunction<number[], number> => map<number[], number>(sum);
+export const sumByOperator = <T>(key: keyof T | (keyof T)[]): OperatorFunction<T[], number> =>
+  map<T[], number>(values => sumBy(values, key));
 
 @Pipe({ name: 'stSumBy' })
 export class SumByPipe implements PipeTransform {

@@ -9,7 +9,7 @@ import { ControlValidator } from '../validator';
   providers: [{ provide: ControlValidator, useExisting: forwardRef(() => RequiredValidatorDirective), multi: true }],
 })
 export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidator<T> {
-  static ngAcceptInputType_required: BooleanInput;
+  private _required = false;
 
   @HostBinding('attr.required')
   get attrRequired(): string | null {
@@ -29,7 +29,6 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
       this.attrs = {};
     }
   }
-  private _required = false;
 
   validate(control: Control<T>): boolean | null {
     if (!this._required) {
@@ -37,4 +36,6 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
     }
     return super.validate(control);
   }
+
+  static ngAcceptInputType_required: BooleanInput;
 }

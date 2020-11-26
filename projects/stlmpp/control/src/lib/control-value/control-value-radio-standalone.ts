@@ -7,13 +7,13 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueRadioStandalone), multi: true }],
 })
 export class ControlValueRadioStandalone extends AbstractControlValue {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }
 
   @Input() @HostBinding('attr.name') name!: string;
   @Input() value: any;
-
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
   @HostListener('change', ['$event'])

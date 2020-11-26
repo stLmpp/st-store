@@ -1,4 +1,4 @@
-import { orderByOperator, OrderByPipe } from './order-by';
+import { orderBy, orderByOperator, OrderByPipe } from './order-by';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
@@ -111,5 +111,14 @@ describe('order by', () => {
         expect(ordered[3]).toEqual(array[1]);
         expect(ordered[4]).toEqual(array[3]);
       });
+  });
+
+  it('should have asc as default order direction', () => {
+    const ordered = orderBy(array, 'id');
+    expect(ordered[0]).toEqual(array[3]);
+    expect(ordered[1]).toEqual(array[1]);
+    expect(ordered[2]).toEqual(array[2]);
+    expect(ordered[3]).toEqual(array[0]);
+    expect(ordered[4]).toEqual(array[4]);
   });
 });
