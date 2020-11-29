@@ -8,5 +8,5 @@ export abstract class ControlValidator<T = any, E = any> {
   attrs?: ControlValidatorAttributes;
   classes?: string | ReadonlyArray<string>;
   async?: boolean;
-  abstract validate(control: Control<T>): E | Observable<E> | null | Observable<null>;
+  abstract validate(control: Control<T>): E | Observable<E | null> | null;
 }
