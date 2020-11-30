@@ -56,6 +56,7 @@ export class Control<T = any> implements AbstractControl<T> {
   constructor(value: T, options?: ControlOptions<T>);
   constructor(value: T, options?: ControlValidator<T>);
   constructor(value: T, options?: ControlValidator<T>[]);
+  constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]);
   constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]) {
     this._initialValue = value;
     this._initialOptions = toControlOptions(options);

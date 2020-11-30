@@ -13,7 +13,7 @@ export class BetweenValidatorDirective<T extends Nullable<Date | number>> extend
   @Input('betweenEnd') start!: NonNullable<T>;
 
   @Input()
-  set between(between: [NonNullable<T>, NonNullable<T>] | { start: NonNullable<T>; end: NonNullable<T> }) {
+  set between(between: [start: NonNullable<T>, end: NonNullable<T>] | { start: NonNullable<T>; end: NonNullable<T> }) {
     if (isArray(between)) {
       const [start, end] = between;
       this.start = start;

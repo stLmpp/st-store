@@ -7,7 +7,7 @@ import { ControlType } from './control/control-type';
 import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-group/control-group';
 import { ControlValidator } from './validator/validator';
 
-export type ControlBuilderTupple<T> = [T, ControlOptions<T> | ControlValidator<T>[] | undefined];
+export type ControlBuilderTupple<T> = [value: T, validatorsOrOptions?: ControlOptions<T> | ControlValidator<T>[]];
 
 export type ControlBuilderGroup<T extends Record<any, any>> = {
   [K in keyof T]: ControlBuilderGroupItem<T[K]>;
@@ -31,9 +31,9 @@ export class ControlBuilder {
   ): Control {
     if (isArray(value)) {
       const [realValue, realOptions] = value;
-      return new Control<T>(realValue, realOptions as any);
+      return new Control<T>(realValue, realOptions);
     } else {
-      return new Control<T>(value, options as any);
+      return new Control<T>(value, options);
     }
   }
 
