@@ -47,7 +47,7 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
       combineLatest(this._controls.map(control => control.value$))
         .pipe(takeUntil(this._destroy$))
         .subscribe(values => {
-          this._value$.next(values as any);
+          this._value$.next(values);
         });
     } else {
       this._value$.next([]);
