@@ -2,14 +2,15 @@ import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
 import { isArray } from '@stlmpp/utils';
 import { Directive, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 @Directive()
 export abstract class AbstractContainsValidators<
-  T extends string | any[] = any,
+  T extends Nullable<string | any[]> = any,
   U = T extends Array<infer RealType> ? RealType : string
 > extends ControlValidator<T, boolean> {
-  @Input() contains!: string | U;
-  @Input() compareWith: (valueA: U, valueB: U) => boolean = Object.is;
+  @Input() contains!: string | NonNullable<U>;
+  @Input() compareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is;
 
   name = 'contains';
 
@@ -26,10 +27,13 @@ export abstract class AbstractContainsValidators<
 }
 
 export class ContainsValidator<
-  T extends string | any[] = any,
+  T extends Nullable<string | any[]> = any,
   U = T extends Array<infer RealType> ? RealType : string
 > extends AbstractContainsValidators<T, U> {
-  constructor(public contains: U, public compareWith: (valueA: U, valueB: U) => boolean = Object.is) {
+  constructor(
+    public contains: NonNullable<U>,
+    public compareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is
+  ) {
     super();
   }
 }

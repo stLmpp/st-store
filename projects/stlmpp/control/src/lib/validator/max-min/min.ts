@@ -4,9 +4,10 @@ import { isNil, isString } from '@stlmpp/utils';
 import { isBefore, parseISO } from 'date-fns';
 import { Control } from '../../control/control';
 import { Directive, HostBinding, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 @Directive()
-export abstract class AbstractMinValidator<T extends Date | number> extends ControlValidator<
+export abstract class AbstractMinValidator<T extends Nullable<Date | number>> extends ControlValidator<
   T,
   MaxMinValidationError<T>
 > {
@@ -16,13 +17,13 @@ export abstract class AbstractMinValidator<T extends Date | number> extends Cont
   }
 
   @Input()
-  set min(min: T | string) {
+  set min(min: NonNullable<T> | string) {
     const [type, newMin, attr] = getTypeAndValue(min);
     this._type = type;
     this._min = newMin as any;
     this.attrs = { min: attr };
   }
-  private _min!: T;
+  private _min!: NonNullable<T>;
   private _type!: MaxMinType;
 
   attrs: ControlValidatorAttributes = {};
@@ -45,8 +46,8 @@ export abstract class AbstractMinValidator<T extends Date | number> extends Cont
   }
 }
 
-export class MinValidator<T extends Date | number> extends AbstractMinValidator<T> {
-  constructor(min: T | string) {
+export class MinValidator<T extends Nullable<Date | number>> extends AbstractMinValidator<T> {
+  constructor(min: NonNullable<T> | string) {
     super();
     this.min = min;
   }

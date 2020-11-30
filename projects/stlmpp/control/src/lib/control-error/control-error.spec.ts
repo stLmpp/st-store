@@ -50,7 +50,7 @@ class ControlNotControl {
 class ControlWithName {
   @ViewChild('controlErrorRef') controlErrorDirective!: ControlError;
 
-  controlGroup = new ControlGroup({ control: new Control() });
+  controlGroup = new ControlGroup({ control: new Control('') });
 }
 
 describe('control error', () => {

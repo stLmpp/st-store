@@ -15,22 +15,23 @@ import { GreaterValidationError, GreaterValidator } from './greater-lesser/great
 import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';
 import { BetweenValidator } from './between/between';
 import { RequiredTrueValidator } from './required/required-true';
+import { Nullable } from '../util';
 
 // @dynamic
 export class Validators {
   static get required(): RequiredValidator {
     return new RequiredValidator();
   }
-  static maxLength<T extends string | any[]>(maxLength: number): MaxLengthValidator<T> {
+  static maxLength<T extends Nullable<string | any[]>>(maxLength: number): MaxLengthValidator<T> {
     return new MaxLengthValidator<T>(maxLength);
   }
-  static minLength<T extends string | any[]>(minLength: number): MinLengthValidator<T> {
+  static minLength<T extends Nullable<string | any[]>>(minLength: number): MinLengthValidator<T> {
     return new MinLengthValidator<T>(minLength);
   }
-  static max<T extends number | Date>(max: T | string): MaxValidator<T> {
+  static max<T extends Nullable<number | Date>>(max: NonNullable<T> | string): MaxValidator<T> {
     return new MaxValidator<T>(max);
   }
-  static min<T extends number | Date>(min: T | string): MinValidator<T> {
+  static min<T extends Nullable<number | Date>>(min: NonNullable<T> | string): MinValidator<T> {
     return new MinValidator<T>(min);
   }
   static get email(): EmailValidator {
@@ -45,28 +46,32 @@ export class Validators {
   static composeAsync(...validators: ControlValidator[]): ComposeAsyncValidator {
     return new ComposeAsyncValidator(validators);
   }
-  static contains<T extends string | any[] = any, U = T extends Array<infer RealType> ? RealType : string>(
-    value: U,
-    compareWith?: (valueA: U, valueB: U) => boolean
+  static contains<T extends Nullable<string | any[]> = any, U = T extends Array<infer RealType> ? RealType : string>(
+    value: NonNullable<U>,
+    compareWith?: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean
   ): ContainsValidator<T, U> {
     return new ContainsValidator<T, U>(value, compareWith);
   }
   static sibblingEquals<T = any>(
     sibblingName: string,
-    compareWith?: (valueA: T | null | undefined, valueB: T | null | undefined) => boolean
+    compareWith?: (valueA: T, valueB: T) => boolean
   ): SibblingEqualsValidator<T> {
     return new SibblingEqualsValidator<T>(sibblingName, compareWith);
   }
   static get url(): UrlValidator {
     return new UrlValidator();
   }
-  static greater<T extends Date | number>(greater: T): GreaterValidator<T> {
+  static greater<T extends Nullable<Date | number>>(greater: NonNullable<T>): GreaterValidator<T> {
     return new GreaterValidator<T>(greater);
   }
-  static lesser<T extends Date | number>(lesser: T): LesserValidator<T> {
+  static lesser<T extends Nullable<Date | number>>(lesser: NonNullable<T>): LesserValidator<T> {
     return new LesserValidator<T>(lesser);
   }
-  static between<T extends Date | number>(start: T, end: T, inclusiveness?: [boolean, boolean]): BetweenValidator<T> {
+  static between<T extends Nullable<Date | number>>(
+    start: NonNullable<T>,
+    end: NonNullable<T>,
+    inclusiveness?: [boolean, boolean]
+  ): BetweenValidator<T> {
     return new BetweenValidator<T>(start, end, inclusiveness);
   }
   static get requiredTrue(): RequiredTrueValidator {
@@ -79,8 +84,8 @@ export interface ValidatorsModel {
   required: boolean;
   maxLength: LengthValidationError;
   minLength: LengthValidationError;
-  max: MaxMinValidationError<Date | number>;
-  min: MaxMinValidationError<Date | number>;
+  max: MaxMinValidationError<Nullable<Date | number>>;
+  min: MaxMinValidationError<Nullable<Date | number>>;
   email: boolean;
   pattern: PatternValidationError;
   compose: Record<string, any>;
@@ -88,7 +93,7 @@ export interface ValidatorsModel {
   contains: boolean;
   sibblingEquals: SibblingEqualsValidationError;
   url: boolean;
-  greater: GreaterValidationError<Date | number>;
-  lesser: LesserValidationError<Date | number>;
+  greater: GreaterValidationError<Nullable<Date | number>>;
+  lesser: LesserValidationError<Nullable<Date | number>>;
   requiredTrue: boolean;
 }

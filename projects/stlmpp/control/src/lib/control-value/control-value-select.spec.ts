@@ -17,7 +17,7 @@ import { triggerEvent } from '../util-tests';
   `,
 })
 class ControlComponent {
-  control = new Control();
+  control = new Control<number | null>(null);
   controlWithValue = new Control(1);
 }
 

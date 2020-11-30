@@ -16,7 +16,7 @@ import { ControlGroup } from './control-group/control-group';
   `,
 })
 class ControlComponent {
-  controlGroup = new ControlGroup({ control: new Control() });
+  controlGroup = new ControlGroup({ control: new Control<string | undefined>(undefined) });
 
   onSubmit($event: ControlGroup): void {}
   onReset($event: ControlGroup): void {}

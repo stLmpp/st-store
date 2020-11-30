@@ -4,9 +4,9 @@ import { ControlUpdateOn } from './control-update-on';
 import { Directive, HostBinding, Input } from '@angular/core';
 
 export interface AbstractControl<T = any> {
-  value$: Observable<T | null | undefined>;
-  value: T | null | undefined;
-  parent: AbstractControl | null | undefined;
+  value$: Observable<T>;
+  value: T;
+  parent: AbstractControl | undefined;
   pristine: boolean;
   dirty: boolean;
   touched: boolean;
@@ -21,8 +21,8 @@ export interface AbstractControl<T = any> {
   markAsDirty(dirty?: boolean): void;
   markAsTouched(touched?: boolean): void;
   markAsInvalid(invalid?: boolean): void;
-  setValue(value: T | null | undefined): void;
-  patchValue(value: PartialDeep<T> | T | null | undefined): void;
+  setValue(value: T): void;
+  patchValue(value: PartialDeep<T> | T): void;
   disable(disabled?: boolean): void;
   enable(enabled?: boolean): void;
   reset(): void;

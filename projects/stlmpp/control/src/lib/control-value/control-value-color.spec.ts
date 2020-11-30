@@ -7,7 +7,7 @@ import { wait } from '../util-tests';
 
 @Component({ template: '<input type="color" [control]="control">' })
 class ControlComponent {
-  control = new Control();
+  control = new Control('');
 }
 
 @Component({ template: '<input type="color" [(model)]="model">' })

@@ -29,14 +29,14 @@ class ChangeControlName {
   @Input() controlGroupName = 'group1';
 
   controlGroup = new ControlGroup<{ group1: { control: string }; group2: { control: string } }>({
-    group1: new ControlGroup({ control: new Control() }),
-    group2: new ControlGroup({ control: new Control() }),
+    group1: new ControlGroup({ control: new Control('') }),
+    group2: new ControlGroup({ control: new Control('') }),
   });
 }
 
 @Component({ template: '<div [controlGroup]="controlGroup"><div controlGroupName="notGroup"></div></div>' })
 class ControlGroupNameNotGroup {
-  controlGroup = new ControlGroup({ notGroup: new Control() });
+  controlGroup = new ControlGroup({ notGroup: new Control('') });
 }
 
 @Directive({ selector: '[customDir]', exportAs: 'customDir' })
@@ -54,7 +54,7 @@ class CustomDirective {
 class CustomDirComponent {
   @ViewChild('customDir') customDirective!: CustomDirective;
   controlGroup = new ControlGroup<{ controlGroup: { control: string } }>({
-    controlGroup: new ControlGroup({ control: new Control() }),
+    controlGroup: new ControlGroup({ control: new Control('') }),
   });
 }
 

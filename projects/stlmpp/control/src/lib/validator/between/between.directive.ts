@@ -2,17 +2,18 @@ import { Directive, forwardRef, Input } from '@angular/core';
 import { ControlValidator } from '../validator';
 import { AbstractBetweenValidator } from './between';
 import { isArray } from '@stlmpp/utils';
+import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][between]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: forwardRef(() => BetweenValidatorDirective), multi: true }],
 })
-export class BetweenValidatorDirective<T extends Date | number> extends AbstractBetweenValidator<T> {
-  @Input('betweenStart') end!: T;
-  @Input('betweenEnd') start!: T;
+export class BetweenValidatorDirective<T extends Nullable<Date | number>> extends AbstractBetweenValidator<T> {
+  @Input('betweenStart') end!: NonNullable<T>;
+  @Input('betweenEnd') start!: NonNullable<T>;
 
   @Input()
-  set between(between: [T, T] | { start: T; end: T }) {
+  set between(between: [NonNullable<T>, NonNullable<T>] | { start: NonNullable<T>; end: NonNullable<T> }) {
     if (isArray(between)) {
       const [start, end] = between;
       this.start = start;

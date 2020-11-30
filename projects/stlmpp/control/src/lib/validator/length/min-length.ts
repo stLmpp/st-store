@@ -2,9 +2,10 @@ import { Control } from '../../control/control';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { LengthValidationError } from './max-length';
 import { Directive, HostBinding, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 @Directive()
-export abstract class AbstractMinLengthValidator<T extends string | any[] = any> extends ControlValidator<
+export abstract class AbstractMinLengthValidator<T extends Nullable<string | any[]> = any> extends ControlValidator<
   T,
   LengthValidationError
 > {
@@ -33,7 +34,7 @@ export abstract class AbstractMinLengthValidator<T extends string | any[] = any>
   }
 }
 
-export class MinLengthValidator<T extends string | any[] = any> extends AbstractMinLengthValidator<T> {
+export class MinLengthValidator<T extends Nullable<string | any[]> = any> extends AbstractMinLengthValidator<T> {
   constructor(minLength: number) {
     super();
     this.minLength = minLength;

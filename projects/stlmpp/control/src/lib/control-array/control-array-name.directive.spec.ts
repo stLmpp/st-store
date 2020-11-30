@@ -17,7 +17,7 @@ class ControlNotExists {
 
 @Component({ template: '<div [controlGroup]="controlGroup"><div controlArrayName="notArray"></div></div>' })
 class ControlArrayNameNotArray {
-  controlGroup = new ControlGroup({ notArray: new Control() });
+  controlGroup = new ControlGroup({ notArray: new Control('') });
 }
 
 @Component({
@@ -25,7 +25,7 @@ class ControlArrayNameNotArray {
 })
 class ControlComponent {
   @ViewChild(ControlArrayNameDirective) controlArrayNameDirective!: ControlArrayNameDirective;
-  controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control()]) });
+  controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control('')]) });
 }
 
 @Component({
@@ -40,7 +40,7 @@ class ControlComponent {
 class ControlArrayParent {
   @ViewChild(ControlNameDirective) controlNameDirective!: ControlNameDirective;
   @ViewChild(ControlArrayNameDirective) controlArrayNameDirective!: ControlArrayNameDirective;
-  controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control()]) });
+  controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control('')]) });
 }
 
 describe('control array name directive', () => {

@@ -95,7 +95,7 @@ describe('control value select multiple', () => {
   });
 
   it('should set empty array if value is null or undefined', () => {
-    component.control.setValue(null);
+    component.control.setValue(null as any);
     fixture.detectChanges();
     expect(select.nativeElement.selectedIndex).toBe(-1);
   });

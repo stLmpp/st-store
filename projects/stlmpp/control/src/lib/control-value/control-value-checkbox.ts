@@ -25,8 +25,8 @@ export class ControlValueCheckbox extends AbstractControlValue<boolean> {
     this.onChange$.next(($event.target as HTMLInputElement).checked);
   }
 
-  setValue(value: boolean | null | undefined): void {
-    this.renderer2.setProperty(this.elementRef.nativeElement, 'checked', !!value);
-    this.renderer2.setAttribute(this.elementRef.nativeElement, 'aria-checked', '' + !!value);
+  setValue(value: boolean): void {
+    this.renderer2.setProperty(this.elementRef.nativeElement, 'checked', value);
+    this.renderer2.setAttribute(this.elementRef.nativeElement, 'aria-checked', '' + value);
   }
 }

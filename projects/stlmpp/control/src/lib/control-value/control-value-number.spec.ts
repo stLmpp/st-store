@@ -7,7 +7,7 @@ import { triggerEvent } from '../util-tests';
 
 @Component({ template: '<input type="number" [control]="control">' })
 class ControlComponent {
-  control = new Control();
+  control = new Control<number | null>(null);
 }
 
 @Component({ template: '<input type="number" [(model)]="model">' })

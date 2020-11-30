@@ -17,13 +17,13 @@ const transformer: Record<
   { toValue(value: any, dateFormat?: string): any; toControl(value: any): any }
 > = {
   date: {
-    toControl(value: string): Date | null | undefined {
+    toControl(value: string): Date | null {
       if (!value) {
         return null;
       }
       return parseISO(value);
     },
-    toValue(value: string | Date | null | undefined, dateFormat = 'yyyy-MM-dd'): string {
+    toValue(value: string | Date | null, dateFormat = 'yyyy-MM-dd'): string {
       if (!value) {
         return '';
       }
@@ -40,10 +40,10 @@ const transformer: Record<
     },
   },
   month: {
-    toControl(value: string): Date | null | undefined {
+    toControl(value: string): Date | null {
       return transformer.date.toControl(value);
     },
-    toValue(value: Date | string | null | undefined): string {
+    toValue(value: Date | string | null): string {
       return transformer.date.toValue(value, 'yyyy-MM');
     },
   },
@@ -81,7 +81,7 @@ const transformer: Record<
     },
   },
   ['datetime-local']: {
-    toControl(value: string): Date | null | undefined {
+    toControl(value: string): Date | null {
       if (!value) {
         return null;
       }
@@ -92,7 +92,7 @@ const transformer: Record<
       }
       return parsedDate;
     },
-    toValue(value: Date | string | null | undefined): string {
+    toValue(value: Date | string | null): string {
       return transformer.date.toValue(value, `yyyy-MM-dd'T'HH:mm`);
     },
   },
@@ -108,7 +108,7 @@ export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'da
     input[type=month][control],input[type=month][controlName],input[type=month][model]`,
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDate), multi: true }],
 })
-export class ControlValueDate extends AbstractControlValue<string | Date> {
+export class ControlValueDate extends AbstractControlValue<string | Date | null> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
@@ -123,7 +123,7 @@ export class ControlValueDate extends AbstractControlValue<string | Date> {
     this.onChange$.next(toControl(value));
   }
 
-  setValue(value: string | Date | null | undefined): void {
+  setValue(value: string | Date | null): void {
     const toValue = transformer[this.type].toValue;
     value = toValue(value);
     super.setValue(value);

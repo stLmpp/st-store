@@ -54,7 +54,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
     for (const controlValue of this._controlValues) {
       controlValue.setValue(this.control.value);
     }
-    let valueStored: T | null | undefined = this.control.value;
+    let valueStored = this.control.value;
     let lastValueSetByControlValue = false;
     for (const controlValue of this._controlValues) {
       controlValue.onChange$.pipe(takeUntil(this._destroy$)).subscribe(value => {

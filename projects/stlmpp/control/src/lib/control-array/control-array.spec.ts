@@ -57,7 +57,7 @@ describe('control array', () => {
 
   it('should create with updateOn', () => {
     component.controlGroup = new ControlGroup<Group>({
-      array: new ControlArray([new Control(), new Control()], { updateOn: 'blur' }),
+      array: new ControlArray([new Control(''), new Control('')], { updateOn: 'blur' }),
     });
     fixture.detectChanges();
     const array = component.array;
@@ -67,7 +67,7 @@ describe('control array', () => {
 
   it('should create with disabled option', () => {
     component.controlGroup = new ControlGroup<Group>({
-      array: new ControlArray([new Control(), new Control()], { disabled: true }),
+      array: new ControlArray([new Control(''), new Control('')], { disabled: true }),
     });
     fixture.detectChanges();
     const array = component.array;
@@ -190,7 +190,7 @@ describe('control array', () => {
 
   it('should push a new control', () => {
     const array = component.array;
-    array.push(new Control());
+    array.push(new Control(''));
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('.input-2'))).toBeDefined();
     expect(array.length).toBe(3);
@@ -199,11 +199,11 @@ describe('control array', () => {
 
   it('should push with updateOn', () => {
     component.controlGroup = new ControlGroup<Group>({
-      array: new ControlArray([new Control(), new Control()], { updateOn: 'blur' }),
+      array: new ControlArray([new Control(''), new Control('')], { updateOn: 'blur' }),
     });
     fixture.detectChanges();
     const array = component.array;
-    array.push(new Control());
+    array.push(new Control(''));
     fixture.detectChanges();
     expect(array.get(2)?.updateOn).toBe('blur');
   });
@@ -220,7 +220,7 @@ describe('control array', () => {
 
   it('should insert with updateOn', () => {
     component.controlGroup = new ControlGroup<Group>({
-      array: new ControlArray([new Control(), new Control()], { updateOn: 'blur' }),
+      array: new ControlArray([new Control(''), new Control('')], { updateOn: 'blur' }),
     });
     fixture.detectChanges();
     const array = component.array;
@@ -250,13 +250,13 @@ describe('control array', () => {
 
   it('should patch the values', () => {
     const array = new ControlArray<{ id: number; name: string }>([
-      new ControlGroup({ id: new Control(), name: new Control() }),
-      new ControlGroup({ id: new Control(), name: new Control() }),
+      new ControlGroup({ id: new Control(0), name: new Control('') }),
+      new ControlGroup({ id: new Control(0), name: new Control('') }),
     ]);
     array.patchValue([{ id: 1 }, { name: 's' }, { name: 's' }]);
     expect(array.value).toEqual([
-      { id: 1, name: undefined },
-      { id: undefined, name: 's' },
+      { id: 1, name: '' },
+      { id: 0, name: 's' },
     ] as any);
   });
 
@@ -287,7 +287,7 @@ describe('control array', () => {
     const array = component.array;
     const sub = jasmine.createSpy('sub');
     array.value$.subscribe(sub);
-    array.push(new Control());
+    array.push(new Control(''));
     fixture.detectChanges();
     triggerEvent(fixture.debugElement.query(By.css('.input-0')), 'input', 's');
     triggerEvent(fixture.debugElement.query(By.css('.input-2')), 'input', 's2');

@@ -5,7 +5,7 @@ import { Control } from './control/control';
 
 @Component({ template: '<input [control]="control" [disabled]="disabled">' })
 export class ControlComponent {
-  control = new Control();
+  control = new Control('');
   disabled = false;
 }
 
@@ -15,7 +15,7 @@ export class ControlDComponent implements OnInit {
   disabled = true;
 
   ngOnInit(): void {
-    this.control = new Control();
+    this.control = new Control('');
   }
 }
 

@@ -8,17 +8,18 @@ import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { ControlArray } from '../control-array/control-array';
 
-export type ControlGroupType<T> = {
+export type ControlGroupType<T extends Record<any, any>> = {
   [K in keyof T]: ControlType<T[K]>;
 };
 
-export type ControlGroupValueType<T> = {
+export type ControlGroupValueType<T extends Record<any, any>> = {
   [K in keyof T]: T[K] extends Control<infer U> ? U : T[K];
 };
 
 export type ControlGroupOptions = AbstractControlOptions;
 
-export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements AbstractControl<RealT> {
+export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT = ControlGroupValueType<T>>
+  implements AbstractControl<RealT> {
   constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();
@@ -36,18 +37,18 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
     }
   }
 
-  private _parent: ControlGroup | ControlArray | null | undefined;
+  private _parent: ControlGroup | ControlArray | undefined;
 
   value$!: Observable<RealT>;
 
   /** @internal */
   submitted = false;
 
-  get parent(): ControlGroup | ControlArray | null | undefined {
+  get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;
   }
   /** @internal */
-  set parent(parent: ControlGroup | ControlArray | null | undefined) {
+  set parent(parent: ControlGroup | ControlArray | undefined) {
     this._parent = parent;
   }
 
@@ -73,7 +74,7 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
   }
 
   get value(): RealT {
-    return this._entries().reduce((acc, [key, value]) => ({ ...acc, [key]: value.value }), {}) as any;
+    return this._entries().reduce((acc, [key, value]) => ({ ...acc, [key]: value.value }), {} as RealT);
   }
 
   get invalid(): boolean {
@@ -122,7 +123,7 @@ export class ControlGroup<T = any, RealT = ControlGroupValueType<T>> implements 
     this.disable(!enable);
   }
 
-  setValue(value: RealT | undefined | null, options?: ControlUpdateOptions): void {
+  setValue(value: RealT, options?: ControlUpdateOptions): void {
     for (const [key, control] of this._entries()) {
       control.setValue((value as any)?.[key], options);
     }

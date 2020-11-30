@@ -49,7 +49,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     }
   }
 
-  private _setValue(value: any | null | undefined): void {
+  private _setValue(value: any): void {
     for (const radio of this.children) {
       const checked = this.compareWith(value, radio.value);
       this.renderer2.setProperty(radio.elementRef.nativeElement, 'checked', checked);
@@ -71,7 +71,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     }
   }
 
-  setValue(value: any | null | undefined): void {
+  setValue(value: any): void {
     if (!this.allChildren && !isNil(value)) {
       this._markForValueAfterContentInit = true;
       this._lastValue = value;

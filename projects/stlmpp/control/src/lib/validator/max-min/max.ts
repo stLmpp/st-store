@@ -3,12 +3,13 @@ import { Control } from '../../control/control';
 import { isDate, isNil, isString } from '@stlmpp/utils';
 import { format, isAfter, parseISO } from 'date-fns';
 import { Directive, HostBinding, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 export type MaxMinType = 'date' | 'number';
 
-export interface MaxMinValidationError<T extends Date | number> {
+export interface MaxMinValidationError<T extends Nullable<Date | number>> {
   actual: T;
-  required: T;
+  required: NonNullable<T>;
 }
 
 export function getTypeAndValue(maxMin: string | Date | number): [MaxMinType, Date | number, string] {
@@ -21,7 +22,7 @@ export function getTypeAndValue(maxMin: string | Date | number): [MaxMinType, Da
 }
 
 @Directive()
-export abstract class AbstractMaxValidator<T extends Date | number> extends ControlValidator<
+export abstract class AbstractMaxValidator<T extends Nullable<Date | number>> extends ControlValidator<
   T,
   MaxMinValidationError<T>
 > {
@@ -31,13 +32,13 @@ export abstract class AbstractMaxValidator<T extends Date | number> extends Cont
   }
 
   @Input()
-  set max(max: T | string) {
+  set max(max: NonNullable<T> | string) {
     const [type, newMax, attr] = getTypeAndValue(max);
     this._type = type;
     this._max = newMax as any;
     this.attrs = { max: attr };
   }
-  private _max!: T;
+  private _max!: NonNullable<T>;
   private _type!: MaxMinType;
 
   attrs: ControlValidatorAttributes = {};
@@ -60,8 +61,8 @@ export abstract class AbstractMaxValidator<T extends Date | number> extends Cont
   }
 }
 
-export class MaxValidator<T extends Date | number> extends AbstractMaxValidator<T> {
-  constructor(max: string | T) {
+export class MaxValidator<T extends Nullable<Date | number>> extends AbstractMaxValidator<T> {
+  constructor(max: string | NonNullable<T>) {
     super();
     this.max = max;
   }

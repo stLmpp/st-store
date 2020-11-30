@@ -8,7 +8,7 @@ import { ControlGroupDirective } from './control-group.directive';
 import { Control } from '../control/control';
 
 interface Group {
-  id: number;
+  id: number | undefined;
   name: string;
 }
 
@@ -33,9 +33,9 @@ class ControlComponent {
   @ViewChild('groupRef') controlGroupDirective!: ControlGroupDirective<GroupNested>;
 
   controlGroupNested = new ControlGroup<GroupNested>({
-    id: new Control(),
-    name: new Control(),
-    nested: new ControlGroup({ id: new Control(), name: new Control() }),
+    id: new Control<number | undefined>(undefined),
+    name: new Control(''),
+    nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('') }),
   });
 }
 

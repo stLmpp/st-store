@@ -71,7 +71,7 @@ export class ControlValueSelectMultiple extends AbstractControlValue<any[]> impl
     this.onChange$.next(selectOptions);
   }
 
-  setValue(value: any[] | null | undefined): void {
+  setValue(value: any[]): void {
     if (!this.options && value?.length) {
       this._valueAfterContentInit = value;
       this._setValueAfterContentInit = true;
