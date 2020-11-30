@@ -45,13 +45,13 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
   private _updateOn: ControlUpdateOn = 'change';
 
   @Input()
-  set model(value: T | null | undefined) {
+  set model(value: T) {
     this.control?.setValue(value, { emitChange: false });
     this._model = value;
   }
-  private _model: T | null | undefined;
+  private _model!: T;
 
-  @Output() modelChange = new EventEmitter<T | null | undefined>();
+  @Output() modelChange = new EventEmitter<T>();
 
   @Input()
   set updateOn(updateOn: ControlUpdateOn) {

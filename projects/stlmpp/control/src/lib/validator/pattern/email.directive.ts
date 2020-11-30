@@ -3,6 +3,7 @@ import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
+import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][email]:not([control]):not([controlName])',
@@ -26,7 +27,7 @@ export class EmailValidatorDirective extends AbstractEmailValidator {
     }
   }
 
-  validate(control: Control<string>): boolean | null {
+  validate(control: Control<Nullable<string>>): boolean | null {
     if (!this._email) {
       return null;
     }

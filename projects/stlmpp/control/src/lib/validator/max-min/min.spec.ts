@@ -13,7 +13,7 @@ import { MinValidator } from './min';
 })
 class ControlComponent {
   control = new Control<number>(0, [Validators.min<number>(5)]);
-  controlDate = new Control<Date>(null, [Validators.min(new Date(2020, 1, 14))]);
+  controlDate = new Control<Date | null>(null, [Validators.min<Date | null>(new Date(2020, 1, 14))]);
 }
 
 describe('min validator', () => {

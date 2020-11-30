@@ -15,11 +15,11 @@ import { Control } from '../control/control';
   `,
 })
 class ControlComponent {
-  controlDate = new Control();
-  controlWeek = new Control();
-  controlTime = new Control();
-  controlMonth = new Control();
-  controlDatetime = new Control();
+  controlDate = new Control<Date | null>(null);
+  controlWeek = new Control<string | null>(null);
+  controlTime = new Control<string | null>(null);
+  controlMonth = new Control<Date | null>(null);
+  controlDatetime = new Control<Date | null>(null);
 }
 
 @Component({
@@ -70,7 +70,7 @@ describe('control value date', () => {
       triggerEvent(input, 'input', '2020-02-14');
       triggerEvent(input, 'blur');
       fixture.detectChanges();
-      expect(new Date(2020, 1, 14)).toEqual(component.controlDate.value);
+      expect(new Date(2020, 1, 14)).toEqual(component.controlDate.value!);
     });
 
     it('should set null if value is not a date', () => {
@@ -84,16 +84,16 @@ describe('control value date', () => {
       component.controlDate.setValue(new Date(2020, 1, 14));
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-02-14');
-      component.controlDate.setValue('2020-03-14');
+      component.controlDate.setValue('2020-03-14' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-03-14');
-      component.controlDate.setValue(new Date(2020, 3, 14).toISOString());
+      component.controlDate.setValue(new Date(2020, 3, 14).toISOString() as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-04-14');
     });
 
     it('should not set the input value is invalid date', () => {
-      component.controlDate.setValue('2014-55-26');
+      component.controlDate.setValue('2014-55-26' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('');
     });
@@ -110,7 +110,7 @@ describe('control value date', () => {
       triggerEvent(input, 'input', '2020-02');
       triggerEvent(input, 'blur');
       fixture.detectChanges();
-      expect(new Date(2020, 1)).toEqual(component.controlMonth.value);
+      expect(new Date(2020, 1)).toEqual(component.controlMonth.value!);
     });
 
     it('should set null if value is not a date', () => {
@@ -124,16 +124,16 @@ describe('control value date', () => {
       component.controlMonth.setValue(new Date(2020, 1));
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-02');
-      component.controlMonth.setValue('2020-03');
+      component.controlMonth.setValue('2020-03' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-03');
-      component.controlMonth.setValue(new Date(2020, 3).toISOString());
+      component.controlMonth.setValue(new Date(2020, 3).toISOString() as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-04');
     });
 
     it('should not set the input value is invalid date', () => {
-      component.controlMonth.setValue('2014-55-26');
+      component.controlMonth.setValue('2014-55-26' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('');
     });
@@ -219,7 +219,7 @@ describe('control value date', () => {
       triggerEvent(input, 'input', '2020-02-14T23:59');
       triggerEvent(input, 'blur');
       fixture.detectChanges();
-      expect(new Date(2020, 1, 14, 23, 59)).toEqual(component.controlDatetime.value);
+      expect(new Date(2020, 1, 14, 23, 59)).toEqual(component.controlDatetime.value!);
     });
 
     it('should set null if value is not a date', () => {
@@ -237,16 +237,16 @@ describe('control value date', () => {
       component.controlDatetime.setValue(new Date(2020, 1, 14, 23, 59));
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-02-14T23:59');
-      component.controlDatetime.setValue('2020-03-14T23:58');
+      component.controlDatetime.setValue('2020-03-14T23:58' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-03-14T23:58');
-      component.controlDatetime.setValue(new Date(2020, 3, 14, 23, 57).toISOString());
+      component.controlDatetime.setValue(new Date(2020, 3, 14, 23, 57).toISOString() as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('2020-04-14T23:57');
     });
 
     it('should not set the input value is invalid date', () => {
-      component.controlDatetime.setValue('2014-55-26');
+      component.controlDatetime.setValue('2014-55-26' as any);
       fixture.detectChanges();
       expect(input.nativeElement.value).toBe('');
     });

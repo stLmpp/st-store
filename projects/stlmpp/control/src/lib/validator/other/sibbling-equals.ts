@@ -7,10 +7,7 @@ export interface SibblingEqualsValidationError {
 }
 
 export class SibblingEqualsValidator<T = any> extends ControlValidator<T, SibblingEqualsValidationError> {
-  constructor(
-    private sibblingName: string,
-    private compareWith: (valueA: T | null | undefined, valueB: T | null | undefined) => boolean = Object.is
-  ) {
+  constructor(private sibblingName: string, private compareWith: (valueA: T, valueB: T) => boolean = Object.is) {
     super();
   }
 

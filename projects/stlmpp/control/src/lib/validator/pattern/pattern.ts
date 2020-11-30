@@ -2,14 +2,15 @@ import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
 import { isRegExp } from '@stlmpp/utils';
 import { Directive, HostBinding, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 export interface PatternValidationError {
   expected: string;
-  actual: string;
+  actual: Nullable<string>;
 }
 
 @Directive()
-export abstract class AbstractPatternValidator extends ControlValidator<string, PatternValidationError> {
+export abstract class AbstractPatternValidator extends ControlValidator<Nullable<string>, PatternValidationError> {
   @HostBinding('attr.pattern')
   get patternAttr(): string {
     return this.attrs.pattern ? '' + this.attrs.pattern : '';
@@ -31,7 +32,7 @@ export abstract class AbstractPatternValidator extends ControlValidator<string, 
   attrs: ControlValidatorAttributes = {};
   name = 'pattern';
 
-  validate({ value }: Control<string>): PatternValidationError | null {
+  validate({ value }: Control<Nullable<string>>): PatternValidationError | null {
     if (!value) {
       return null;
     }

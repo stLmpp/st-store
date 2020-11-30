@@ -53,10 +53,10 @@ function toControlOptions(options: ControlOptions | ControlValidator | ControlVa
 }
 
 export class Control<T = any> implements AbstractControl<T> {
-  constructor(value?: T | null | undefined, options?: ControlOptions<T>);
-  constructor(value?: T | null | undefined, options?: ControlValidator<T>);
-  constructor(value?: T | null | undefined, options?: ControlValidator<T>[]);
-  constructor(value?: T | null | undefined, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]) {
+  constructor(value: T, options?: ControlOptions<T>);
+  constructor(value: T, options?: ControlValidator<T>);
+  constructor(value: T, options?: ControlValidator<T>[]);
+  constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]) {
     this._initialValue = value;
     this._initialOptions = toControlOptions(options);
     this._updateOn = this._initialOptions.updateOn!;
@@ -64,25 +64,25 @@ export class Control<T = any> implements AbstractControl<T> {
       this._disabled = this._initialOptions.disabled;
     }
     this._setInitialValidators(this._initialOptions.validators);
-    this._value$ = new BehaviorSubject<T | null | undefined>(value);
+    this._value$ = new BehaviorSubject<T>(value);
     this.internalValueChanges$.next(value);
     this.value$ = this._value$.asObservable();
     this._valueChanges$.next(value);
   }
 
-  private readonly _initialValue: T | null | undefined;
+  private readonly _initialValue: T;
   private readonly _initialOptions: ControlOptions<T>;
   private readonly _validatorsMap = new Map<keyof ValidatorsModel, ControlValidator>();
   private readonly _disabledChanged$ = new BehaviorSubject<void>(undefined);
   private readonly _stateChanged$ = new Subject<ControlState>();
-  private readonly _value$: BehaviorSubject<T | null | undefined>;
-  private readonly _valueChanges$ = new Subject<T | null | undefined>();
+  private readonly _value$: BehaviorSubject<T>;
+  private readonly _valueChanges$ = new Subject<T>();
   private readonly _attributesChanged$ = new Subject<Record<string, string>>();
   private readonly _classesChanged$ = new Subject<string[]>();
   private readonly _submit$ = new Subject();
   private readonly _errors$ = new BehaviorSubject<Partial<ValidatorsModel>>({});
 
-  private _parent: ControlGroup | null | undefined;
+  private _parent: ControlGroup | undefined;
   private _dirty = false;
   private _touched = false;
   private _invalid = false;
@@ -100,11 +100,11 @@ export class Control<T = any> implements AbstractControl<T> {
   readonly validationCancel: Record<keyof ValidatorsModel, Subject<void>> = {};
   readonly disabledChanged$ = this._disabledChanged$.asObservable();
   readonly stateChanged$ = this._stateChanged$.asObservable();
-  readonly value$: Observable<T | null | undefined>;
+  readonly value$: Observable<T>;
   readonly valueChanges$ = this._valueChanges$.asObservable();
 
   /** @internal */
-  readonly internalValueChanges$ = new Subject<T | null | undefined>();
+  readonly internalValueChanges$ = new Subject<T>();
   /** @internal */
   readonly attributesChanged$ = this._attributesChanged$.asObservable();
   /** @internal */
@@ -112,11 +112,11 @@ export class Control<T = any> implements AbstractControl<T> {
   /** @internal */
   readonly submit$ = this._submit$.asObservable();
 
-  get parent(): ControlGroup | null | undefined {
+  get parent(): ControlGroup | undefined {
     return this._parent;
   }
   /** @internal */
-  set parent(parent: ControlGroup | null | undefined) {
+  set parent(parent: ControlGroup | undefined) {
     this._parent = parent;
   }
 
@@ -165,7 +165,7 @@ export class Control<T = any> implements AbstractControl<T> {
     return this._updateOn;
   }
 
-  get value(): T | null | undefined {
+  get value(): T {
     return this._value$.value;
   }
 
@@ -219,7 +219,7 @@ export class Control<T = any> implements AbstractControl<T> {
     this._stateChanged();
   }
 
-  private _emitChange(value: T | null | undefined, options?: ControlUpdateOptions): void {
+  private _emitChange(value: T, options?: ControlUpdateOptions): void {
     options = controlUpdateOptions(options);
     if (options.emitChange) {
       this._valueChanges$.next(value);
@@ -343,13 +343,13 @@ export class Control<T = any> implements AbstractControl<T> {
     this._sendAttributesAndClasses();
   }
 
-  setValue(value: T | null | undefined, options?: ControlUpdateOptions): void {
+  setValue(value: T, options?: ControlUpdateOptions): void {
     this._value$.next(value);
     this._emitChange(value, options);
     this.runValidators();
   }
 
-  patchValue(value: T | null | undefined, options?: ControlUpdateOptions): void {
+  patchValue(value: T, options?: ControlUpdateOptions): void {
     this.setValue(value, options);
   }
 

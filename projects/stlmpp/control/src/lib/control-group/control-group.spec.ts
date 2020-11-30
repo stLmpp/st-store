@@ -9,7 +9,7 @@ import { By } from '@angular/platform-browser';
 import { AsyncValidator, triggerEvent, wait } from '../util-tests';
 
 interface Group {
-  id: number;
+  id: number | undefined;
   name: string;
 }
 
@@ -35,14 +35,14 @@ interface GroupNested extends Group {
 })
 class ControlComponent {
   controlGroup = new ControlGroup<Group>({
-    id: new Control(),
-    name: new Control(),
+    id: new Control<number | undefined>(undefined),
+    name: new Control(''),
   });
 
   controlGroupNested = new ControlGroup<GroupNested>({
-    id: new Control(),
-    name: new Control(),
-    nested: new ControlGroup({ id: new Control(), name: new Control() }),
+    id: new Control<number | undefined>(undefined),
+    name: new Control(''),
+    nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('') }),
   });
 }
 
@@ -61,37 +61,52 @@ describe('control group', () => {
   });
 
   it('should set updateOn of all children on creation', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(), name: new Control() }, { updateOn: 'blur' });
+    const controlGroup = new ControlGroup<Group>(
+      { id: new Control<number | undefined>(undefined), name: new Control('') },
+      { updateOn: 'blur' }
+    );
     expect(controlGroup.get('id').updateOn).toBe('blur');
     expect(controlGroup.get('name').updateOn).toBe('blur');
   });
 
   it('should disable all children on creation', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(), name: new Control() }, { disabled: true });
+    const controlGroup = new ControlGroup<Group>(
+      { id: new Control<number | undefined>(undefined), name: new Control('') },
+      { disabled: true }
+    );
     expect(controlGroup.get('id').disabled).toBeTrue();
     expect(controlGroup.get('name').disabled).toBeTrue();
   });
 
   it('should emit the value of all controls', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(), name: new Control() });
+    const controlGroup = new ControlGroup<Group>({
+      id: new Control<number | undefined>(undefined),
+      name: new Control(''),
+    });
     const sub = jasmine.createSpy('sub');
     controlGroup.value$.subscribe(sub);
     expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).toHaveBeenCalledWith({ id: undefined, name: undefined });
+    expect(sub).toHaveBeenCalledWith({ id: undefined, name: '' });
     controlGroup.get('id').setValue(1);
     expect(sub).toHaveBeenCalledTimes(2);
-    expect(sub).toHaveBeenCalledWith({ id: 1, name: undefined });
+    expect(sub).toHaveBeenCalledWith({ id: 1, name: '' });
   });
 
   it('should get/set parent', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(), name: new Control() });
+    const controlGroup = new ControlGroup<Group>({
+      id: new Control<number | undefined>(undefined),
+      name: new Control(''),
+    });
     const controlGroupParent = new ControlGroup({});
     controlGroup.parent = controlGroupParent;
     expect(controlGroup.parent).toBe(controlGroupParent);
   });
 
   it('should set updateOn of all children', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(), name: new Control() });
+    const controlGroup = new ControlGroup<Group>({
+      id: new Control<number | undefined>(undefined),
+      name: new Control(''),
+    });
     controlGroup.setUpdateOn('submit');
     expect(controlGroup.get('id').updateOn).toBe('submit');
     expect(controlGroup.get('name').updateOn).toBe('submit');
@@ -101,7 +116,7 @@ describe('control group', () => {
   });
 
   it('should get the value of all controls', () => {
-    const controlGroup = new ControlGroup<Group>({ id: new Control(1), name: new Control('a') });
+    const controlGroup = new ControlGroup<Group>({ id: new Control<number | undefined>(1), name: new Control('a') });
     expect(controlGroup.value).toEqual({ id: 1, name: 'a' });
     controlGroup.get('name').setValue('b');
     expect(controlGroup.value).toEqual({ id: 1, name: 'b' });
@@ -195,7 +210,7 @@ describe('control group', () => {
 
   it('should set the value of all controls', () => {
     const controlGroup = component.controlGroup;
-    expect(controlGroup.value).toEqual({ id: undefined, name: undefined } as any);
+    expect(controlGroup.value).toEqual({ id: undefined, name: '' });
     controlGroup.setValue({ id: 1, name: 'string' });
     fixture.detectChanges();
     expect(controlGroup.value).toEqual({ id: 1, name: 'string' });
@@ -212,7 +227,7 @@ describe('control group', () => {
     const controlGroup = component.controlGroupNested;
     controlGroup.patchValue({ id: 1, nested: { name: 'string' } });
     fixture.detectChanges();
-    expect(controlGroup.value).toEqual({ id: 1, name: undefined, nested: { id: undefined, name: 'string' } } as any);
+    expect(controlGroup.value).toEqual({ id: 1, name: '', nested: { id: undefined, name: 'string' } } as any);
   });
 
   it('should get the control', () => {
@@ -224,9 +239,9 @@ describe('control group', () => {
 
   it('should reset all controls', async () => {
     component.controlGroupNested = new ControlGroup<GroupNested>({
-      id: new Control(1),
-      name: new Control(),
-      nested: new ControlGroup({ id: new Control(), name: new Control('string') }),
+      id: new Control<number | undefined>(1),
+      name: new Control(''),
+      nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('string') }),
     });
     fixture.detectChanges();
     const controlGroup = component.controlGroupNested;
@@ -238,16 +253,16 @@ describe('control group', () => {
     expect(controlGroup.dirty).toBeTrue();
     controlGroup.reset();
     fixture.detectChanges();
-    expect(controlGroup.value).toEqual({ id: 1, name: undefined, nested: { id: undefined, name: 'string' } } as any);
+    expect(controlGroup.value).toEqual({ id: 1, name: '', nested: { id: undefined, name: 'string' } } as any);
     expect(controlGroup.dirty).toBeFalse();
   });
 
   it('should submit all controls', () => {
     component.controlGroupNested = new ControlGroup<GroupNested>(
       {
-        id: new Control(1),
-        name: new Control(),
-        nested: new ControlGroup({ id: new Control(), name: new Control('string') }),
+        id: new Control<number | undefined>(1),
+        name: new Control(''),
+        nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('string') }),
       },
       { updateOn: 'submit' }
     );
@@ -260,7 +275,7 @@ describe('control group', () => {
     fixture.detectChanges();
     expect(component.controlGroupNested.value).toEqual({
       id: 1,
-      name: undefined,
+      name: '',
       nested: { id: undefined, name: 'string' },
     } as any);
     component.controlGroupNested.submit();

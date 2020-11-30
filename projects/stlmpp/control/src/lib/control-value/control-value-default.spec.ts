@@ -7,12 +7,12 @@ import { triggerEvent } from '../util-tests';
 
 @Component({ template: '<input type="text" [control]="control">' })
 class ControlComponent {
-  control = new Control();
+  control = new Control('');
 }
 
 @Component({ template: '<input [type]="type" [control]="control">' })
 class ControlTypeDynamicComponent {
-  control = new Control();
+  control = new Control('');
   type = 'password';
 }
 

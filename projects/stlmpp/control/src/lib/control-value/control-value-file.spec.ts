@@ -8,7 +8,7 @@ import { ControlValueFile } from './control-value-file';
 @Component({ template: `<input type="file" [control]="control" />` })
 class ControlComponent {
   @ViewChild(ControlValueFile) controlValueFile!: ControlValueFile;
-  control = new Control<FileList>();
+  control = new Control<FileList | null>(null);
 }
 
 @Component({ template: '<input type="file" [(model)]="model">' })

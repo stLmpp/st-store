@@ -27,17 +27,17 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
 
   private readonly _originControls: C[];
 
-  private _parent: ControlGroup | ControlArray | null | undefined;
+  private _parent: ControlGroup | ControlArray | undefined;
   private _destroy$ = new Subject();
   private _value$ = new BehaviorSubject<T[]>([]);
 
   value$ = this._value$.asObservable();
 
-  get parent(): ControlGroup | ControlArray | null | undefined {
+  get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;
   }
   /** @internal */
-  set parent(parent: ControlGroup | ControlArray | null | undefined) {
+  set parent(parent: ControlGroup | ControlArray | undefined) {
     this._parent = parent;
   }
 
@@ -105,7 +105,7 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
     return this._controls.some(control => control.pending);
   }
 
-  get controls(): Readonly<C[]> {
+  get controls(): C[] {
     return this._controls;
   }
 

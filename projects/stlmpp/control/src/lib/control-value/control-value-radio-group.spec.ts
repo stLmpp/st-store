@@ -26,7 +26,7 @@ class ControlComponent {
   </radio-group>`,
 })
 class ControlDisabled {
-  control = new Control();
+  control = new Control<number | null>(null);
 }
 
 @Component({

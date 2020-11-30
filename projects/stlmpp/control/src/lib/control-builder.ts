@@ -7,10 +7,7 @@ import { ControlType } from './control/control-type';
 import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-group/control-group';
 import { ControlValidator } from './validator/validator';
 
-export type ControlBuilderTupple<T> =
-  | [T | null | undefined, ControlOptions<T> | ControlValidator<T>[] | undefined]
-  | [T | null | undefined]
-  | [];
+export type ControlBuilderTupple<T> = [T, ControlOptions<T> | ControlValidator<T>[] | undefined];
 
 export type ControlBuilderGroup<T extends Record<any, any>> = {
   [K in keyof T]: ControlBuilderGroupItem<T[K]>;
@@ -26,13 +23,10 @@ export type ControlBuilderGroupItem<T> = [T] extends [Control<infer C>]
 
 @Injectable()
 export class ControlBuilder {
-  control<T>(
-    value?: T | null | undefined,
-    options?: ControlValidator<T> | ControlValidator<T>[] | ControlOptions<T>
-  ): Control;
+  control<T>(value: T, options?: ControlValidator<T> | ControlValidator<T>[] | ControlOptions<T>): Control;
   control<T>(tuple: ControlBuilderTupple<T>): Control;
   control<T>(
-    value?: T | null | undefined | ControlBuilderTupple<T>,
+    value: T | ControlBuilderTupple<T>,
     options?: ControlValidator | ControlValidator[] | ControlOptions
   ): Control {
     if (isArray(value)) {

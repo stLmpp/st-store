@@ -11,7 +11,7 @@ import { ControlDirective } from './control.directive';
     '<div [controlGroup]="controlGroup"><input [controlName]="controlName" #controlNameRef="controlName"></div>',
 })
 class ControlComponent {
-  @ViewChild('controlNameRef') controlNameDirective!: ControlNameDirective;
+  @ViewChild('controlNameRef') controlNameDirective!: ControlNameDirective<number>;
   @Input() controlGroup = new ControlGroup({ control: new Control(1), control2: new Control(2) });
   @Input() controlName = 'control';
 }
@@ -35,7 +35,7 @@ class CustomInputDirective {
 })
 class CustomInputComponent {
   @ViewChild('customInput') customInput!: CustomInputDirective;
-  controlGroup = new ControlGroup({ control: new Control() });
+  controlGroup = new ControlGroup({ control: new Control('') });
 }
 
 describe('control name', () => {

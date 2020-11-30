@@ -12,7 +12,7 @@ export abstract class AbstractControlValue<T = any> extends ControlValue<T> {
     this.onTouched$.next();
   }
 
-  setValue(value: T | null | undefined): void {
+  setValue(value: T): void {
     this.renderer2.setProperty(this.elementRef.nativeElement, 'value', value ?? '');
   }
 

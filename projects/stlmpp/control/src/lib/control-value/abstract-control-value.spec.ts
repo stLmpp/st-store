@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({ template: '<input type="number" [control]="control">' })
 class ControlComponent {
-  control = new Control();
+  control = new Control<null | number>(null);
 }
 
 @Component({
@@ -21,9 +21,9 @@ class ControlComponent {
 class CustomInputComponent extends ControlValue implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
 
-  control = new Control();
+  control = new Control<null | number>(null);
 
-  setValue(value: any | null | undefined): void {
+  setValue(value: any): void {
     this.control.setValue(value);
   }
 
@@ -43,7 +43,7 @@ class CustomInputComponent extends ControlValue implements OnInit, OnDestroy {
 class CustomComponent {
   @ViewChild(CustomInputComponent) customInputComponent!: CustomInputComponent;
 
-  control = new Control();
+  control = new Control<number | null>(null);
 }
 
 @Component({ template: '<custom-input [(model)]="model"></custom-input>' })

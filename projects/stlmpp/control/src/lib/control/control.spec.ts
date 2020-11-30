@@ -14,8 +14,8 @@ import { Validators } from '../validator/validators';
     '<input class="control" [control]="control"><div [controlGroup]="controlGroup"><input controlName="control"></div>',
 })
 class ControlComponent {
-  @Input() control = new Control();
-  @Input() controlGroup = new ControlGroup({ control: new Control() });
+  @Input() control = new Control('');
+  @Input() controlGroup = new ControlGroup({ control: new Control('') });
 }
 
 describe('control', () => {
@@ -44,7 +44,7 @@ describe('control', () => {
   });
 
   it('should create a control', () => {
-    const control = new Control();
+    const control = new Control(undefined);
     expect(control).toBeDefined();
     expect(control.value).toBeUndefined();
   });
@@ -75,8 +75,8 @@ describe('control', () => {
   });
 
   it('should get the parent if exists', () => {
-    const control = new Control();
-    const controlGroup = new ControlGroup({ control: new Control() });
+    const control = new Control('');
+    const controlGroup = new ControlGroup({ control: new Control('') });
     expect(control.parent).toBeUndefined();
     expect(controlGroup.get('control').parent).toBeDefined();
   });
@@ -129,7 +129,7 @@ describe('control', () => {
   });
 
   it('should set the updateOn option', () => {
-    const control = new Control();
+    const control = new Control('');
     control.setUpdateOn('submit');
     expect(control.updateOn).toBe('submit');
     control.setUpdateOn(undefined);
@@ -137,7 +137,7 @@ describe('control', () => {
   });
 
   it('should mark as touched only once', () => {
-    const control = new Control();
+    const control = new Control('');
     const sub = jasmine.createSpy('sub');
     control.stateChanged$.subscribe(sub);
     control.markAsTouched();
@@ -149,7 +149,7 @@ describe('control', () => {
   });
 
   it('should mark as dirty only once', () => {
-    const control = new Control();
+    const control = new Control('');
     const sub = jasmine.createSpy('sub');
     control.stateChanged$.subscribe(sub);
     control.markAsDirty();
@@ -348,7 +348,7 @@ describe('control', () => {
   });
 
   it('should reset the control', () => {
-    const control = (component.control = new Control('', [Validators.required]));
+    const control: Control<string> = (component.control = new Control('', [Validators.required]));
     fixture.detectChanges();
     control.setValidators([Validators.email]);
     triggerEvent(input, 'input', 'teste2');

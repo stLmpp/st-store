@@ -6,6 +6,7 @@ import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 import { createFakeControl } from '../../util-tests';
 import { RequiredTrueValidator } from './required-true';
+import { Nullable } from '../../util';
 
 @Component({ template: '<input type="checkbox" [control]="control">' })
 class ControlComponent {
@@ -26,7 +27,7 @@ describe('required true validator', () => {
 
   it('should validate', () => {
     const validator = new RequiredTrueValidator();
-    expect(validator.validate(createFakeControl<boolean>(false))).toBeTrue();
-    expect(validator.validate(createFakeControl<boolean>(true))).toBeNull();
+    expect(validator.validate(createFakeControl<Nullable<boolean>>(false))).toBeTrue();
+    expect(validator.validate(createFakeControl<Nullable<boolean>>(true))).toBeNull();
   });
 });

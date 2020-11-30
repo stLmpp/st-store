@@ -1,12 +1,13 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
+import { Nullable } from '../../util';
 
-export abstract class AbstractRequiredTrueValidator extends ControlValidator<boolean, boolean> {
+export abstract class AbstractRequiredTrueValidator extends ControlValidator<Nullable<boolean>, boolean> {
   name = 'requiredTrue';
 
   attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
 
-  validate({ value }: Control<boolean>): boolean | null {
+  validate({ value }: Control<Nullable<boolean>>): boolean | null {
     return value !== true || null;
   }
 }

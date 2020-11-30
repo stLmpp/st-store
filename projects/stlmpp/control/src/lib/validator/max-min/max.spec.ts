@@ -13,7 +13,7 @@ import { createFakeControl } from '../../util-tests';
 })
 class ControlComponent {
   control = new Control<number>(0, [Validators.max<number>(5)]);
-  controlDate = new Control<Date>(null, [Validators.max(new Date(2020, 1, 14))]);
+  controlDate = new Control<Date | null>(null, [Validators.max<Date | null>(new Date(2020, 1, 14))]);
 }
 
 describe('max validator', () => {

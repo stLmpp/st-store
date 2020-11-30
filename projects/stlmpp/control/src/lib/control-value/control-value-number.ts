@@ -7,7 +7,7 @@ import { AbstractControlValue } from './abstract-control-value';
     input[type=range][control],input[type=range][controlName],input[type=range][model]`,
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueNumber) }],
 })
-export class ControlValueNumber extends AbstractControlValue<number> {
+export class ControlValueNumber extends AbstractControlValue<number | null> {
   @HostListener('input', ['$event'])
   onInput($event: InputEvent): void {
     const value = ($event.target as HTMLInputElement).value;

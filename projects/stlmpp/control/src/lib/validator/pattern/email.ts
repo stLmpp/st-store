@@ -1,14 +1,15 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
+import { Nullable } from '../../util';
 
 // eslint-disable-next-line max-len
 const EMAIL_REGEXP = /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-export abstract class AbstractEmailValidator extends ControlValidator<string, boolean> {
+export abstract class AbstractEmailValidator extends ControlValidator<Nullable<string>, boolean> {
   attrs: ControlValidatorAttributes = { email: undefined };
   name = 'email';
 
-  validate({ value }: Control<string>): boolean | null {
+  validate({ value }: Control<Nullable<string>>): boolean | null {
     return (value && !EMAIL_REGEXP.test(value)) || null;
   }
 }

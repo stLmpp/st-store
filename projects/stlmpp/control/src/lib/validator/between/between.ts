@@ -3,19 +3,23 @@ import { Control } from '../../control/control';
 import { isDate, isNil } from '@stlmpp/utils';
 import { isAfter, isBefore, isEqual } from 'date-fns';
 import { Directive, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
-export interface BetweenError<T extends Date | number> {
-  expectedStart: T;
-  expectedEnd: T;
+export interface BetweenError<T extends Nullable<Date | number>> {
+  expectedStart: NonNullable<T>;
+  expectedEnd: NonNullable<T>;
   actual: T;
 }
 
 @Directive()
-export abstract class AbstractBetweenValidator<T extends Date | number> extends ControlValidator<T, BetweenError<T>> {
+export abstract class AbstractBetweenValidator<T extends Nullable<Date | number>> extends ControlValidator<
+  T,
+  BetweenError<T>
+> {
   @Input() inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true];
 
-  abstract start: T;
-  abstract end: T;
+  abstract start: NonNullable<T>;
+  abstract end: NonNullable<T>;
 
   name = 'between';
 
@@ -38,10 +42,10 @@ export abstract class AbstractBetweenValidator<T extends Date | number> extends 
   }
 }
 
-export class BetweenValidator<T extends Date | number> extends AbstractBetweenValidator<T> {
+export class BetweenValidator<T extends Nullable<Date | number>> extends AbstractBetweenValidator<T> {
   constructor(
-    public start: T,
-    public end: T,
+    public start: NonNullable<T>,
+    public end: NonNullable<T>,
     public inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true]
   ) {
     super();

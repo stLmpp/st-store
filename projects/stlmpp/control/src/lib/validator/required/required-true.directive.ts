@@ -3,6 +3,7 @@ import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
+import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][requiredTrue]:not([control]):not([controlName])',
@@ -32,7 +33,7 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
     }
   }
 
-  validate(control: Control<boolean>): boolean | null {
+  validate(control: Control<Nullable<boolean>>): boolean | null {
     if (!this._requiredTrue) {
       return null;
     }

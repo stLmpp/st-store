@@ -4,6 +4,7 @@ import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
 import { Control } from '../../control/control';
 import { PatternValidationError } from './pattern';
 import { ControlValidator } from '../validator';
+import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][url]:not([control]):not([controlName])',
@@ -27,7 +28,7 @@ export class UrlValidatorDirective extends AbstractUrlValidator {
     }
   }
 
-  validate(control: Control<string>): PatternValidationError | null {
+  validate(control: Control<Nullable<string>>): PatternValidationError | null {
     if (!this._url) {
       return null;
     }

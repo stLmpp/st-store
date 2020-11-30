@@ -9,7 +9,7 @@ import { ControlArray } from '../control-array/control-array';
   exportAs: 'controlGroup',
   providers: [{ provide: ControlParent, useExisting: forwardRef(() => ControlGroupDirective) }],
 })
-export class ControlGroupDirective<T = any> extends ControlParent {
+export class ControlGroupDirective<T extends Record<any, any> = Record<any, any>> extends ControlParent {
   @Input('controlGroup') control!: ControlGroup<T>;
 
   @HostBinding('class.is-submitted')
@@ -17,7 +17,7 @@ export class ControlGroupDirective<T = any> extends ControlParent {
     return this.control.submitted;
   }
 
-  get(name: keyof T): Control | ControlGroup | ControlArray | undefined {
+  get<K extends keyof T>(name: K): Control<T[K]> | ControlGroup<T[K]> | ControlArray | undefined {
     return this.control.get(name);
   }
 }

@@ -50,7 +50,7 @@ export class ControlValueSelect extends AbstractControlValue implements AfterCon
     this.onChange$.next(this.options.toArray()[index].value);
   }
 
-  setValue(value: any | null | undefined): void {
+  setValue(value: any): void {
     if (!this.options && value) {
       this._valueAfterContentInit = value;
       this._setValueAfterContentInit = true;

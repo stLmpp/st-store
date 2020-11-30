@@ -1,6 +1,7 @@
 import { Control } from '../../control/control';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Directive, HostBinding, Input } from '@angular/core';
+import { Nullable } from '../../util';
 
 export interface LengthValidationError {
   required: number;
@@ -8,7 +9,7 @@ export interface LengthValidationError {
 }
 
 @Directive()
-export abstract class AbstractMaxLengthValidator<T extends string | any[] = any> extends ControlValidator<
+export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any[]> = any> extends ControlValidator<
   T,
   LengthValidationError
 > {
@@ -37,7 +38,7 @@ export abstract class AbstractMaxLengthValidator<T extends string | any[] = any>
   }
 }
 
-export class MaxLengthValidator<T extends string | any[] = any> extends AbstractMaxLengthValidator<T> {
+export class MaxLengthValidator<T extends Nullable<string | any[]> = any> extends AbstractMaxLengthValidator<T> {
   constructor(maxLength: number) {
     super();
     this.maxLength = maxLength;

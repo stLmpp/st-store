@@ -7,6 +7,7 @@ import { By } from '@angular/platform-browser';
 import { PatternValidator } from './pattern';
 import { isRegExp } from '@stlmpp/utils';
 import { createFakeControl } from '../../util-tests';
+import { Nullable } from '../../util';
 
 @Component({ template: '<input [control]="control">' })
 class ControlComponent {
@@ -40,14 +41,14 @@ describe('pattern validator', () => {
   });
 
   it('should not validate if value is falsey', () => {
-    expect(validator.validate(createFakeControl(''))).toBeNull();
+    expect(validator.validate(createFakeControl<Nullable<string>>(''))).toBeNull();
   });
 
   it('should return null if value matchs the pattern', () => {
-    expect(validator.validate(createFakeControl('GUI'))).toBeNull();
+    expect(validator.validate(createFakeControl<Nullable<string>>('GUI'))).toBeNull();
   });
 
   it('should return error if value does not match the pattern', () => {
-    expect(validator.validate(createFakeControl('G'))).toEqual({ expected: '^GUI$', actual: 'G' });
+    expect(validator.validate(createFakeControl<Nullable<string>>('G'))).toEqual({ expected: '^GUI$', actual: 'G' });
   });
 });

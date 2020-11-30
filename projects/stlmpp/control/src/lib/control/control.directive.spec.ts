@@ -16,7 +16,7 @@ class WithoutControlValue extends ControlValue {
 
 @Component({ template: '<div withoutControlValue [control]="control"></div>' })
 class ComponentWithoutControlValue {
-  @Input() control = new Control();
+  @Input() control = new Control('');
 }
 
 @Directive({
@@ -24,7 +24,7 @@ class ComponentWithoutControlValue {
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => WithoutSets), multi: true }],
 })
 class WithoutSets extends ControlValue {
-  setValue(value: any | null | undefined): void {}
+  setValue(value: any): void {}
 }
 
 @Directive({
@@ -33,7 +33,7 @@ class WithoutSets extends ControlValue {
   exportAs: 'withStateChanged',
 })
 class WithStateChanged extends ControlValue {
-  setValue(value: any | null | undefined): void {}
+  setValue(value: any): void {}
   stateChanged(state: ControlState): void {}
 }
 
@@ -44,15 +44,15 @@ class WithStateChanged extends ControlValue {
 class WithoutSetsComponent {
   @ViewChild('withStateChanged') withStateChangedDirective!: WithStateChanged;
 
-  control = new Control();
-  control2 = new Control();
+  control = new Control('');
+  control2 = new Control('');
 }
 
 @Component({ template: '<input [control]="control" [disabled]="disabled">' })
 class ControlComponent {
   @ViewChild(ControlDirective) controlDirective!: ControlDirective;
 
-  @Input() control = new Control();
+  @Input() control = new Control('');
   disabled?: boolean;
 }
 
