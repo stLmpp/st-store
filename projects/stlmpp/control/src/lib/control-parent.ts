@@ -53,5 +53,5 @@ export abstract class ControlParent<T = any>
     this._destroy$.complete();
   }
 
-  abstract get(name: keyof T | number): Control<T> | ControlGroup<T> | ControlArray<T> | undefined;
+  abstract get<K extends keyof T>(name: K | number): Control<T[K]> | ControlGroup<T[K]> | ControlArray | undefined;
 }
