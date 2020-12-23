@@ -2,6 +2,11 @@
  * Public API Surface of store
  */
 
+/** @internal */
+declare global {
+  const ngDevMode: any;
+}
+
 export {
   EntityState,
   StoreOptions,

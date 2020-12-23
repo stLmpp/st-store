@@ -82,7 +82,7 @@ export class EntityQuery<
   all$: Observable<T[]> = this._entities$.pipe(map(entities => entities.values));
 
   activeIds$: Observable<S[]> = this.select('activeKeys').pipe(
-    map(active => [...active] as S[]),
+    map(active => [...active]),
     distinctUntilManyChanged()
   );
 

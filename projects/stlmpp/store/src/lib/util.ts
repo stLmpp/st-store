@@ -19,17 +19,19 @@ export function toEntities<T, S extends ID = number>(
   );
 }
 
-export const devCopy = <T>(value: T): T => {
-  if (environment.isDev) {
-    if (environment.copyData) {
-      value = copy(value);
-    }
-    if (environment.freezeData) {
-      value = deepFreeze(value);
+export function devCopy<T>(value: T): T {
+  if (typeof ngDevMode === 'undefined' || ngDevMode) {
+    if (environment.isDev) {
+      if (environment.copyData) {
+        value = copy(value);
+      }
+      if (environment.freezeData) {
+        value = deepFreeze(value);
+      }
     }
   }
   return value;
-};
+}
 
 export function deepFreeze<T>(object: T): T {
   if (!object || !isObject(object)) {

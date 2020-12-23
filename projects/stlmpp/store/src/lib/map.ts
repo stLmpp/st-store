@@ -72,7 +72,7 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   private _upsertOne(key: S, entity: Partial<T>): this;
   private _upsertOne(key: S, entity: T | Partial<T>): this {
     if (this.has(key)) {
-      return this.update(key, entity as Partial<T>);
+      return this.update(key, entity);
     } else {
       return this.set(key, entity as T);
     }
@@ -180,6 +180,14 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
     return this._keys.has(key);
   }
 
+  hasAny(keys: S[]): boolean {
+    return this.some((_, key) => keys.includes(key));
+  }
+
+  hasAll(keys: S[]): boolean {
+    return this.every((_, key) => keys.includes(key));
+  }
+
   get(key: S): T | undefined {
     return this._state[key];
   }
@@ -283,10 +291,10 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   upsert(key: S, entity: T | Partial<T>): this;
   upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this;
   upsert(keyOrEntities: Array<T | Partial<T>> | S, entity?: T | Partial<T>): this {
-    if (entity && isID(keyOrEntities)) {
-      return this._upsertOne(keyOrEntities, entity as any);
+    if (isID(keyOrEntities)) {
+      return this._upsertOne(keyOrEntities, entity!);
     } else {
-      return this._upsertMany(keyOrEntities as any[]);
+      return this._upsertMany(keyOrEntities);
     }
   }
 
@@ -295,12 +303,12 @@ export class StMap<T, S extends ID = number> implements Iterable<[S, T]> {
   remove(callback: EntityPredicate<T, S>): this;
   remove(idOrIdsOrCallback: S | S[] | EntityPredicate<T, S>): this;
   remove(idOrIdsOrCallback: S | S[] | EntityPredicate<T, S>): this {
-    const callback: EntityPredicate<T, S> = isFunction(idOrIdsOrCallback)
+    const predicate: EntityPredicate<T, S> = isFunction(idOrIdsOrCallback)
       ? (entity, key) => !idOrIdsOrCallback(entity, key)
       : isArray(idOrIdsOrCallback)
       ? (_, key) => !idOrIdsOrCallback.includes(key)
       : (_, key) => key !== idOrIdsOrCallback;
-    const newMap = this.filter(callback);
+    const newMap = this.filter(predicate);
     this._state = newMap.state;
     this._keys = newMap.keys;
     return this;

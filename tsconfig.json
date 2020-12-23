@@ -20,10 +20,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@stlmpp/utils": [
-        "dist/stlmpp/utils/stlmpp-utils",
-        "dist/stlmpp/utils"
-      ]
+      "@stlmpp/utils": ["dist/stlmpp/utils"],
+      "@stlmpp/utils/*": ["dist/stlmpp/utils/*"]
     },
     "stripInternal": true
   },

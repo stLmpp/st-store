@@ -88,7 +88,7 @@ export class EntityStore<
     if (isID(keyOrEntities)) {
       if (currentEntities.has(keyOrEntities)) {
         const entityStored = currentEntities.get(keyOrEntities)!;
-        const newEntity = this.preUpdateEntity(this.merger(entityStored, entity as T));
+        const newEntity = this.preUpdateEntity(this.merger(entityStored, entity!));
         return [newEntity];
       } else {
         const newEntity = this.preAddEntity(entity as T);
@@ -138,12 +138,14 @@ export class EntityStore<
     const callback = isFunction(state) ? state : (oldState: State) => ({ ...oldState, ...state });
     super.update(oldState => {
       let newState = callback(oldState);
-      if (environment.isDev) {
-        newState = {
-          ...newState,
-          entities: newState.entities.map(entity => devCopy(entity)),
-          activeKeys: this._createSet([...newState.activeKeys]),
-        } as any;
+      if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        if (environment.isDev) {
+          newState = {
+            ...newState,
+            entities: newState.entities.map(entity => devCopy(entity)),
+            activeKeys: this._createSet([...newState.activeKeys]),
+          } as any;
+        }
       }
       return newState;
     });
