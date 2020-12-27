@@ -339,4 +339,13 @@ describe('control group', () => {
     expect(component.controlGroupNested.get('nested').get('id').invalid).toBeFalse();
     expect(component.controlGroupNested.get('nested').get('name').invalid).toBeFalse();
   });
+
+  it('should patch null and undefined if the control is a Control', () => {
+    component.controlGroup.setValue({ id: 1, name: '' });
+    fixture.detectChanges();
+    component.controlGroup.patchValue({ id: undefined });
+    fixture.detectChanges();
+    expect(component.controlGroup.value).toEqual({ id: undefined, name: '' });
+  });
+
 });

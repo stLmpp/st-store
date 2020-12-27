@@ -132,7 +132,7 @@ export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT =
   patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): void {
     for (const [key, control] of this._entries()) {
       const valueKey = (value as any)[key];
-      if (!isNil(valueKey)) {
+      if ((control instanceof Control && key in value) || !isNil(valueKey)) {
         control.patchValue(valueKey, options);
       }
     }
