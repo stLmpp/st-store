@@ -75,12 +75,12 @@ describe('order by', () => {
   });
 
   it('should sort with function', () => {
-    const ordered = orderByPipe.transform(array, (a, b) => a.name.localeCompare(b.name));
-    expect(ordered[0]).toEqual(array[4]);
-    expect(ordered[1]).toEqual(array[0]);
+    const ordered = orderByPipe.transform(array, item => item.nested.id);
+    expect(ordered[0]).toEqual(array[1]);
+    expect(ordered[1]).toEqual(array[2]);
     expect(ordered[2]).toEqual(array[3]);
-    expect(ordered[3]).toEqual(array[1]);
-    expect(ordered[4]).toEqual(array[2]);
+    expect(ordered[3]).toEqual(array[0]);
+    expect(ordered[4]).toEqual(array[4]);
   });
 
   it('should sort with object', () => {
