@@ -1,6 +1,6 @@
 import { AbstractEmailValidator } from './email';
 import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
-import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
+import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
 import { Nullable } from '../../util';

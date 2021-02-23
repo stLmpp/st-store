@@ -1,6 +1,6 @@
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';

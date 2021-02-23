@@ -1,4 +1,4 @@
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 
 export class StorePersistLocalStorageStrategy<T> implements StorePersistStrategy<T> {
   get(key: string): string | null | undefined {

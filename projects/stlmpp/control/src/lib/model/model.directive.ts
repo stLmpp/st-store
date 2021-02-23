@@ -19,7 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AbstractControlOptions } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValidator } from '../validator/validator';
-import { coerceArray } from '@stlmpp/utils';
+import { coerceArray } from 'st-utils';
 import { ControlUpdateOn } from '../control-update-on';
 
 export type ModelOptions = Omit<AbstractControlOptions, 'disabled'>;

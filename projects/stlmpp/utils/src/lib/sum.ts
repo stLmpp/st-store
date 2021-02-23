@@ -1,35 +1,21 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { isArray, isString } from './util';
 import { OperatorFunction } from 'rxjs';
-
-export function sum(values: number[]): number {
-  if (!values?.length) {
-    return 0;
-  }
-  return values.reduce((acc, item) => acc + +(item ?? 0), 0);
-}
-
-const isKey = <T>(key: any): key is keyof T => isString(key);
-
-export function sumBy<T = any>(values: T[], key: keyof T | (keyof T)[]): number {
-  if (!values?.length || !key || (isArray(key) && !key.length)) {
-    return 0;
-  }
-  const get = isKey<T>(key)
-    ? (value: T) => value[key]
-    : (value: T) => key.reduce((acc, k) => acc + +(value[k] ?? 0), 0);
-  return values.reduce((acc, item) => acc + +(get(item) ?? 0), 0);
-}
+import { sum, sumBy } from 'st-utils';
+import { ConditionalKeys } from 'type-fest';
 
 export const sumOperator = (): OperatorFunction<number[], number> => map<number[], number>(sum);
-export const sumByOperator = <T>(key: keyof T | (keyof T)[]): OperatorFunction<T[], number> =>
-  map<T[], number>(values => sumBy(values, key));
+export const sumByOperator = <T extends Record<any, any>, K extends ConditionalKeys<T, number | null | undefined>>(
+  key: K
+): OperatorFunction<T[], number> => map<T[], number>(values => sumBy<T, K>(values, key));
 
 @Pipe({ name: 'stSumBy' })
 export class SumByPipe implements PipeTransform {
-  transform<T = any>(value: T[], key: keyof T | (keyof T)[]): number {
-    return sumBy(value, key);
+  transform<T extends Record<any, any>, K extends ConditionalKeys<T, number | null | undefined>>(
+    value: T[],
+    key: K
+  ): number {
+    return sumBy<T, K>(value, key);
   }
 }
 

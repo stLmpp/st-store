@@ -1,6 +1,6 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
-import { isArray } from '@stlmpp/utils';
+import { isArray } from 'st-utils';
 import { Directive, Input } from '@angular/core';
 import { Nullable } from '../../util';
 

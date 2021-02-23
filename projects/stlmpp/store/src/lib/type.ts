@@ -1,32 +1,32 @@
 import { StMap } from './map';
-import { ID, IdGetterType, OrderByDirection, OrderByType } from '@stlmpp/utils';
+import { IdGetter, OrderByDirection, OrderByType } from 'st-utils';
 import { StorePersistStrategy } from './store/store-persist';
 
-export interface EntityState<T = any, S extends ID = number, E = any> {
-  entities: StMap<T, S>;
-  activeKeys: Set<S>;
+export type EntityIdType = number | string;
+
+export interface EntityState<T extends Record<any, any> = Record<any, any>> {
+  entities: StMap<T>;
+  activeKeys: Set<EntityIdType>;
 }
 
 export type EntityType<State> = State extends EntityState<infer T> ? T : never;
-export type IdType<State> = State extends EntityState<any, infer S> ? S : never;
-export type ErrorType<State> = State extends EntityState<any, any, infer E> ? E : never;
 
-export type EntityUpdate<T> = (entity: Readonly<T>) => T;
-export type EntityUpdateWithId<T, S extends ID = number> = (entity: Readonly<T>, key: S) => T;
-export type EntityPartialUpdate<T> = EntityUpdate<T> | Partial<T> | T;
-export type EntityPredicate<T, S extends ID = number> = (entity: Readonly<T>, key: S) => boolean;
+export type EntityUpdate<T extends Record<any, any>> = (entity: Readonly<T>) => T;
+export type EntityUpdateWithId<T extends Record<any, any>> = (entity: Readonly<T>, key: EntityIdType) => T;
+export type EntityPartialUpdate<T extends Record<any, any>> = EntityUpdate<T> | Partial<T> | T;
+export type EntityPredicate<T extends Record<any, any>> = (entity: Readonly<T>, key: EntityIdType) => boolean;
 
 export type DistinctUntilChangedFn<T = any> = (entityA: T, entityB: T) => boolean;
 
-export interface EntityStoreOptions<T, S extends ID = number, E = any>
+export interface EntityStoreOptions<State extends EntityState<T> = any, T extends Record<any, any> = EntityType<State>>
   extends Omit<StoreOptions<any>, 'initialState' | 'persistKey' | 'persistStrategy'> {
-  idGetter?: IdGetterType<T, S>;
+  idGetter?: IdGetter<T, keyof T>;
   mergeFn?: EntityMergeFn<T>;
-  initialState?: { [K in S]?: T } | T[];
-  initialActive?: S[];
+  initialState?: Partial<Omit<State, 'entities' | 'activeKeys'>> & { entities?: T[] | { [id: string]: T } };
+  initialActive?: EntityIdType[];
 }
 
-export interface StoreOptions<T> {
+export interface StoreOptions<T extends Record<any, any>> {
   name: string;
   initialState: T;
   cache?: number;
@@ -34,7 +34,11 @@ export interface StoreOptions<T> {
   persistStrategy?: StorePersistStrategy<T>;
 }
 
-export type EntityMergeFn<T = any> = (entityA: T, entityB: T | Partial<T>) => T;
+export interface QueryOptions {
+  distinctUntilChanged?: boolean;
+}
+
+export type EntityMergeFn<T extends Record<any, any> = Record<any, any>> = (entityA: T, entityB: T | Partial<T>) => T;
 
 export interface KeyValue<K, V> {
   key: K;
@@ -47,12 +51,11 @@ export interface StMapMergeOptions {
 
 export type Entries<T = any, K extends keyof T = keyof T> = [K, T[K]][];
 
-export type EntityFilter<T, S extends ID = number, K extends keyof T = keyof T> =
+export type EntityFilter<T extends Record<any, any>, K extends keyof T = keyof T> =
   | [K, T[K]]
-  | ((entity: T, key: S) => boolean);
-export interface EntityFilterOptions<T = any, S extends ID = number, E = any> {
-  filterBy?: EntityFilter<T, S>;
-  orderBy?: OrderByType<T>;
+  | ((entity: T, key: EntityIdType) => boolean);
+export interface EntityFilterOptions<T extends Record<any, any> = Record<any, any>, K extends keyof T = keyof T> {
+  filterBy?: EntityFilter<T, K>;
+  orderBy?: OrderByType<T, K>;
   orderByDirection?: OrderByDirection;
-  limit?: number;
 }

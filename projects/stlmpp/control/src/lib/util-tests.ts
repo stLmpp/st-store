@@ -3,7 +3,7 @@
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { DebugElement } from '@angular/core';
-import { isUndefined } from '@stlmpp/utils';
+import { isUndefined } from 'st-utils';
 import { Control } from './control/control';
 import { ControlValidator } from './validator/validator';
 

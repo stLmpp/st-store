@@ -1,6 +1,6 @@
 import { Directive, forwardRef, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({

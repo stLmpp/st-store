@@ -2,7 +2,7 @@ import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
 import { combineLatest, isObservable, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { coerceArray, isNil } from '@stlmpp/utils';
+import { coerceArray, isNil } from 'st-utils';
 
 function toObservable(value: any): Observable<any> {
   return isObservable(value) ? value : of(value);

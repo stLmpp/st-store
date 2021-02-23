@@ -1,7 +1,6 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
-import { coerceArray, isNil } from '@stlmpp/utils';
-import { isObjectEmpty } from '@stlmpp/utils';
+import { coerceArray, isNil, isObjectEmpty } from 'st-utils';
 
 export class ComposeValidator extends ControlValidator<any, Record<string, any>> {
   constructor(validators: ControlValidator[]) {

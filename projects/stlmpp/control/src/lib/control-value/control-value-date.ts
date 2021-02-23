@@ -1,6 +1,6 @@
 import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isDate } from '@stlmpp/utils';
+import { isDate } from 'st-utils';
 import { format, isValid, parse, parseISO } from 'date-fns';
 import { AbstractControlValue } from './abstract-control-value';
 

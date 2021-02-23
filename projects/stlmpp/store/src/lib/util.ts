@@ -1,13 +1,14 @@
-import { ID, IdGetter, isArray, isNumber, isObject, isObjectEmpty } from '@stlmpp/utils';
+import { isArray, isNumber, isObject, isObjectEmpty, IdGetterFn, isString } from 'st-utils';
 import { environment } from './environment';
 import { copy } from 'copy-anything';
 import { MonoTypeOperatorFunction } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { EntityIdType } from './type';
 
-export function toEntities<T, S extends ID = number>(
+export function toEntities<T extends Record<any, any>>(
   entities: T[],
-  idGetter: IdGetter<T, S>
-): [{ [K in S]?: T }, Set<S>] {
+  idGetter: IdGetterFn<T>
+): [{ [id: string]: T }, Set<EntityIdType>] {
   return entities.reduce(
     (acc, item) => {
       const key = idGetter(item);
@@ -15,7 +16,7 @@ export function toEntities<T, S extends ID = number>(
       acc[1] = acc[1].add(key);
       return acc;
     },
-    [{}, new Set<S>([])]
+    [{}, new Set<EntityIdType>([])]
   );
 }
 
@@ -54,9 +55,12 @@ export function deepFreeze<T>(object: T): T {
   return object;
 }
 
-export function predictIdType<T, S extends ID = number>(object: any, idGetter: IdGetter<T, S>): (key: ID) => S {
+export function predictIdType<T extends Record<any, any>>(
+  object: any,
+  idGetter: IdGetterFn<T>
+): (key: EntityIdType) => EntityIdType {
   if (!object || isObjectEmpty(object)) {
-    return key => key as S;
+    return key => key;
   }
   return isNumber(idGetter(Object.values<T>(object)[0])) ? Number : key => key as any;
 }
@@ -77,4 +81,8 @@ export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[
     }
     return true;
   });
+}
+
+export function isEntityId(value: any): value is EntityIdType {
+  return isNumber(value) || isString(value);
 }

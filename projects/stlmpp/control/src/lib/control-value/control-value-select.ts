@@ -10,7 +10,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 import { ControlValueSelectOption } from './control-value-select-option';
 import { AbstractControlValue } from './abstract-control-value';
 

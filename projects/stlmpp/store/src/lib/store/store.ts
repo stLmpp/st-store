@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { devCopy } from '../util';
 import { StoreOptions } from '../type';
-import { isFunction } from '@stlmpp/utils';
+import { isFunction } from 'st-utils';
 import { StorePersistStrategy, StorePersistLocalStorageStrategy } from './store-persist';
 
 export class Store<T, E = any> {
@@ -97,7 +97,7 @@ export class Store<T, E = any> {
     this._loading$.next(loading);
   }
 
-  setError(error: E): void {
+  setError(error: E | null): void {
     this._error$.next(error);
   }
 
@@ -109,9 +109,6 @@ export class Store<T, E = any> {
     this._state$.next(state);
   }
 
-  update(partial: Partial<T>): void;
-  update(state: T): void;
-  update(callback: (oldState: T) => T): void;
   update(state: T | Partial<T> | ((oldState: T) => T)): void {
     const currentState = this.getState();
     const callback = isFunction(state) ? state : (oldState: T) => ({ ...oldState, ...state });

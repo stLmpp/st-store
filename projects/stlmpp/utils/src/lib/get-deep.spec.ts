@@ -1,6 +1,5 @@
-import { GetDeepPipe } from './get-deep';
+import { getDeep, GetDeepPipe } from './get-deep';
 import { TestBed } from '@angular/core/testing';
-import { getDeep } from './util';
 
 describe('GetDeep Pipe', () => {
   let getDeepPipe: GetDeepPipe;

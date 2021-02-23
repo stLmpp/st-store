@@ -12,7 +12,7 @@ import {
 } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { auditTime, distinctUntilChanged, filter, map, pluck, takeUntil } from 'rxjs/operators';
-import { isNil, isString } from '@stlmpp/utils';
+import { isNil, isString } from 'st-utils';
 import { isEqualParams } from './util';
 
 type ParamType = 'queryParamMap' | 'paramMap';

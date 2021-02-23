@@ -1,7 +1,7 @@
 import { entityInitialState, SimpleEntityQuery, SimpleEntityStore, simpleInitialState, wait } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { take } from 'rxjs/operators';
-import { isEqualEntitiesFactory, isEqualEntity } from './entity-query';
+import { map, take } from 'rxjs/operators';
+import { isEqualEntity } from './entity-query';
 
 describe('Entity Query', () => {
   let query: SimpleEntityQuery;
@@ -93,10 +93,13 @@ describe('Entity Query', () => {
       { id: 3, name: '3' },
     ]);
     const subscriber1 = jasmine.createSpy('subscriber1');
-    query.selectMany([1, 2]).subscribe(subscriber1);
+    query
+      .selectMany([1, 2])
+      .pipe(map(o => o.values))
+      .subscribe(subscriber1);
     store.updateEntity(1, { other: '1' });
     store.updateEntity(3, { other: '3' });
-    expect(subscriber1).toHaveBeenCalledTimes(2);
+    expect(subscriber1).toHaveBeenCalledTimes(3);
     expect(subscriber1).toHaveBeenCalledWith([
       { id: 1, name: 'Guilherme', other: '1' },
       { id: 2, name: '2' },
@@ -109,7 +112,10 @@ describe('Entity Query', () => {
       { id: 3, name: '2' },
     ]);
     const sub = jasmine.createSpy();
-    query.selectMany(entity => entity.name === '2').subscribe(sub);
+    query
+      .selectMany(entity => entity.name === '2')
+      .pipe(map(o => o.values))
+      .subscribe(sub);
     expect(sub).toHaveBeenCalledWith([
       { id: 2, name: '2' },
       { id: 3, name: '2' },
@@ -131,26 +137,6 @@ describe('Entity Query', () => {
     expect(subscriber).toHaveBeenCalledTimes(2);
     store.remove(1);
     expect(subscriber).toHaveBeenCalledTimes(3);
-  });
-
-  it('should not emit if equal entities', () => {
-    store.setEntities([
-      { id: 1, name: '1' },
-      { id: 2, name: '2' },
-    ]);
-    const subscriber = jasmine.createSpy('subscriber');
-    query.selectMany([1, 2]).subscribe(subscriber);
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.add({ id: 3, name: '3' });
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.updateEntity(3, { other: '3' });
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.remove(3);
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.upsert([{ id: 1, name: '1' }]);
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.upsert([{ id: 1, other: '1' }]);
-    expect(subscriber).toHaveBeenCalledTimes(2);
   });
 
   it('should not emit if equal active ids', () => {
@@ -175,32 +161,13 @@ describe('Entity Query', () => {
     ]);
     store.setActive(1);
     const sub = jasmine.createSpy();
-    query.active$.subscribe(sub);
+    query.active$.pipe(map(o => o.values)).subscribe(sub);
     expect(sub).toHaveBeenCalledWith([{ id: 1, name: '1' }]);
     store.addActive(2);
     expect(sub).toHaveBeenCalledWith([
       { id: 1, name: '1' },
       { id: 2, name: '2' },
     ]);
-  });
-
-  it('should emit if active is updated', () => {
-    store.setEntities([
-      { id: 1, name: '1' },
-      { id: 2, name: '2' },
-    ]);
-    store.setActive([1, 2]);
-    const subscriber = jasmine.createSpy('subscriber');
-    query.active$.subscribe(subscriber);
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.updateEntity(1, { name: '2' });
-    expect(subscriber).toHaveBeenCalledTimes(2);
-    store.add({ name: '3', id: 3 });
-    expect(subscriber).toHaveBeenCalledTimes(2);
-    store.remove(2);
-    expect(subscriber).toHaveBeenCalledTimes(3);
-    store.updateEntity(3, { other: '3' });
-    expect(subscriber).toHaveBeenCalledTimes(3);
   });
 
   it('should define if entity is equal', () => {
@@ -211,24 +178,11 @@ describe('Entity Query', () => {
     expect(isEqualEntity(undefined, entity)).toBeFalse();
   });
 
-  it('should distinct if entities are equal', () => {
-    const comparator = isEqualEntitiesFactory(isEqualEntity);
-    const entitiesA = [{ id: 1, nome: 'Guilherme' }];
-    const entitiesB = [{ nome: 'Guilherme', id: 1 }];
-    expect(comparator(entitiesA, entitiesB)).toBeTrue();
-    expect(comparator(entitiesA, entitiesA)).toBeTrue();
-    expect(comparator(entitiesA, undefined as any)).toBeFalse();
-    expect(comparator(undefined as any, entitiesA)).toBeFalse();
-    expect(comparator(entitiesA, []));
-    expect(comparator([], entitiesA));
-    expect(comparator([...entitiesA], [...entitiesB])).toBeTrue();
-    expect(comparator([...entitiesA, { id: 2, nome: 'Guilherme2' }], entitiesB)).toBeFalse();
-  });
-
-  it('should return all entities', () => {
-    const sub = jasmine.createSpy();
-    query.all$.subscribe(sub);
-    expect(sub).toHaveBeenCalledWith(entityInitialState());
+  it('should return all entities', done => {
+    query.all$.subscribe(all => {
+      expect(all.values).toEqual(entityInitialState());
+      done();
+    });
   });
 
   it('should return all active', () => {
@@ -236,7 +190,7 @@ describe('Entity Query', () => {
     const active = query.getActive();
     expect(active).toBeDefined();
     expect(active.length).toBe(1);
-    expect(active).toEqual(entityInitialState());
+    expect(active.values).toEqual(entityInitialState());
   });
 
   it('should return the loading state', () => {
@@ -289,65 +243,45 @@ describe('Entity Query', () => {
   describe('selectAll', () => {
     it('should select all without options', () => {
       const sub = jasmine.createSpy();
-      query.selectAll().subscribe(sub);
+      query
+        .selectAll()
+        .pipe(map(o => o.values))
+        .subscribe(sub);
       expect(sub).toHaveBeenCalledWith(entityInitialState());
     });
 
-    it('should select all ordered', () => {
+    it('should select all ordered', done => {
       store.setEntities([
         { id: 2, name: '2' },
         { id: 1, name: '1' },
       ]);
-      const sub = jasmine.createSpy();
-      query.selectAll({ orderBy: 'id' }).subscribe(sub);
-      expect(sub).toHaveBeenCalledWith([
-        { id: 1, name: '1' },
-        { id: 2, name: '2' },
-      ]);
-    });
-
-    it('should select all filtered [key, value]', () => {
-      store.setEntities([
-        { id: 1, name: '1' },
-        { id: 2, name: '2' },
-      ]);
-      const sub = jasmine.createSpy();
-      query.selectAll({ filterBy: ['name', '2'] }).subscribe(sub);
-      expect(sub).toHaveBeenCalledWith([{ id: 2, name: '2' }]);
-    });
-
-    it('should select all filtered', () => {
-      store.setEntities([
-        { id: 1, name: '1' },
-        { id: 2, name: '2' },
-      ]);
-      const sub = jasmine.createSpy();
-      query.selectAll({ filterBy: entity => entity.id === 1 }).subscribe(sub);
-      expect(sub).toHaveBeenCalledWith([{ id: 1, name: '1' }]);
-    });
-
-    it('should select all with limit', done => {
-      store.setEntities(Array.from({ length: 100 }).map((_, index) => ({ id: index, name: '' + index })));
-      query.selectAll({ limit: 10 }).subscribe(entities => {
-        expect(entities.length).toBe(10);
-        expect(entities[0]).toEqual({ id: 0, name: '0' });
-        expect(entities[entities.length - 1]).toEqual({ id: 9, name: '9' });
+      query.selectAll({ orderBy: 'id' }).subscribe(all => {
+        expect(all.values).toEqual([
+          { id: 1, name: '1' },
+          { id: 2, name: '2' },
+        ]);
         done();
       });
     });
 
-    it('should not limit if 0', done => {
-      store.setEntities(Array.from({ length: 100 }).map((_, index) => ({ id: index, name: '' + index })));
-      query.selectAll({ limit: 0 }).subscribe(entities => {
-        expect(entities.length).toBe(100);
+    it('should select all filtered [key, value]', done => {
+      store.setEntities([
+        { id: 1, name: '1' },
+        { id: 2, name: '2' },
+      ]);
+      query.selectAll({ filterBy: ['name', '2'] }).subscribe(all => {
+        expect(all.values).toEqual([{ id: 2, name: '2' }]);
         done();
       });
     });
 
-    it('should not limit if less than 0', done => {
-      store.setEntities(Array.from({ length: 100 }).map((_, index) => ({ id: index, name: '' + index })));
-      query.selectAll({ limit: -1 }).subscribe(entities => {
-        expect(entities.length).toBe(100);
+    it('should select all filtered', done => {
+      store.setEntities([
+        { id: 1, name: '1' },
+        { id: 2, name: '2' },
+      ]);
+      query.selectAll({ filterBy: entity => entity.id === 1 }).subscribe(all => {
+        expect(all.values).toEqual([{ id: 1, name: '1' }]);
         done();
       });
     });

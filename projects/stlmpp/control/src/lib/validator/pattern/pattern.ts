@@ -1,6 +1,6 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
-import { isRegExp } from '@stlmpp/utils';
+import { isRegExp } from 'st-utils';
 import { Directive, HostBinding, Input } from '@angular/core';
 import { Nullable } from '../../util';
 

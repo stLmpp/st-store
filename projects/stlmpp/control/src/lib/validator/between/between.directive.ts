@@ -1,7 +1,7 @@
 import { Directive, forwardRef, Input } from '@angular/core';
 import { ControlValidator } from '../validator';
 import { AbstractBetweenValidator } from './between';
-import { isArray } from '@stlmpp/utils';
+import { isArray } from 'st-utils';
 import { Nullable } from '../../util';
 
 @Directive({

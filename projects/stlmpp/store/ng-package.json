@@ -5,8 +5,7 @@
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
       "copy-anything": "copy-anything",
-      "@stlmpp/utils": "_utils",
-      "@stlmpp/utils/util": "_utils_util"
+      "st-utils": "st-utils"
     }
   },
   "whitelistedNonPeerDependencies": ["."]
