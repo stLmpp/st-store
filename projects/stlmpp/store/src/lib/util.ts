@@ -56,13 +56,25 @@ export function deepFreeze<T>(object: T): T {
 }
 
 export function predictIdType<T extends Record<any, any>>(
-  object: any,
+  object: { [id: string]: T },
   idGetter: IdGetterFn<T>
 ): (key: EntityIdType) => EntityIdType {
   if (!object || isObjectEmpty(object)) {
     return key => key;
   }
-  return isNumber(idGetter(Object.values<T>(object)[0])) ? Number : key => key as any;
+  const firstKey = getFirstKey(object);
+  const firstItem = object[firstKey];
+  return isNumber(idGetter(firstItem)) ? Number : key => key;
+}
+
+export function getFirstKey<T extends Record<any, any>>(object: T): keyof T {
+  let key: keyof T;
+  for (key in object) {
+    if (key in object) {
+      break;
+    }
+  }
+  return key;
 }
 
 export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[]> {
