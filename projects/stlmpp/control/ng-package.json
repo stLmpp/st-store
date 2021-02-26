@@ -8,5 +8,5 @@
       "st-utils": "st-utils"
     }
   },
-  "whitelistedNonPeerDependencies": ["."]
+  "allowedNonPeerDependencies": ["."]
 }
