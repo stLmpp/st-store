@@ -7,13 +7,21 @@ describe('StMap', () => {
     { id: 1, name: 'Guilherme' },
     { id: 2, name: 'Teste' },
   ];
-  const idGetter = (entity: IdName): number => entity.id;
+  interface IdNameOther extends IdName {
+    other: string;
+  }
+  const dataSearch: IdNameOther[] = data.map(o => ({ ...o, other: '' + o.id }));
+  const idGetter = <T extends { id: number }>(entity: T): number => entity.id;
   let map: StMap<IdName>;
   let mapView: StMapView<IdName>;
+  let mapSearch: StMap<IdNameOther>;
+  let mapViewSearch: StMapView<IdNameOther>;
 
   beforeEach(() => {
     map = new StMap<IdName>(idGetter).fromArray(data);
     mapView = map.toView();
+    mapSearch = new StMap<IdNameOther>(idGetter).fromArray(dataSearch);
+    mapViewSearch = mapSearch.toView();
   });
 
   describe('StMap', () => {
@@ -427,6 +435,18 @@ describe('StMap', () => {
       expect(map.hasAll([1, 2])).toBeTrue();
       expect(map.hasAll([1])).toBeFalse();
     });
+
+    it('should search (key)', () => {
+      expect(mapSearch.search('name', 'Guil').values).toEqual([{ id: 1, name: 'Guilherme', other: '1' }]);
+    });
+
+    it('should search (keys)', () => {
+      expect(mapSearch.search(['name', 'other'], '1').values).toEqual([{ id: 1, name: 'Guilherme', other: '1' }]);
+    });
+
+    it('should search (predicate)', () => {
+      expect(mapSearch.search(entity => entity.other, '1').values).toEqual([{ id: 1, name: 'Guilherme', other: '1' }]);
+    });
   });
 
   describe('StMapView', () => {
@@ -517,6 +537,20 @@ describe('StMap', () => {
     it('should check if has all', () => {
       expect(mapView.hasAll([1, 2])).toBeTrue();
       expect(mapView.hasAll([1])).toBeFalse();
+    });
+
+    it('should search (key)', () => {
+      expect(mapViewSearch.search('name', 'Guil').values).toEqual([{ id: 1, name: 'Guilherme', other: '1' }]);
+    });
+
+    it('should search (keys)', () => {
+      expect(mapViewSearch.search(['name', 'other'], '1').values).toEqual([{ id: 1, name: 'Guilherme', other: '1' }]);
+    });
+
+    it('should search (predicate)', () => {
+      expect(mapViewSearch.search(entity => entity.other, '1').values).toEqual([
+        { id: 1, name: 'Guilherme', other: '1' },
+      ]);
     });
   });
 });

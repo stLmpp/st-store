@@ -11,10 +11,11 @@ export interface EntityState<T extends Record<any, any> = Record<any, any>> {
 
 export type EntityType<State> = State extends EntityState<infer T> ? T : never;
 
+export type EntityFn<T extends Record<any, any>, R> = (entity: Readonly<T>, key: EntityIdType) => R;
 export type EntityUpdate<T extends Record<any, any>> = (entity: Readonly<T>) => T;
-export type EntityUpdateWithId<T extends Record<any, any>> = (entity: Readonly<T>, key: EntityIdType) => T;
+export type EntityUpdateWithId<T extends Record<any, any>> = EntityFn<T, T>;
 export type EntityPartialUpdate<T extends Record<any, any>> = EntityUpdate<T> | Partial<T> | T;
-export type EntityPredicate<T extends Record<any, any>> = (entity: Readonly<T>, key: EntityIdType) => boolean;
+export type EntityPredicate<T extends Record<any, any>> = EntityFn<T, boolean>;
 
 export type DistinctUntilChangedFn<T = any> = (entityA: T, entityB: T) => boolean;
 

@@ -4,6 +4,7 @@ import {
   isArray,
   isFunction,
   isObjectEmpty,
+  normalizeString,
   orderBy,
   OrderByDirection,
   OrderByType,
@@ -11,6 +12,7 @@ import {
 } from 'st-utils';
 import { predictIdType, toEntities } from './util';
 import {
+  EntityFn,
   EntityIdType,
   EntityMergeFn,
   EntityPartialUpdate,
@@ -19,19 +21,7 @@ import {
   StMapMergeOptions,
 } from './type';
 import { TrackByFunction } from '@angular/core';
-
-export interface StMapInterface<IterableType, T extends Record<any, any>> extends Iterable<IterableType> {
-  filter(callback: EntityPredicate<T>): StMap<T> | StMapView<T>;
-  map(callback: EntityUpdateWithId<T>): StMap<T> | StMapView<T>;
-  find(callback: EntityPredicate<T>): T | undefined;
-  forEach(callback: (entity: T, key: EntityIdType) => void): void;
-  some(callback: EntityPredicate<T>): boolean;
-  every(callback: EntityPredicate<T>): boolean;
-  reduce<R>(callback: (accumulator: R, item: [EntityIdType, T]) => R, initialValue: R): R;
-  findKey(callback: EntityPredicate<T>): EntityIdType | undefined;
-  hasAny(keys: EntityIdType[]): boolean;
-  hasAll(keys: EntityIdType[]): boolean;
-}
+import { ConditionalKeys } from 'type-fest';
 
 const stMapSymbol = Symbol('StMap');
 
@@ -48,6 +38,34 @@ export abstract class StMapBase<T extends Record<any, any>> {
   protected _keys = new Set<EntityIdType>();
 
   [stMapSymbol] = true;
+
+  protected _search<K extends ConditionalKeys<T, string>>(
+    map: StMapView<T>,
+    keyOrKeysOrCallback: K | K[] | EntityFn<T, string>,
+    term: string
+  ): StMapView<T>;
+  protected _search<K extends ConditionalKeys<T, string>>(
+    map: StMap<T>,
+    keyOrKeysOrCallback: K | K[] | EntityFn<T, string>,
+    term: string
+  ): StMap<T>;
+  protected _search<K extends ConditionalKeys<T, string>>(
+    map: StMapView<T> | StMap<T>,
+    keyOrKeysOrCallback: K | K[] | EntityFn<T, string>,
+    term: string
+  ): StMap<T> | StMapView<T> {
+    let predicate: EntityPredicate<T>;
+    term = normalizeString(term).toLowerCase();
+    if (isFunction(keyOrKeysOrCallback)) {
+      predicate = (entity, key) => normalizeString(keyOrKeysOrCallback(entity, key).toLowerCase()).includes(term);
+    } else if (isArray(keyOrKeysOrCallback)) {
+      predicate = entity =>
+        keyOrKeysOrCallback.some(keySearch => normalizeString(entity[keySearch]).toLowerCase().includes(term));
+    } else {
+      predicate = entity => normalizeString(entity[keyOrKeysOrCallback]).toLowerCase().includes(term);
+    }
+    return map.filter(predicate);
+  }
 
   trackBy: TrackByFunction<T> = (_, element) => this._idGetter(element);
 
@@ -101,12 +119,35 @@ export abstract class StMapBase<T extends Record<any, any>> {
     return this;
   }
 
-  static isStMap<E extends Record<any, any>>(value: any): value is StMap<E> {
+  hasAny(keys: EntityIdType[]): boolean {
+    const keySet = new Set(keys);
+    return this.some((_, key) => keySet.has(key));
+  }
+
+  hasAll(keys: EntityIdType[]): boolean {
+    const keySet = new Set(keys);
+    return this.every((_, key) => keySet.has(key));
+  }
+
+  abstract filter(callback: EntityPredicate<T>): StMap<T> | StMapView<T>;
+  abstract map(callback: EntityUpdateWithId<T>): StMap<T> | StMapView<T>;
+  abstract find(callback: EntityPredicate<T>): T | undefined;
+  abstract forEach(callback: EntityFn<T, void>): void;
+  abstract some(callback: EntityPredicate<T>): boolean;
+  abstract every(callback: EntityPredicate<T>): boolean;
+  abstract reduce<R>(callback: (accumulator: R, item: [EntityIdType, T]) => R, initialValue: R): R;
+  abstract findKey(callback: EntityPredicate<T>): EntityIdType | undefined;
+  abstract search<K extends ConditionalKeys<T, string>>(
+    keyOrKeysOrCallback: K[] | EntityFn<T, string> | K,
+    term: string
+  ): StMapView<T> | StMap<T>;
+
+  static isStMap<E extends Record<any, any>>(value: any): value is StMapBase<E> {
     return value?.[stMapSymbol] || value instanceof StMapBase;
   }
 }
 
-export class StMap<T extends Record<any, any>> extends StMapBase<T> implements StMapInterface<[EntityIdType, T], T> {
+export class StMap<T extends Record<any, any>> extends StMapBase<T> {
   constructor(
     idGetter: IdGetter<T, keyof T>,
     public merger: EntityMergeFn = (entityA, entityB) => ({ ...entityA, ...entityB })
@@ -206,7 +247,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> implements S
     return undefined;
   }
 
-  forEach(callback: (entity: T, key: EntityIdType) => void): void {
+  forEach(callback: EntityFn<T, void>): void {
     for (const [key, entity] of this) {
       callback(entity, key);
     }
@@ -236,16 +277,6 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> implements S
       acc = callback(acc, pair);
     }
     return acc;
-  }
-
-  hasAny(keys: EntityIdType[]): boolean {
-    const keySet = new Set(keys);
-    return this.some((_, key) => keySet.has(key));
-  }
-
-  hasAll(keys: EntityIdType[]): boolean {
-    const keySet = new Set(keys);
-    return this.every((_, key) => keySet.has(key));
   }
 
   // Mutators
@@ -385,9 +416,16 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> implements S
   toView(): StMapView<T> {
     return new StMapView<T>(this._idGetter).setState(this._state, this._keys);
   }
+
+  search<K extends ConditionalKeys<T, string>>(
+    keyOrKeysOrCallback: K[] | EntityFn<T, string> | K,
+    term: string
+  ): StMap<T> {
+    return super._search(this, keyOrKeysOrCallback, term);
+  }
 }
 
-export class StMapView<T extends Record<any, any>> extends StMapBase<T> implements StMapInterface<T, T> {
+export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
   *[Symbol.iterator](): Iterator<T> {
     for (const key of this._keys) {
       yield this.get(key)!;
@@ -466,20 +504,17 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> implemen
     return acc;
   }
 
-  hasAny(keys: EntityIdType[]): boolean {
-    const keySet = new Set(keys);
-    return this.some((_, key) => keySet.has(key));
-  }
-
-  hasAll(keys: EntityIdType[]): boolean {
-    const keySet = new Set(keys);
-    return this.every((_, key) => keySet.has(key));
-  }
-
   /** @internal */
   setState(state: { [id: string]: T }, keys: Set<EntityIdType>): this {
     this._state = state;
     this._keys = keys;
     return this;
+  }
+
+  search<K extends ConditionalKeys<T, string>>(
+    keyOrKeysOrCallback: K[] | EntityFn<T, string> | K,
+    term: string
+  ): StMapView<T> {
+    return super._search(this, keyOrKeysOrCallback, term);
   }
 }

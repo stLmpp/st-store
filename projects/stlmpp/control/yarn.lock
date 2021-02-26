@@ -12,10 +12,10 @@ fast-sort@~2.2.0:
   resolved "https://registry.yarnpkg.com/fast-sort/-/fast-sort-2.2.0.tgz#20903763531fbcbb41c9df5ab1bf5f2cefc8476a"
   integrity sha512-W7zqnn2zsYoQA87FKmYtgOsbJohOrh7XrtZrCVHN5XZKqTBTv5UG+rSS3+iWbg/nepRQUOu+wnas8BwtK8kiCg==
 
-st-utils@~1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-1.4.0.tgz#5f2a4d3027f5494b8bd281cee5553b0d286d0279"
-  integrity sha512-GBVE8TWVkxXF+CVwih2/y5wZWMeIICPZTyRrde0oRUhf6Dn6MS5xfMm3pYN3gzF+084tObGdjRfmgi62wkyW3A==
+st-utils@~1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-1.5.0.tgz#234a335a7342eccc56feeccea5cba38f54214c51"
+  integrity sha512-NLmmH2BtTAKvrZDRdlZ49/Aqj97IbDiy/9oOV2c0OmD8O5lkDx14B5GC+FmXSoiCsBz/LQyGUJ/pdHqCHTdUsA==
   dependencies:
     fast-sort "~2.2.0"
     type-fest "~0.21.1"
