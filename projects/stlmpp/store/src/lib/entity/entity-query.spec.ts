@@ -170,6 +170,25 @@ describe('Entity Query', () => {
     ]);
   });
 
+  it('should emit if active is updated', () => {
+    store.setEntities([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    store.setActive([1, 2]);
+    const subscriber = jasmine.createSpy('subscriber');
+    query.active$.subscribe(subscriber);
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    store.updateEntity(1, { name: '2' });
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    store.add({ name: '3', id: 3 });
+    expect(subscriber).toHaveBeenCalledTimes(3);
+    store.remove(2);
+    expect(subscriber).toHaveBeenCalledTimes(4);
+    store.updateEntity(3, { other: '3' });
+    expect(subscriber).toHaveBeenCalledTimes(5);
+  });
+
   it('should define if entity is equal', () => {
     expect(isEqualEntity({ id: 1, nome: 'Guilherme' }, { nome: 'Guilherme', id: 1 })).toBeTrue();
     const entity = { id: 2 };

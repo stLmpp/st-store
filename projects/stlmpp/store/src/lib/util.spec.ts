@@ -1,4 +1,4 @@
-import { deepFreeze, devCopy, distinctUntilManyChanged, predictIdType } from './util';
+import { deepFreeze, devCopy, distinctUntilManyChanged, getFirstKey, predictIdType } from './util';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from './environment';
 import { IdGetter, parseIdGetter } from 'st-utils';
@@ -114,6 +114,22 @@ describe('Utils', () => {
       const objCopy = devCopy(obj);
       objCopy.a = 2;
       expect(obj.a).toBe(1);
+    });
+  });
+
+  describe('getFirstKey', () => {
+    it('should return he first key', () => {
+      expect(getFirstKey({ key: 1 })).toBe('key');
+    });
+
+    it('should return undefined if no keys are found', () => {
+      expect(getFirstKey({})).toBeUndefined();
+    });
+
+    it('should return undefined if no keys are found with hasOwnProperty', () => {
+      const objParent = { a: 1 };
+      const obj = Object.create(objParent);
+      expect(getFirstKey(obj)).toBeUndefined();
     });
   });
 });

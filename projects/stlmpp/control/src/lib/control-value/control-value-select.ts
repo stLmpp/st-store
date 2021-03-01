@@ -19,7 +19,6 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelect), multi: true }],
 })
 export class ControlValueSelect extends AbstractControlValue implements AfterContentInit {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }

@@ -63,18 +63,18 @@ export function predictIdType<T extends Record<any, any>>(
     return key => key;
   }
   const firstKey = getFirstKey(object);
-  const firstItem = object[firstKey];
+  // Non-null assertion here because I checked if the object is empty before
+  const firstItem = object[firstKey!];
   return isNumber(idGetter(firstItem)) ? Number : key => key;
 }
 
-export function getFirstKey<T extends Record<any, any>>(object: T): keyof T {
-  let key: keyof T;
-  for (key in object) {
-    if (key in object) {
-      break;
+export function getFirstKey<T extends Record<any, any>>(object: T): keyof T | undefined {
+  for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+      return key;
     }
   }
-  return key;
+  return undefined;
 }
 
 export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[]> {
