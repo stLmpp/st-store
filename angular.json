@@ -32,10 +32,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/stlmpp/store/**/*.ts",
-              "projects/stlmpp/store/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/stlmpp/store/**/*.ts", "projects/stlmpp/store/**/*.html"]
           }
         }
       }
@@ -69,10 +66,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/stlmpp/utils/**/*.ts",
-              "projects/stlmpp/utils/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/stlmpp/utils/**/*.ts", "projects/stlmpp/utils/**/*.html"]
           }
         }
       }
@@ -106,10 +100,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/stlmpp/router/**/*.ts",
-              "projects/stlmpp/router/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/stlmpp/router/**/*.ts", "projects/stlmpp/router/**/*.html"]
           }
         }
       }
@@ -143,10 +134,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/stlmpp/control/**/*.ts",
-              "projects/stlmpp/control/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/stlmpp/control/**/*.ts", "projects/stlmpp/control/**/*.html"]
           }
         }
       }

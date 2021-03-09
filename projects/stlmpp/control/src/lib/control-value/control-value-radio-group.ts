@@ -10,7 +10,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { ControlValueRadioParent } from './control-value-radio-parent';
@@ -86,7 +86,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     this.allChildren.changes
       .pipe(takeUntil(this._destroy$), startWith(this.allChildren))
       .subscribe((children: QueryList<ControlValueRadio>) => {
-        this.children.reset(children.filter(child => child.controlValueRadioStandaloneParent === this));
+        this.children.reset(children.filter(child => child.controlValueRadioParent === this));
         this._setValue(this._lastValue);
         this.children.notifyOnChanges();
       });

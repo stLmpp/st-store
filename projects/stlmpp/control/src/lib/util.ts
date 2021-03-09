@@ -1,4 +1,4 @@
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 
 export function isEmptyValue(value: any): value is null | undefined | '' {
   return isNil(value) || value === '';

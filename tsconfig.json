@@ -21,7 +21,9 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@stlmpp/utils": ["dist/stlmpp/utils"],
-      "@stlmpp/utils/*": ["dist/stlmpp/utils/*"]
+      "@stlmpp/utils/*": ["dist/stlmpp/utils/*"],
+      "@stlmpp/store": ["dist/stlmpp/store"],
+      "@stlmpp/store/*": ["dist/stlmpp/store/*"]
     },
     "stripInternal": true
   },

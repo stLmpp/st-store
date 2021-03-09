@@ -8,7 +8,7 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
   constructor(
     public elementRef: ElementRef<HTMLInputElement>,
     private renderer2: Renderer2,
-    @Host() @Optional() public controlValueRadioStandaloneParent?: ControlValueRadioParent
+    @Host() @Optional() public controlValueRadioParent?: ControlValueRadioParent
   ) {}
 
   private _changeListener?: () => void;
@@ -19,27 +19,25 @@ export class ControlValueRadio implements AfterViewInit, OnDestroy {
   private _onChange($event: Event): void {
     const target = $event.target as HTMLInputElement;
     if (target.checked) {
-      this.controlValueRadioStandaloneParent!.onChange(this.value);
+      // Non-null assertion because this is called only inside an if (this.controlValueRadioParent)
+      this.controlValueRadioParent!.onChange(this.value);
     }
   }
 
   private _onBlur(): void {
-    this.controlValueRadioStandaloneParent?.onTouched$.next();
+    // Non-null assertion because this is called only inside an if (this.controlValueRadioParent)
+    this.controlValueRadioParent!.onTouched$.next();
   }
 
   ngAfterViewInit(): void {
-    if (this.controlValueRadioStandaloneParent) {
+    if (this.controlValueRadioParent) {
       this._changeListener = this.renderer2.listen(this.elementRef.nativeElement, 'change', ($event: Event) =>
         this._onChange($event)
       );
       this._touchedListener = this.renderer2.listen(this.elementRef.nativeElement, 'blur', () => {
         this._onBlur();
       });
-      this.renderer2.setAttribute(
-        this.elementRef.nativeElement,
-        'name',
-        '' + this.controlValueRadioStandaloneParent.id
-      );
+      this.renderer2.setAttribute(this.elementRef.nativeElement, 'name', '' + this.controlValueRadioParent.id);
     }
   }
 

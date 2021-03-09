@@ -99,4 +99,10 @@ describe('control value select multiple', () => {
     fixture.detectChanges();
     expect(select.nativeElement.selectedIndex).toBe(-1);
   });
+
+  it('should not set value if index is not found', () => {
+    component.control.setValue([15]);
+    fixture.detectChanges();
+    expect(select.nativeElement.selectedIndex).toBe(-1);
+  });
 });

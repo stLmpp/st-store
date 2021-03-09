@@ -5,7 +5,7 @@ import { AppComponent, HomeComponent, routes, UserComponent, UserDetailComponent
 import { StRouterModule } from './st-router.module';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
-import { isFunction } from '@stlmpp/utils';
+import { isFunction } from 'st-utils';
 import { take } from 'rxjs/operators';
 
 function wrapRouterInNgZone(router: Router, ngZone: NgZone): Router {

@@ -1,5 +1,5 @@
 import { Control } from '../../control/control';
-import { isArray, isNil, isString } from '@stlmpp/utils';
+import { isArray, isNil, isString } from 'st-utils';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 
 export class AbstractRequiredValidator<T = any> extends ControlValidator<T, boolean> {

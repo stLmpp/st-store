@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 import { PatternValidator } from './pattern';
-import { isRegExp } from '@stlmpp/utils';
+import { isRegExp } from 'st-utils';
 import { createFakeControl } from '../../util-tests';
 import { Nullable } from '../../util';
 

@@ -4,8 +4,8 @@
   "lib": {
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
-      "@stlmpp/utils": "@stlmpp/utils"
+      "st-utils": "st-utils"
     }
   },
-  "whitelistedNonPeerDependencies": ["."]
+  "allowedNonPeerDependencies": ["."]
 }

@@ -1,6 +1,6 @@
 import { AbstractUrlValidator } from './url';
 import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
-import { BooleanInput, coerceBooleanProperty } from '@stlmpp/utils';
+import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { PatternValidationError } from './pattern';
 import { ControlValidator } from '../validator';

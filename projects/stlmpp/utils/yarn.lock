@@ -7,7 +7,20 @@ fast-sort@~2.2.0:
   resolved "https://registry.yarnpkg.com/fast-sort/-/fast-sort-2.2.0.tgz#20903763531fbcbb41c9df5ab1bf5f2cefc8476a"
   integrity sha512-W7zqnn2zsYoQA87FKmYtgOsbJohOrh7XrtZrCVHN5XZKqTBTv5UG+rSS3+iWbg/nepRQUOu+wnas8BwtK8kiCg==
 
+st-utils@~1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-1.5.0.tgz#234a335a7342eccc56feeccea5cba38f54214c51"
+  integrity sha512-NLmmH2BtTAKvrZDRdlZ49/Aqj97IbDiy/9oOV2c0OmD8O5lkDx14B5GC+FmXSoiCsBz/LQyGUJ/pdHqCHTdUsA==
+  dependencies:
+    fast-sort "~2.2.0"
+    type-fest "~0.21.1"
+
 tslib@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
+
+type-fest@~0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.21.1.tgz#fb17fed5e8ef5c7c8b1e0733a444d16a025a8de1"
+  integrity sha512-IRDHjLrSaDb8NdGkqMXWjB6L/4ZhC9y2OtmheHmdkrhufHi8uRvkfJHzW7XKog8RAVZsgZ8JsZqDFg97aC99Xw==

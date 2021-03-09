@@ -1,5 +1,5 @@
 import { Params } from '@angular/router';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 
 export function isEqualParams(paramsA: Params, paramsB: Params): boolean {
   if (isNil(paramsA) || isNil(paramsB)) {

@@ -2,25 +2,30 @@
 # yarn lockfile v1
 
 
-"@stlmpp/utils@~3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@stlmpp/utils/-/utils-3.2.3.tgz#c878ddad0477560cc70182c8af5bf0935850aacf"
-  integrity sha512-LObOfBVcbvtKdZOOcY+AN0SCf1er5iRlsVkPSuNk/3+L4NmRTmYO2kaZkEIqptBJPssJaspXJaPxU6q9S7MSgQ==
-  dependencies:
-    fast-sort "~2.2.0"
-    tslib "~2.0.3"
-
-date-fns@~2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
-  integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
+date-fns@~2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.17.0.tgz#afa55daea539239db0a64e236ce716ef3d681ba1"
+  integrity sha512-ZEhqxUtEZeGgg9eHNSOAJ8O9xqSgiJdrL0lzSSfMF54x6KXWJiOH/xntSJ9YomJPrYH/p08t6gWjGWq1SDJlSA==
 
 fast-sort@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/fast-sort/-/fast-sort-2.2.0.tgz#20903763531fbcbb41c9df5ab1bf5f2cefc8476a"
   integrity sha512-W7zqnn2zsYoQA87FKmYtgOsbJohOrh7XrtZrCVHN5XZKqTBTv5UG+rSS3+iWbg/nepRQUOu+wnas8BwtK8kiCg==
 
+st-utils@~1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-1.5.0.tgz#234a335a7342eccc56feeccea5cba38f54214c51"
+  integrity sha512-NLmmH2BtTAKvrZDRdlZ49/Aqj97IbDiy/9oOV2c0OmD8O5lkDx14B5GC+FmXSoiCsBz/LQyGUJ/pdHqCHTdUsA==
+  dependencies:
+    fast-sort "~2.2.0"
+    type-fest "~0.21.1"
+
 tslib@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
+
+type-fest@~0.21.1:
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.21.2.tgz#43b9dc71d9dc5593ea71bf7b0e013ec10f838249"
+  integrity sha512-pvQl0WNazvfQ0rq2XDdhpWv49sohh2t+buFbglaJ9N9+Xj4BhFRpuo+uJxemeARteRxRloJ1m+8gBR6Z2Nfktg==

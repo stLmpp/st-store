@@ -1,6 +1,6 @@
 import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isDate } from '@stlmpp/utils';
+import { isDate } from 'st-utils';
 import { format, isValid, parse, parseISO } from 'date-fns';
 import { AbstractControlValue } from './abstract-control-value';
 
@@ -109,7 +109,6 @@ export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'da
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDate), multi: true }],
 })
 export class ControlValueDate extends AbstractControlValue<string | Date | null> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }

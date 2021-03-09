@@ -50,20 +50,24 @@ export class SimpleQuery extends Query<IdName> {
   }
 }
 
-export interface IdNameEntityState extends EntityState<IdNameEntity, number, { code: number }> {
+export interface IdNameEntityStateError {
+  code: number;
+}
+
+export interface IdNameEntityState extends EntityState<IdNameEntity> {
   list: number[];
   loadingNames: boolean;
 }
 
 @Injectable()
-export class SimpleEntityStore extends EntityStore<IdNameEntityState> {
+export class SimpleEntityStore extends EntityStore<IdNameEntityState, IdNameEntityStateError> {
   constructor() {
-    super({ name: 'simple-entity', cache: 10, initialState: entityInitialState() });
+    super({ name: 'simple-entity', cache: 10, initialState: { entities: entityInitialState() } });
   }
 }
 
 @Injectable()
-export class SimpleEntityQuery extends EntityQuery<IdNameEntityState> {
+export class SimpleEntityQuery extends EntityQuery<IdNameEntityState, IdNameEntityStateError> {
   constructor(private simpleEntityStore: SimpleEntityStore) {
     super(simpleEntityStore);
   }

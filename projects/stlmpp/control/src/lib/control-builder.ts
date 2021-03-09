@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Entries } from './util';
-import { isArray, isObject } from '@stlmpp/utils';
+import { isArray, isObject } from 'st-utils';
 import { Control, ControlOptions } from './control/control';
 import { ControlArray, ControlArrayOptions } from './control-array/control-array';
 import { ControlType } from './control/control-type';

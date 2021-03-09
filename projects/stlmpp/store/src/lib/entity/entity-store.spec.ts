@@ -31,7 +31,7 @@ describe('Entity Store', () => {
   it('should use custom merge function', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
       name: 'teste',
-      initialState: entityInitialState(),
+      initialState: { entities: entityInitialState() },
       mergeFn: (a, b) => ({ ...b, ...a }),
     });
     newStore.updateEntity(1, { name: '2' });
@@ -401,7 +401,7 @@ describe('Entity Store', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
       name: 'teste',
       idGetter: 'id',
-      initialState: { 1: { id: 1, name: 'Guilherme' } },
+      initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
     });
     expect(newStore.getState().entities.length).toBe(1);
     expect(newStore.getState().entities.has(1)).toBeTrue();
@@ -412,7 +412,7 @@ describe('Entity Store', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
       name: 'teste',
       idGetter: 'id',
-      initialState: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } },
+      initialState: { entities: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } } },
       initialActive: [1, 2],
     });
     expect(newStore.getState().activeKeys.has(1)).toBeTrue();
@@ -423,11 +423,16 @@ describe('Entity Store', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
       name: 'teste',
       idGetter: 'id',
-      initialState: { 1: { id: 1, name: 'Guilherme' } },
+      initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
       initialActive: [1, 2],
     });
     expect(newStore.getState().activeKeys.has(1)).toBeTrue();
     expect(newStore.getState().activeKeys.has(2)).toBeFalse();
+  });
+
+  it('should not set initial state', () => {
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'teste-teste', initialState: {} });
+    expect(newStore.getState().entities.length).toBe(0);
   });
 
   it('should dev copy', () => {

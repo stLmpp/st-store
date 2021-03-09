@@ -10,7 +10,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isNil } from '@stlmpp/utils';
+import { isNil } from 'st-utils';
 import { ControlValueSelectOption } from './control-value-select-option';
 import { AbstractControlValue } from './abstract-control-value';
 
@@ -19,7 +19,6 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelect), multi: true }],
 })
 export class ControlValueSelect extends AbstractControlValue implements AfterContentInit {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }

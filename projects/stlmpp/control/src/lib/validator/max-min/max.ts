@@ -1,6 +1,6 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
-import { isDate, isNil, isString } from '@stlmpp/utils';
+import { isDate, isNil, isString } from 'st-utils';
 import { format, isAfter, parseISO } from 'date-fns';
 import { Directive, HostBinding, Input } from '@angular/core';
 import { Nullable } from '../../util';

@@ -1,6 +1,6 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { getTypeAndValue, MaxMinValidationError, MaxMinType } from './max';
-import { isNil, isString } from '@stlmpp/utils';
+import { isNil, isString } from 'st-utils';
 import { isBefore, parseISO } from 'date-fns';
 import { Control } from '../../control/control';
 import { Directive, HostBinding, Input } from '@angular/core';

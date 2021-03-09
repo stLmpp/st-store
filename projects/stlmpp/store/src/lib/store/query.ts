@@ -1,11 +1,12 @@
 import { Store } from './store';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
-import { KeyValue } from '../type';
-import { isString } from '@stlmpp/utils';
+import { Entries, KeyValue, QueryOptions } from '../type';
+import { isFunction } from 'st-utils';
 
-export class Query<T, E = any> {
-  constructor(store: Store<T, E>) {
+export class Query<T extends Record<any, any>, E = any> {
+  constructor(store: Store<T, E>, options?: QueryOptions) {
+    this._options = { distinctUntilChanged: true, ...options };
     this._store = store;
     this.state$ = this._store.selectState();
     this.loading$ = this._store.selectLoading();
@@ -15,6 +16,8 @@ export class Query<T, E = any> {
 
   /** @internal */
   protected _store: Store<T, E>;
+
+  protected _options: QueryOptions;
 
   state$: Observable<T>;
   loading$: Observable<boolean>;
@@ -43,26 +46,29 @@ export class Query<T, E = any> {
   select<K extends keyof T, R>(callbackOrKey?: K | ((state: T) => R)): Observable<T | R | T[K]> {
     let state$: Observable<any> = this.state$;
     if (callbackOrKey) {
-      const isKey = (key: any): key is keyof T => isString(key);
-      if (isKey(callbackOrKey)) {
-        state$ = state$.pipe(pluck(callbackOrKey));
-      } else {
+      if (isFunction(callbackOrKey)) {
         state$ = state$.pipe(map(callbackOrKey));
+      } else {
+        state$ = state$.pipe(pluck(callbackOrKey));
       }
     }
-    return state$.pipe(distinctUntilChanged());
+    if (this._options.distinctUntilChanged) {
+      state$ = state$.pipe(distinctUntilChanged());
+    }
+    return state$;
   }
 
-  selectAsKeyValue(pick?: (keyof T)[]): Observable<KeyValue<string | number, T[keyof T]>[]> {
+  selectAsKeyValue<K extends keyof T>(pick?: K[]): Observable<KeyValue<K, T[K]>[]> {
     let state$ = this.state$;
-    if (pick?.length) {
-      state$ = state$.pipe(distinctUntilChanged((a, b) => pick.every(key => a[key] === b[key])));
+    if (pick?.length && this._options.distinctUntilChanged) {
+      state$ = state$.pipe(distinctUntilChanged((stateA, stateB) => pick.every(key => stateA[key] === stateB[key])));
     }
     return state$.pipe(
       map(state => {
-        let entries = Object.entries(state);
+        let entries = Object.entries(state) as Entries<T, K>;
         if (pick?.length) {
-          entries = entries.filter(([key]) => (pick as string[]).includes(key));
+          const keysSet = new Set(pick);
+          entries = entries.filter(([key]) => keysSet.has(key));
         }
         return entries.map(([key, value]) => ({ key, value }));
       })

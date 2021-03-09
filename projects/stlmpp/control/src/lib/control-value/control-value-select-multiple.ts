@@ -18,7 +18,6 @@ import { AbstractControlValue } from './abstract-control-value';
   providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelectMultiple), multi: true }],
 })
 export class ControlValueSelectMultiple extends AbstractControlValue<any[]> implements AfterContentInit {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }
@@ -44,9 +43,7 @@ export class ControlValueSelectMultiple extends AbstractControlValue<any[]> impl
           this._indices.add(index);
           indicesDelete.delete(index);
           const option = optionsArray[index];
-          if (option) {
-            this.renderer2.setProperty(option.elementRef.nativeElement, 'selected', true);
-          }
+          this.renderer2.setProperty(option.elementRef.nativeElement, 'selected', true);
         }
       }
       for (const index of indicesDelete) {

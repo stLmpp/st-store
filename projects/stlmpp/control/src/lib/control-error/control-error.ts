@@ -10,13 +10,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ControlParent } from '../control-parent';
-import { isNil } from '@stlmpp/utils';
+import { isNil, isNumber, isString } from 'st-utils';
 import { ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Subject } from 'rxjs';
 import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
-import { isID } from '@stlmpp/utils';
 import { Control } from '../control/control';
 
 export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
@@ -46,7 +45,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
       this.removeError(errorName);
     }
     this._destroy$.next();
-    if (isID(this.controlError)) {
+    if (isString(this.controlError) || isNumber(this.controlError)) {
       if (!this.controlParent) {
         throw new ControlParentNotFound('controlError', this.controlError);
       }

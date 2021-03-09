@@ -17,24 +17,16 @@ describe('sum', () => {
 
     it('should sum', () => {
       expect(sumPipe.transform([1, 2, 3, 4])).toBe(10);
-      expect(sumPipe.transform(undefined as any)).toBe(0);
       expect(sumPipe.transform([])).toBe(0);
-      expect(sumPipe.transform([1, 2, 3, 4, undefined as any])).toBe(10);
     });
 
     it('should pipe sum', () => {
       of([1, 2, 3, 4])
         .pipe(sumOperator())
         .subscribe(sum => expect(sum).toBe(10));
-      of(undefined as any)
-        .pipe(sumOperator())
-        .subscribe(sum => expect(sum).toBe(0));
       of([])
         .pipe(sumOperator())
         .subscribe(sum => expect(sum).toBe(0));
-      of([1, 2, 3, 4, undefined as any])
-        .pipe(sumOperator())
-        .subscribe(sum => expect(sum).toBe(10));
     });
   });
 
@@ -60,10 +52,6 @@ describe('sum', () => {
       expect(sumByPipe.transform(array, 'value')).toBe(3);
     });
 
-    it('should sum by multiple keys', () => {
-      expect(sumByPipe.transform(array, ['id', 'value'])).toBe(6);
-    });
-
     it('should not sum if undefined or null', () => {
       expect(
         sumByPipe.transform(
@@ -76,16 +64,9 @@ describe('sum', () => {
       ).toBe(0);
     });
 
-    it('should not sum if empty or undefined', () => {
-      const newArray = [
-        { id: 1, value: null },
-        { id: 2, value: undefined },
-      ];
-      expect(sumByPipe.transform([], 'value')).toBe(0);
-      expect(sumByPipe.transform(undefined as any, 'value')).toBe(0);
-      expect(sumByPipe.transform(newArray, ['id', 'value'])).toBe(3);
-      expect(sumByPipe.transform(array, [])).toBe(0);
-      expect(sumByPipe.transform(array, undefined as any)).toBe(0);
+    it('should not sum if empty', () => {
+      const emptyArr: { value: number }[] = [];
+      expect(sumByPipe.transform(emptyArr, 'value')).toBe(0);
     });
 
     it('should pipe sum by', () => {
