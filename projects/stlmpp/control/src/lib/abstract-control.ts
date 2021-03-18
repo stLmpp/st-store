@@ -5,6 +5,7 @@ import { Directive, HostBinding, Input } from '@angular/core';
 
 export interface AbstractControl<T = any> {
   value$: Observable<T>;
+  valueChanges$: Observable<T>;
   value: T;
   parent: AbstractControl | undefined;
   pristine: boolean;

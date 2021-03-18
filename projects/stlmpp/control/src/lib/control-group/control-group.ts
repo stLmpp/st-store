@@ -1,5 +1,5 @@
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, skip } from 'rxjs/operators';
 import { isNil } from 'st-utils';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from '../control-update-on';
@@ -26,6 +26,7 @@ export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT =
     this.value$ = combineLatest(values$).pipe(
       map(values => values.reduce((acc, item, index) => ({ ...acc, [keys[index]]: item }), {}))
     );
+    this.valueChanges$ = this.value$.pipe(skip(1));
     for (const control of this._values()) {
       control.parent = this;
       if (options?.updateOn) {
@@ -39,7 +40,8 @@ export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT =
 
   private _parent: ControlGroup | ControlArray | undefined;
 
-  value$!: Observable<RealT>;
+  value$: Observable<RealT>;
+  valueChanges$: Observable<RealT>;
 
   /** @internal */
   submitted = false;

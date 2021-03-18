@@ -3,7 +3,7 @@ import { PartialDeep } from 'type-fest';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 
@@ -32,6 +32,7 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
   private _value$ = new BehaviorSubject<T[]>([]);
 
   value$ = this._value$.asObservable();
+  valueChanges$ = this.value$.pipe(skip(1));
 
   get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;

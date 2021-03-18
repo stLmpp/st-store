@@ -92,6 +92,22 @@ describe('control group', () => {
     expect(sub).toHaveBeenCalledWith({ id: 1, name: '' });
   });
 
+  it('should emit the valueChanges of all controls', () => {
+    const controlGroup = new ControlGroup<Group>({
+      id: new Control<number | undefined>(undefined),
+      name: new Control(''),
+    });
+    const sub = jasmine.createSpy('sub');
+    controlGroup.valueChanges$.subscribe(sub);
+    expect(sub).toHaveBeenCalledTimes(0);
+    controlGroup.get('id').setValue(1);
+    expect(sub).toHaveBeenCalledTimes(1);
+    expect(sub).toHaveBeenCalledWith({ id: 1, name: '' });
+    controlGroup.get('name').setValue('2');
+    expect(sub).toHaveBeenCalledTimes(2);
+    expect(sub).toHaveBeenCalledWith({ id: 1, name: '2' });
+  });
+
   it('should get/set parent', () => {
     const controlGroup = new ControlGroup<Group>({
       id: new Control<number | undefined>(undefined),
@@ -347,5 +363,4 @@ describe('control group', () => {
     fixture.detectChanges();
     expect(component.controlGroup.value).toEqual({ id: undefined, name: '' });
   });
-
 });

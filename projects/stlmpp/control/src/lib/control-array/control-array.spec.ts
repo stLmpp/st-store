@@ -91,6 +91,21 @@ describe('control array', () => {
     expect(sub).toHaveBeenCalledWith(['string1', '', '']);
   });
 
+  it('should emit the valueChanges', () => {
+    const array = component.array;
+    const sub = jasmine.createSpy('sub');
+    array.valueChanges$.subscribe(sub);
+    expect(sub).toHaveBeenCalledTimes(0);
+    array.push(new Control(''));
+    fixture.detectChanges();
+    expect(sub).toHaveBeenCalledTimes(1);
+    expect(sub).toHaveBeenCalledWith(['', '', '']);
+    triggerEvent(fixture.debugElement.query(By.css('.input-0')), 'input', 'string1');
+    fixture.detectChanges();
+    expect(sub).toHaveBeenCalledTimes(2);
+    expect(sub).toHaveBeenCalledWith(['string1', '', '']);
+  });
+
   it('should get the parent', () => {
     expect(component.array.parent).toBeInstanceOf(ControlGroup);
   });
