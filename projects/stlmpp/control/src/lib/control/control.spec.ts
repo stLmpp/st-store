@@ -442,4 +442,31 @@ describe('control', () => {
     fixture.detectChanges();
     expect(sub).toHaveBeenCalledWith(false);
   });
+
+  it('should not emit changes if the value is the same as the previous', () => {
+    const subvalue = jasmine.createSpy('value$');
+    const subchanges = jasmine.createSpy('valueChanges$');
+    component.control.value$.subscribe(subvalue);
+    component.control.valueChanges$.subscribe(subchanges);
+    triggerEvent(input, 'input', 'A');
+    triggerEvent(input, 'blur');
+    fixture.detectChanges();
+    expect(subvalue).toHaveBeenCalledTimes(2);
+    expect(subvalue).toHaveBeenCalledWith('A');
+    expect(subchanges).toHaveBeenCalledTimes(1);
+    triggerEvent(input, 'input', 'B');
+    triggerEvent(input, 'blur');
+    fixture.detectChanges();
+    expect(subvalue).toHaveBeenCalledTimes(3);
+    expect(subvalue).toHaveBeenCalledWith('B');
+    expect(subchanges).toHaveBeenCalledTimes(2);
+    expect(subchanges).toHaveBeenCalledWith('B');
+    triggerEvent(input, 'input', 'B');
+    triggerEvent(input, 'blur');
+    fixture.detectChanges();
+    expect(subvalue).toHaveBeenCalledTimes(3);
+    expect(subvalue).toHaveBeenCalledWith('B');
+    expect(subchanges).toHaveBeenCalledTimes(2);
+    expect(subchanges).toHaveBeenCalledWith('B');
+  });
 });

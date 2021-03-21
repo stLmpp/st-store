@@ -344,9 +344,11 @@ export class Control<T = any> implements AbstractControl<T> {
   }
 
   setValue(value: T, options?: ControlUpdateOptions): void {
-    this._value$.next(value);
-    this._emitChange(value, options);
-    this.runValidators();
+    if (value !== this.value) {
+      this._value$.next(value);
+      this._emitChange(value, options);
+      this.runValidators();
+    }
   }
 
   patchValue(value: T, options?: ControlUpdateOptions): void {
