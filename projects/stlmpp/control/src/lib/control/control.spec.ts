@@ -469,4 +469,15 @@ describe('control', () => {
     expect(subchanges).toHaveBeenCalledTimes(2);
     expect(subchanges).toHaveBeenCalledWith('B');
   });
+
+  it('should work without a control directive', () => {
+    const control = new Control<string>('', [Validators.required, Validators.minLength(3)]);
+    expect(control.invalid).toBeTrue();
+    expect(control.value).toBe('');
+    expect(control.getError('required')).toEqual(true);
+    control.setValue('TESTE');
+    expect(control.invalid).toBeFalse();
+    expect(control.value).toBe('TESTE');
+    expect(control.getError('required')).toBeUndefined();
+  });
 });

@@ -52,10 +52,6 @@ function toControlOptions(options: ControlOptions | ControlValidator | ControlVa
 }
 
 export class Control<T = any> implements AbstractControl<T> {
-  constructor(value: T, options?: ControlOptions<T>);
-  constructor(value: T, options?: ControlValidator<T>);
-  constructor(value: T, options?: ControlValidator<T>[]);
-  constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]);
   constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]) {
     this._initialValue = value;
     this._initialOptions = toControlOptions(options);
@@ -68,6 +64,7 @@ export class Control<T = any> implements AbstractControl<T> {
     this.internalValueChanges$.next(value);
     this.value$ = this._value$.asObservable();
     this._valueChanges$.next(value);
+    this.init();
   }
 
   private readonly _initialValue: T;
