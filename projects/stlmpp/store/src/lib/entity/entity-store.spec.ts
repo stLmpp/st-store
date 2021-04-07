@@ -380,12 +380,12 @@ describe('Entity Store', () => {
   });
 
   it('should update the state (partial)', () => {
-    store.update({ loadingNames: true });
+    store.updateState({ loadingNames: true });
     expect(store.getState().loadingNames).toBe(true);
   });
 
   it('should update the state (callback)', () => {
-    store.update(state => ({
+    store.updateState(state => ({
       ...state,
       list: [1, 2, 3],
     }));
@@ -438,7 +438,7 @@ describe('Entity Store', () => {
   it('should dev copy', () => {
     environment.isDev = true;
     const newStore = new SimpleEntityStore();
-    newStore.update({ loadingNames: true });
+    newStore.updateState({ loadingNames: true });
     const entity = newStore.getState().entities.get(1)!;
     expect(Object.isFrozen(entity)).toBeTrue();
     expect(() => (entity.name = '1')).toThrow();
@@ -448,7 +448,7 @@ describe('Entity Store', () => {
     environment.isDev = false;
     const newStore = new SimpleEntityStore();
     const oldEntity = newStore.getState().entities.get(1)!;
-    newStore.update({ loadingNames: true });
+    newStore.updateState({ loadingNames: true });
     const newEntity = newStore.getState().entities.get(1)!;
     expect(oldEntity === newEntity).toBeTrue();
     expect(Object.isFrozen(newEntity)).toBeFalse();
@@ -466,5 +466,12 @@ describe('Entity Store', () => {
     expect(store.getError()?.code).toBe(1);
     store.setError(null);
     expect(store.getError()).toBeNull();
+  });
+
+  // TODO remove on release 6.0.0
+  it('should call updateState', () => {
+    spyOn(store, 'updateState');
+    store.update({ list: [1] });
+    expect(store.updateState).toHaveBeenCalled();
   });
 });

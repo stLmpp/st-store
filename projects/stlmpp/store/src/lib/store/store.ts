@@ -2,49 +2,60 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { devCopy } from '../util';
 import { StoreOptions } from '../type';
 import { isFunction } from 'st-utils';
-import { StorePersistStrategy, StorePersistLocalStorageStrategy } from './store-persist';
+import { StorePersistLocalStorageStrategy, StorePersistStrategy } from './store-persist';
+import { State } from '../state/state';
+import { OnDestroy } from '@angular/core';
 
-export class Store<T, E = any> {
+export function getPersistKey<T extends Record<any, any>>(name: string, persist: keyof T): string {
+  return '__ST_STORE__' + name + '.' + (persist ?? '');
+}
+
+function mergePersistedValue<T extends Record<any, any>>({
+  persistKey,
+  persistStrategy = new StorePersistLocalStorageStrategy(),
+  name,
+  initialState,
+}: StoreOptions<T>): T {
+  const key = getPersistKey(name, persistKey);
+  let value = persistStrategy.get(key);
+
+  if (value) {
+    value = persistStrategy.deserialize(value);
+    return persistStrategy.setStore(initialState, value, persistKey);
+  }
+  return initialState;
+}
+
+export class Store<T extends Record<any, any>, E = any> extends State<T> implements OnDestroy {
   constructor(private _options: StoreOptions<T>) {
-    this._persist = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
-    this._state$ = new BehaviorSubject(this._mergePersistedValue(this._options.initialState));
+    super(mergePersistedValue(_options), { name: _options.name });
+    this._persistStrategy = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
   }
 
-  private _state$: BehaviorSubject<T>;
-  private _error$ = new BehaviorSubject<E | null>(null);
-  private _loading$ = new BehaviorSubject<boolean>(false);
-  private _persist: StorePersistStrategy<T>;
+  private readonly _error$ = new BehaviorSubject<E | null>(null);
+  private readonly _loading$ = new BehaviorSubject<boolean>(false);
+  private readonly _persistStrategy: StorePersistStrategy<T>;
 
   private _timeout: any;
-  private _cache$ = new BehaviorSubject(false);
+  private readonly _cache$ = new BehaviorSubject(false);
 
   /** @internal */
   protected _useDevCopy = true;
 
+  /** @deprecated */
   private _getPersistKey(): string {
-    return '__ST_STORE__' + this._options.name + '.' + (this._options.persistKey ?? '');
-  }
-
-  private _mergePersistedValue(state: T): T {
-    if (this._options.persistStrategy) {
-      const key = this._getPersistKey();
-      let value = this._persist.get(key);
-      if (value) {
-        value = this._persist.deserialize(value);
-        return this._persist.setStore(state, value, this._options.persistKey);
-      }
-    }
-    return state;
+    return getPersistKey(this._options.name, this._options.persistKey);
   }
 
   private _setPersist(state: T): void {
     if (this._options.persistStrategy) {
-      const key = this._getPersistKey();
-      const value = this._persist.getStore(state, this._options.persistKey);
-      this._persist.set(key, this._persist.serialize(value));
+      const key = getPersistKey(this._options.name, this._options.persistKey);
+      const value = this._persistStrategy.getStore(state, this._options.persistKey);
+      this._persistStrategy.set(key, this._persistStrategy.serialize(value));
     }
   }
 
+  /** @internal */
   protected updateInitialState(initialState: T): void {
     this._options = { ...this._options, initialState };
   }
@@ -69,20 +80,12 @@ export class Store<T, E = any> {
     return this._cache$.asObservable();
   }
 
-  selectState(): Observable<T> {
-    return this._state$.asObservable();
-  }
-
   selectError(): Observable<E | null> {
     return this._error$.asObservable();
   }
 
   selectLoading(): Observable<boolean> {
     return this._loading$.asObservable();
-  }
-
-  getState(): T {
-    return this._state$.value;
   }
 
   getError(): E | null {
@@ -101,24 +104,38 @@ export class Store<T, E = any> {
     this._error$.next(error);
   }
 
+  /**
+   * @deprecated since 5.1.0 (use Store.setState)
+   */
   set(state: T): void {
-    this._setPersist(state);
+    this.setState(state);
+  }
+
+  setState(state: T): void {
     if (this._useDevCopy) {
       state = devCopy(state);
     }
-    this._state$.next(state);
+    this._setPersist(state);
+    super.setState(state);
   }
 
+  /**
+   * @deprecated since 5.1.0 (use Store.updateState)
+   */
   update(state: T | Partial<T> | ((oldState: T) => T)): void {
+    this.updateState(state);
+  }
+
+  updateState(state: T | Partial<T> | ((oldState: T) => T)): void {
     const currentState = this.getState();
     const callback = isFunction(state) ? state : (oldState: T) => ({ ...oldState, ...state });
     const newState = this.preUpdate(callback(currentState));
-    this.set(newState);
+    this.setState(newState);
     this.postUpdate();
   }
 
   reset(): void {
-    this._state$.next(this._options.initialState);
+    this.setState(this._options.initialState);
   }
 
   preUpdate(newState: T): T {
@@ -126,4 +143,8 @@ export class Store<T, E = any> {
   }
 
   postUpdate(): void {}
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
 }

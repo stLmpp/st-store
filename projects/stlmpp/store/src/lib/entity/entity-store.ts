@@ -14,6 +14,10 @@ import { devCopy, isEntityId } from '../util';
 import { environment } from '../environment';
 import { Store } from '../store/store';
 
+function createSet(values: EntityIdType[] = []): Set<EntityIdType> {
+  return new Set<EntityIdType>(values);
+}
+
 export class EntityStore<
   State extends EntityState<T> = any,
   E = any,
@@ -26,7 +30,7 @@ export class EntityStore<
     this.merger = options.mergeFn ?? ((entityA, entityB) => ({ ...entityA, ...entityB }));
     const initialState = this._getInitialState();
     this.updateInitialState(initialState);
-    this.update(initialState);
+    this.updateState(initialState);
   }
 
   readonly idGetter: IdGetterFn<T>;
@@ -36,13 +40,9 @@ export class EntityStore<
     return new StMap<T>(this.idGetter, this.merger);
   }
 
-  private _createSet(values: EntityIdType[] = []): Set<EntityIdType> {
-    return new Set<EntityIdType>(values);
-  }
-
   private _getInitialState(): State {
     const entities = this._createMap();
-    let activeKeys = this._createSet();
+    let activeKeys = createSet();
     let initialState: Partial<State> = {};
     if (this.options.initialState) {
       if (this.options.initialState.entities) {
@@ -56,7 +56,7 @@ export class EntityStore<
       }
     }
     if (this.options.initialActive && this.options.initialState) {
-      activeKeys = this._createSet(this.options.initialActive.filter(key => entities.has(key)));
+      activeKeys = createSet(this.options.initialActive.filter(key => entities.has(key)));
     }
     return { entities, activeKeys, ...initialState } as State;
   }
@@ -66,7 +66,7 @@ export class EntityStore<
       entity = this.preAddEntity(entity);
       return entity;
     });
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.setMany(newEntities),
     }));
@@ -75,7 +75,7 @@ export class EntityStore<
   private _addOne(entity: T): void {
     const newEntity = this.preAddEntity(entity);
 
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.set(this.idGetter(newEntity), newEntity),
     }));
@@ -120,25 +120,32 @@ export class EntityStore<
           newSet.add(key);
         }
         return newSet;
-      }, this._createSet());
+      }, createSet());
     } else if (isEntityId(idOrEntity)) {
-      return this._createSet([idOrEntity]);
+      return createSet([idOrEntity]);
     } else {
       const id = this.idGetter(idOrEntity);
-      return this._createSet([id]);
+      return createSet([id]);
     }
   }
 
+  /**
+   * @deprecated since version 5.1.0 (use EntityStore.updateState)
+   */
   update(state: State | Partial<State> | ((oldState: State) => State)): void {
+    this.updateState(state);
+  }
+
+  updateState(state: State | Partial<State> | ((oldState: State) => State)): void {
     const callback = isFunction(state) ? state : (oldState: State) => ({ ...oldState, ...state });
-    super.update(oldState => {
+    super.updateState(oldState => {
       let newState = callback(oldState);
       if (typeof ngDevMode === 'undefined' || ngDevMode) {
         if (environment.isDev) {
           newState = {
             ...newState,
             entities: newState.entities.map(entity => devCopy(entity)),
-            activeKeys: this._createSet([...newState.activeKeys]),
+            activeKeys: createSet([...newState.activeKeys]),
           };
         }
       }
@@ -148,7 +155,7 @@ export class EntityStore<
 
   setEntities(array: T[]): void {
     array = array.map(entry => this.preAddEntity(entry));
-    this.update(state => ({ ...state, entities: state.entities.fromArray(array) }));
+    this.updateState(state => ({ ...state, entities: state.entities.fromArray(array) }));
   }
 
   add(entityOrEntities: T | T[]): void {
@@ -171,10 +178,10 @@ export class EntityStore<
       callback = (_, key) => key === idOrIdsOrCallback;
     }
     const entities = this.getState().entities.filter(callback);
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.remove(idOrIdsOrCallback),
-      activeKeys: this._createSet([...state.activeKeys].filter(key => !entities.has(key))),
+      activeKeys: createSet([...state.activeKeys].filter(key => !entities.has(key))),
     }));
     const entitiesRemoved = entities.values;
     this.postRemoveEntity(entitiesRemoved);
@@ -190,7 +197,7 @@ export class EntityStore<
         return;
       }
       const newEntity = this.preUpdateEntity(updateCallback(entity));
-      this.update(state => ({ ...state, entities: state.entities.update(idOrPredicate, newEntity) }));
+      this.updateState(state => ({ ...state, entities: state.entities.update(idOrPredicate, newEntity) }));
     } else {
       const entitiesMap = this.getState().entities.filter(idOrPredicate);
       if (!entitiesMap.length) {
@@ -198,7 +205,7 @@ export class EntityStore<
       }
       let entities = entitiesMap.values;
       entities = entities.map(entity => this.preUpdateEntity(updateCallback(entity)));
-      this.update(state => ({
+      this.updateState(state => ({
         ...state,
         entities: state.entities.merge(entities),
       }));
@@ -208,7 +215,7 @@ export class EntityStore<
 
   upsert(keyOrEntities: Array<T | Partial<T>> | EntityIdType, entity?: T | Partial<T>): void {
     const newEntities = this._preUpsert(keyOrEntities, entity);
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.upsert(newEntities),
     }));
@@ -216,7 +223,7 @@ export class EntityStore<
   }
 
   setActive(idOrEntity: EntityIdType | T | Array<EntityIdType | T>): void {
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       activeKeys: this._formatActive(idOrEntity),
     }));
@@ -224,17 +231,17 @@ export class EntityStore<
 
   addActive(idOrEntity: EntityIdType | T | Array<EntityIdType | T>): void {
     const formatted = this._formatActive(idOrEntity);
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
-      activeKeys: this._createSet([...state.activeKeys, ...formatted]),
+      activeKeys: createSet([...state.activeKeys, ...formatted]),
     }));
   }
 
   removeActive(idOrEntity: EntityIdType | T | Array<EntityIdType | T>): void {
     const formatted = this._formatActive(idOrEntity);
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
-      activeKeys: this._createSet([...state.activeKeys].filter(key => !formatted.has(key))),
+      activeKeys: createSet([...state.activeKeys].filter(key => !formatted.has(key))),
     }));
   }
 
@@ -253,14 +260,14 @@ export class EntityStore<
   }
 
   replace(id: EntityIdType, entity: T): void {
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.set(id, entity),
     }));
   }
 
   map(callback: EntityUpdateWithId<T>): void {
-    this.update(state => ({
+    this.updateState(state => ({
       ...state,
       entities: state.entities.map(callback),
     }));

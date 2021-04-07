@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { environment } from './environment';
+import { StateService } from './state/state.service';
 
 export interface StStoreModuleConfig {
   production?: boolean;
@@ -15,7 +16,7 @@ export class StStoreModule {
     environment.freezeData = config?.freezeData ?? true;
     return {
       ngModule: StStoreModule,
-      providers: [],
+      providers: [StateService],
     };
   }
 }
