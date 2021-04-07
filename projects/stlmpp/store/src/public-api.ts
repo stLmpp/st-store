@@ -22,12 +22,24 @@ export {
   Entries,
   EntityFilter,
   EntityFilterOptions,
+  EntityIdType,
+  StateConfig,
+  StateComponentConfig,
+  StateComponentConfigInput,
+  QueryOptions,
 } from './lib/type';
 export { StMap } from './lib/map';
 export { EntityStore } from './lib/entity/entity-store';
 export { EntityQuery } from './lib/entity/entity-query';
 export { Store } from './lib/store/store';
 export { Query } from './lib/store/query';
-export { setError, setLoading, useCache } from './lib/operators';
 export { StStoreModule, StStoreModuleConfig } from './lib/st-store.module';
 export { StorePersistLocalStorageStrategy, StorePersistStrategy } from './lib/store/store-persist';
+export { setLoading } from './lib/operators/set-loading';
+export { setError } from './lib/operators/set-error';
+export { useCache } from './lib/operators/use-cache';
+export { useEntityCache } from './lib/operators/use-entity-cache';
+export { distinctUntilKeysChanged } from './lib/operators/distinct-until-keys-changed';
+export { State } from './lib/state/state';
+export { LocalState } from './lib/state/local-state';
+export { StateService } from './lib/state/state.service';

@@ -29,11 +29,39 @@ export class SimpleStore extends Store<IdName> {
   }
 }
 
+export class StorePersistCustomStrategy implements StorePersistStrategy<IdName> {
+  state: Record<string, string | undefined> = {};
+  deserialize(value: string | undefined): any {
+    return value ? JSON.parse(value) : undefined;
+  }
+
+  get(key: string): string | undefined {
+    return this.state[key];
+  }
+
+  getStore(state: IdName, key?: keyof IdName): any {
+    return state.id;
+  }
+
+  serialize(value: any): string | undefined {
+    return value ? JSON.stringify(value) : undefined;
+  }
+
+  set(key: string, value: string | undefined): void {
+    this.state[key] = value;
+  }
+
+  setStore(state: IdName, value: any, key?: keyof IdName): IdName {
+    return { ...state, id: value };
+  }
+}
+
+const persistStrategy = new StorePersistCustomStrategy();
+persistStrategy.state[`__ST_STORE__simple-custom-persist.`] = '2';
+
 @Injectable()
 export class SimpleStoreCustomPersist extends Store<IdName> {
   constructor() {
-    const persistStrategy = new StorePersistCustomStrategy();
-    persistStrategy.state[`__ST_STORE__simple-custom-persist.`] = '2';
     super({
       name: 'simple-custom-persist',
       initialState: simpleInitialState(),
@@ -70,33 +98,6 @@ export class SimpleEntityStore extends EntityStore<IdNameEntityState, IdNameEnti
 export class SimpleEntityQuery extends EntityQuery<IdNameEntityState, IdNameEntityStateError> {
   constructor(private simpleEntityStore: SimpleEntityStore) {
     super(simpleEntityStore);
-  }
-}
-
-export class StorePersistCustomStrategy implements StorePersistStrategy<IdName> {
-  state: Record<string, string | undefined> = {};
-  deserialize(value: string | undefined): any {
-    return value ? JSON.parse(value) : undefined;
-  }
-
-  get(key: string): string | undefined {
-    return this.state[key];
-  }
-
-  getStore(state: IdName, key?: keyof IdName): any {
-    return state.id;
-  }
-
-  serialize(value: any): string | undefined {
-    return value ? JSON.stringify(value) : undefined;
-  }
-
-  set(key: string, value: string | undefined): void {
-    this.state[key] = value;
-  }
-
-  setStore(state: IdName, value: any, key?: keyof IdName): IdName {
-    return { ...state, id: value };
   }
 }
 

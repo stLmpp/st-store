@@ -65,9 +65,9 @@ describe('Query', () => {
     const spy = jasmine.createSpy('subscriber');
     observable.subscribe(spy);
     expect(spy).toHaveBeenCalledTimes(1);
-    store.update({ id: 2 });
+    store.updateState({ id: 2 });
     expect(spy).toHaveBeenCalledTimes(2);
-    store.update({ name: '2' });
+    store.updateState({ name: '2' });
     expect(spy).toHaveBeenCalledTimes(2);
   });
 

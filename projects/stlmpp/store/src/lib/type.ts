@@ -1,10 +1,12 @@
 import { StMap } from './map';
 import { IdGetter, OrderByDirection, OrderByType } from 'st-utils';
 import { StorePersistStrategy } from './store/store-persist';
+import { SchedulerLike } from 'rxjs';
 
 export type EntityIdType = number | string;
 
 export interface EntityState<T extends Record<any, any> = Record<any, any>> {
+  [key: string]: any;
   entities: StMap<T>;
   activeKeys: Set<EntityIdType>;
 }
@@ -59,4 +61,28 @@ export interface EntityFilterOptions<T extends Record<any, any> = Record<any, an
   filterBy?: EntityFilter<T, K>;
   orderBy?: OrderByType<T, K>;
   orderByDirection?: OrderByDirection;
+}
+
+export interface SimpleChangeCustom<T = any> {
+  previousValue: T;
+  currentValue: T;
+  firstChange: boolean;
+
+  isFirstChange(): boolean;
+}
+
+export type SimpleChangesCustom<T extends Record<any, any> = any> = { [K in keyof T]?: SimpleChangeCustom<T[K]> };
+
+export interface StateComponentConfigInput<T extends Record<any, any>, K extends keyof T = keyof T> {
+  key: K;
+  transformer: (value: T[K]) => any;
+}
+
+export interface StateConfig {
+  scheduler?: SchedulerLike;
+  name?: string;
+}
+
+export interface StateComponentConfig<T extends Record<any, any>, K extends keyof T = keyof T> extends StateConfig {
+  inputs?: Array<K | StateComponentConfigInput<T, K>>;
 }
