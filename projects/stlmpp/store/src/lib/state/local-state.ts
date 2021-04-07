@@ -3,6 +3,7 @@ import { isKeyof, isObjectEmpty } from 'st-utils';
 import { SimpleChangesCustom, StateComponentConfig, StateComponentConfigInput } from '../type';
 import { State } from './state';
 
+/** @dynamic */
 @Directive()
 export abstract class LocalState<T extends Record<string, any> = Record<string, any>>
   extends State<T>
