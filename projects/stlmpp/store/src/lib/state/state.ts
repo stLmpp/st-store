@@ -13,7 +13,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
     this._updateQueue$
       .pipe(
         observeOn(config.scheduler ?? queueScheduler),
-        takeUntil(this._destroy$),
+        takeUntil(this.destroy$),
         filter(updates => !!updates.length)
       )
       .subscribe(updates => {
@@ -27,7 +27,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
   private readonly _updateQueue$ = new BehaviorSubject<((state: T) => T)[]>([]);
 
   protected readonly _state$: BehaviorSubject<T>;
-  protected readonly _destroy$ = new Subject();
+  readonly destroy$ = new Subject();
   readonly name?: string;
 
   private _updateQueue(callback: (state: T) => T): void {
@@ -85,8 +85,8 @@ export class State<T extends Record<string, any> = Record<string, any>> {
 
   /** @internal */
   destroyInternal(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
     this._state$.complete();
     this._updateQueue$.complete();
   }
