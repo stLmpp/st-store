@@ -8,12 +8,7 @@
         "project": ["tsconfig.json", "e2e/tsconfig.json"],
         "createDefaultProgram": true
       },
-      "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
-        "plugin:@angular-eslint/template/process-inline-templates"
-      ],
-      "plugins": ["prefer-arrow"],
+      "extends": ["plugin:@angular-eslint/recommended", "plugin:@angular-eslint/template/process-inline-templates"],
       "rules": {
         "object-shorthand": ["error"],
         "object-curly-spacing": ["error", "always"],
@@ -47,7 +42,8 @@
         "arrow-body-style": ["error", "as-needed"],
         "prefer-arrow-callback": ["error"],
         "prefer-arrow/prefer-arrow-functions": ["off"],
-        "max-len": ["off"],
+        "no-shadow": ["off"],
+        "prefer-const": ["error", { "destructuring": "all" }],
         "@typescript-eslint/explicit-member-accessibility": ["off", { "accessibility": "explicit" }],
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/unified-signatures": "off",
@@ -66,6 +62,11 @@
           {
             "selector": "variable",
             "format": ["camelCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "variable",
+            "modifiers": ["const"],
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
           },
           {
             "selector": "parameter",
@@ -99,6 +100,14 @@
             "modifiers": ["private"],
             "format": ["camelCase"],
             "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "enumMember",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "function",
+            "format": ["camelCase", "PascalCase"]
           }
         ],
         "@typescript-eslint/member-ordering": [
@@ -107,13 +116,11 @@
             "default": [
               "signature",
 
-              // Constructors
               "private-constructor",
               "protected-constructor",
               "public-constructor",
               "constructor",
 
-              // Fields
               "private-decorated-field",
               "private-abstract-field",
               "private-instance-field",
@@ -132,7 +139,6 @@
               "decorated-field",
               "field",
 
-              // Methods
               "private-decorated-method",
               "private-instance-method",
               "private-abstract-method",
@@ -192,26 +198,23 @@
         "@angular-eslint/no-host-metadata-property": ["off"],
         "@angular-eslint/no-input-rename": ["off"],
         "@angular-eslint/no-inputs-metadata-property": ["off"],
-        "@angular-eslint/component-max-inline-declarations": [
-          "error",
-          {
-            "animations": 20,
-            "styles": 8,
-            "template": 5
-          }
-        ],
-        "@angular-eslint/component-class-suffix": ["off"]
+        "@angular-eslint/component-class-suffix": ["off"],
+        "@angular-eslint/prefer-on-push-component-change-detection": ["warn"],
+        "@angular-eslint/use-lifecycle-interface": ["warn"],
+        "@angular-eslint/no-conflicting-lifecycle": ["warn"],
+        "@angular-eslint/contextual-decorator": ["error"],
+        "@angular-eslint/prefer-output-readonly": ["warn"],
+        "@angular-eslint/component-max-inline-declarations": ["error", { "animations": 20, "styles": 8, "template": 5 }]
       }
     },
     {
       "files": ["*.html"],
       "extends": ["plugin:@angular-eslint/template/recommended"],
-      "rules": {}
-    },
-    {
-      "files": ["*.spec.ts"],
       "rules": {
-        "@angular-eslint/component-max-inline-declarations": ["off"]
+        "@angular-eslint/template/no-negated-async": ["off"],
+        "@angular-eslint/template/no-call-expression": ["error"],
+        "@angular-eslint/template/use-track-by-function": ["warn"],
+        "@angular-eslint/template/banana-in-box": ["error"]
       }
     }
   ]

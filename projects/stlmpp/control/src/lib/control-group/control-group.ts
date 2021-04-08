@@ -7,6 +7,7 @@ import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { ControlArray } from '../control-array/control-array';
+import { getUniqueId } from '../util';
 
 export type ControlGroupType<T extends Record<any, any>> = {
   [K in keyof T]: ControlType<T[K]>;
@@ -40,8 +41,9 @@ export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT =
 
   private _parent: ControlGroup | ControlArray | undefined;
 
-  value$: Observable<RealT>;
-  valueChanges$: Observable<RealT>;
+  readonly value$: Observable<RealT>;
+  readonly valueChanges$: Observable<RealT>;
+  readonly uniqueId = getUniqueId();
 
   /** @internal */
   submitted = false;

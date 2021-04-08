@@ -480,4 +480,10 @@ describe('control', () => {
     expect(control.value).toBe('TESTE');
     expect(control.getError('required')).toBeUndefined();
   });
+
+  it('should have a unique id', () => {
+    const control1 = new Control<string>('');
+    const control2 = new Control<string>('');
+    expect(control1.uniqueId).not.toBe(control2.uniqueId);
+  });
 });

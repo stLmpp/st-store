@@ -6,8 +6,8 @@ import { ControlGroup } from './control-group/control-group';
 export class FormSubmitDirective<T = any> {
   constructor(@Self() private controlGroupDirective: ControlGroupDirective) {}
 
-  @Output() groupSubmit = new EventEmitter<ControlGroup<T>>();
-  @Output() groupReset = new EventEmitter<ControlGroup<T>>();
+  @Output() readonly groupSubmit = new EventEmitter<ControlGroup<T>>();
+  @Output() readonly groupReset = new EventEmitter<ControlGroup<T>>();
 
   @HostBinding('attr.novalidate') novalidate = '';
 

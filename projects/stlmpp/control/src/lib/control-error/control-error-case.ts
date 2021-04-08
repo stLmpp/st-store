@@ -38,7 +38,7 @@ export class ControlErrorCase<K extends keyof ValidatorsModel> implements OnInit
     }
   }
 
-  private _context = new ControlErrorCaseContext<K>(null);
+  private readonly _context = new ControlErrorCaseContext<K>(null);
   private _hasView = false;
 
   @Input() error!: K;

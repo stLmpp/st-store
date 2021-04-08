@@ -110,5 +110,11 @@ describe('control builder', () => {
       expect(array.get(0)).toBeInstanceOf(Control);
       expect(array.get(1)).toBeInstanceOf(Control);
     });
+
+    it('should create array of controls with tuple', () => {
+      const array = controlBuilder.array<string>([[''], ['']]);
+      expect(array.get(0)).toBeInstanceOf(Control);
+      expect(array.get(1)).toBeInstanceOf(Control);
+    });
   });
 });

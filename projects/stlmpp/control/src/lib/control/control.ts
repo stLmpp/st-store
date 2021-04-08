@@ -1,6 +1,6 @@
 import { BehaviorSubject, isObservable, Observable, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, map, pluck, take, takeUntil } from 'rxjs/operators';
-import { Entries } from '../util';
+import { Entries, getUniqueId } from '../util';
 import { isArray, isNil, isObjectEmpty, isString, uniq, uniqBy } from 'st-utils';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
@@ -99,6 +99,7 @@ export class Control<T = any> implements AbstractControl<T> {
   readonly stateChanged$ = this._stateChanged$.asObservable();
   readonly value$: Observable<T>;
   readonly valueChanges$ = this._valueChanges$.asObservable();
+  readonly uniqueId = getUniqueId();
 
   /** @internal */
   readonly internalValueChanges$ = new Subject<T>();

@@ -43,7 +43,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
   private _attrDiffer!: KeyValueDiffer<string, string>;
   private _classesDiffer!: IterableDiffer<string>;
   private readonly _controlValues: ControlValue<T>[];
-  protected _destroy$ = new Subject();
+  protected readonly _destroy$ = new Subject();
 
   control!: Control<T>;
 

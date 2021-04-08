@@ -17,6 +17,7 @@ export interface AbstractControl<T = any> {
   pending: boolean;
   disabled: boolean;
   enabled: boolean;
+  uniqueId: number;
   /** @internal */
   setUpdateOn(updateOn: ControlUpdateOn): void;
   markAsDirty(dirty?: boolean): void;

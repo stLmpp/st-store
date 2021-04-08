@@ -6,6 +6,7 @@ import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
+import { getUniqueId } from '../util';
 
 export type ControlArrayOptions = AbstractControlOptions;
 
@@ -28,11 +29,12 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
   private readonly _originControls: C[];
 
   private _parent: ControlGroup | ControlArray | undefined;
-  private _destroy$ = new Subject();
-  private _value$ = new BehaviorSubject<T[]>([]);
+  private readonly _destroy$ = new Subject();
+  private readonly _value$ = new BehaviorSubject<T[]>([]);
 
-  value$ = this._value$.asObservable();
-  valueChanges$ = this.value$.pipe(skip(1));
+  readonly value$ = this._value$.asObservable();
+  readonly valueChanges$ = this.value$.pipe(skip(1));
+  readonly uniqueId = getUniqueId();
 
   get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;

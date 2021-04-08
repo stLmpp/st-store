@@ -54,11 +54,12 @@ export class ControlBuilder {
     return new ControlGroup<T>(newControls, options);
   }
 
+  array<T extends any[]>(controls: ControlArray<T>[], options?: ControlArrayOptions): ControlArray<T>;
+  array<T extends Record<any, any>>(controls: ControlGroupType<T>[], options?: ControlArrayOptions): ControlArray<T>;
+  array<T extends Record<any, any>>(controls: ControlBuilderGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
+  array<T>(controls: T[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: ControlBuilderTupple<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: Control<T>[], options?: ControlArrayOptions): ControlArray<T>;
-  array<T>(controls: ControlGroupType<T>[], options?: ControlArrayOptions): ControlArray<T>;
-  array<T>(controls: ControlArray<T>[], options?: ControlArrayOptions): ControlArray<T>;
-  array<T>(controls: ControlBuilderGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(
     controls: Array<ControlBuilderTupple<T> | Control<T> | ControlGroup<T> | ControlArray<T> | ControlBuilderGroup<T>>,
     options?: ControlArrayOptions
@@ -69,10 +70,12 @@ export class ControlBuilder {
       const newControls: ControlType<any>[] = controls.map(control => {
         if (control instanceof Control || control instanceof ControlGroup || control instanceof ControlArray) {
           return control;
-        } else if (isObject(control) && !isArray(control)) {
-          return this.group<T>(control);
-        } else {
+        } else if (isArray(control)) {
           return this.control<T>(control);
+        } else if (!isObject(control)) {
+          return this.control<T>(control);
+        } else {
+          return this.group<T>(control);
         }
       });
       return new ControlArray<T>(newControls, options);

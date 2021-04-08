@@ -85,7 +85,6 @@ describe('Store', () => {
   });
 
   it('should persist value', () => {
-    console.log(storeCustomPersist.getState());
     expect(storeCustomPersist.getState().id).toBe(2);
     storeCustomPersist.updateState({ id: 1 });
     // @ts-ignore

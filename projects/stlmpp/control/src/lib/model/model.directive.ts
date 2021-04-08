@@ -51,7 +51,7 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
   }
   private _model!: T;
 
-  @Output() modelChange = new EventEmitter<T>();
+  @Output() readonly modelChange = new EventEmitter<T>();
 
   @Input()
   set updateOn(updateOn: ControlUpdateOn) {

@@ -24,13 +24,12 @@ export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
 export class ControlError implements OnInit, OnChanges, OnDestroy {
   constructor(private keyValueDiffers: KeyValueDiffers, @Host() @Optional() private controlParent?: ControlParent) {}
 
-  private _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
-  private _destroy$ = new Subject();
+  private readonly _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
+  private readonly _destroy$ = new Subject();
   private _control!: Control;
   private _lastErrors: Partial<ValidatorsModel> = {};
 
   @Input() controlError!: Control | string | number;
-
   @Input() showWhen: ControlErrorShowWhen = 'touched';
 
   private _validateShowWhen(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): boolean {
