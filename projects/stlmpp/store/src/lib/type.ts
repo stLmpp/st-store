@@ -81,6 +81,7 @@ export interface StateComponentConfigInput<T extends Record<any, any>, K extends
 export interface StateConfig {
   scheduler?: SchedulerLike;
   name?: string;
+  useDevCopy?: boolean;
 }
 
 export interface StateComponentConfig<T extends Record<any, any>, K extends keyof T = keyof T> extends StateConfig {

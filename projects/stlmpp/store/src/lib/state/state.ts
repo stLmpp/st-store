@@ -17,7 +17,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
         filter(updates => !!updates.length)
       )
       .subscribe(updates => {
-        const state = devCopy(this._state$.value);
+        const state = config.useDevCopy ? devCopy(this._state$.value) : this._state$.value;
         const newState = updates.reduce((acc, item) => item(acc), state);
         this._state$.next(newState);
         this._updateQueue$.next([]);
