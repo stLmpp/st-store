@@ -5,7 +5,6 @@ branches:
   only:
     - master
 before_script:
-  - yarn install
   - cd projects/stlmpp/store
   - yarn install
   - cd ../utils
