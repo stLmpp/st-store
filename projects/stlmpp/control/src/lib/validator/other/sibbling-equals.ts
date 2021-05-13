@@ -1,5 +1,6 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
+import { isControl } from '../../util';
 
 export interface SibblingEqualsValidationError {
   sibbling: any;
@@ -19,7 +20,7 @@ export class SibblingEqualsValidator<T = any> extends ControlValidator<T, Sibbli
       return null;
     }
     const sibbling = parent.get(this.sibblingName);
-    if (!sibbling || !(sibbling instanceof Control)) {
+    if (!sibbling || !isControl(sibbling)) {
       return null;
     }
     const value = control.value;

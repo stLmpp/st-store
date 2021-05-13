@@ -1,4 +1,4 @@
-import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
 import { ControlValue } from './control-value';
 import { isDate } from 'st-utils';
 import { format, isValid, parse, parseISO } from 'date-fns';
@@ -106,7 +106,7 @@ export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'da
     input[type=week][control],input[type=week][controlName],input[type=week][model],
     input[type=time][control],input[type=time][controlName],input[type=time][model],
     input[type=month][control],input[type=month][controlName],input[type=month][model]`,
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDate), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueDate, multi: true }],
 })
 export class ControlValueDate extends AbstractControlValue<string | Date | null> {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {

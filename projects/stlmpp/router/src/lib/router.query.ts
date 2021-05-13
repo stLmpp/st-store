@@ -26,7 +26,7 @@ export class RouterQuery implements OnDestroy {
 
   private _lastSnapshot: ActivatedRouteSnapshot;
 
-  private _destroy$ = new Subject();
+  private _destroy$ = new Subject<void>();
 
   private _params$ = new BehaviorSubject<Params>({});
   private _queryParams$ = new BehaviorSubject<Params>({});

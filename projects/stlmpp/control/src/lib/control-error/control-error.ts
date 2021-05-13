@@ -17,6 +17,7 @@ import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { Control } from '../control/control';
+import { isControl } from '../util';
 
 export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
 
@@ -25,7 +26,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
   constructor(private keyValueDiffers: KeyValueDiffers, @Host() @Optional() private controlParent?: ControlParent) {}
 
   private readonly _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
-  private readonly _destroy$ = new Subject();
+  private readonly _destroy$ = new Subject<void>();
   private _control!: Control;
   private _lastErrors: Partial<ValidatorsModel> = {};
 
@@ -52,7 +53,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
       if (!control) {
         throw new ControlNameNotFound('controlError', this.controlError);
       }
-      if (!(control instanceof Control)) {
+      if (!isControl(control)) {
         throw new Error(`controlError with name ${this.controlError} is not a Control`);
       }
       this._control = control;

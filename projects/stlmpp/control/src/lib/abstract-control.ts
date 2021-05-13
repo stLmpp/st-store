@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from './control-update-on';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, Input } from '@angular/core';
 
 export interface AbstractControl<T = any> {
   value$: Observable<T>;
@@ -34,6 +34,7 @@ export interface AbstractControl<T = any> {
 
 @Directive()
 export abstract class AbstractControlDirective<T = any> {
+  protected _disabled: boolean | undefined;
   protected control!: AbstractControl<T>;
 
   @Input()
@@ -41,46 +42,35 @@ export abstract class AbstractControlDirective<T = any> {
     this._disabled = disabled;
     this.control?.disable(disabled);
   }
-  protected _disabled: boolean | undefined;
 
-  @HostBinding('class.is-invalid')
-  @HostBinding('attr.aria-invalid')
   get isInvalid(): boolean {
     return this.control?.invalid;
   }
 
-  @HostBinding('class.is-valid')
   get isValid(): boolean {
     return this.control?.valid;
   }
 
-  @HostBinding('class.is-pristine')
   get isPristine(): boolean {
     return this.control?.pristine;
   }
 
-  @HostBinding('class.is-dirty')
   get isDirty(): boolean {
     return this.control?.dirty;
   }
 
-  @HostBinding('class.is-touched')
   get isTouched(): boolean {
     return this.control?.touched;
   }
 
-  @HostBinding('class.is-untouched')
   get isUntouched(): boolean {
     return this.control?.untouched;
   }
 
-  @HostBinding('class.is-pending')
   get isPending(): boolean {
     return this.control?.pending;
   }
 
-  @HostBinding('class.is-disabled')
-  @HostBinding('attr.aria-disabled')
   get isDisabled(): boolean {
     return this.control?.disabled;
   }

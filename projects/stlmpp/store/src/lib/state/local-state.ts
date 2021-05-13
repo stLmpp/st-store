@@ -7,7 +7,8 @@ import { State } from './state';
 @Directive()
 export abstract class LocalState<T extends Record<string, any> = Record<string, any>>
   extends State<T>
-  implements OnChanges, OnDestroy {
+  implements OnChanges, OnDestroy
+{
   protected constructor(initialState: T, config: StateComponentConfig<T> = {}) {
     super(initialState, config);
     this._inputs = (config.inputs ?? []).map(keyOrConfig =>

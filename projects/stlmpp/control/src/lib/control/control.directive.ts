@@ -3,6 +3,7 @@ import {
   Directive,
   ElementRef,
   Inject,
+  Input,
   IterableDiffer,
   IterableDiffers,
   KeyValueDiffer,
@@ -43,7 +44,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
   private _attrDiffer!: KeyValueDiffer<string, string>;
   private _classesDiffer!: IterableDiffer<string>;
   private readonly _controlValues: ControlValue<T>[];
-  protected readonly _destroy$ = new Subject();
+  protected readonly _destroy$ = new Subject<void>();
 
   control!: Control<T>;
 
@@ -151,5 +152,7 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
   }
 }
 
-@Directive({ selector: '[control]', inputs: ['control'] })
-export class ControlDirective<T = any> extends BaseControlDirective<T> {}
+@Directive({ selector: '[control]', providers: [{ provide: AbstractControlDirective, useExisting: ControlDirective }] })
+export class ControlDirective<T = any> extends BaseControlDirective<T> {
+  @Input() control!: Control<T>;
+}

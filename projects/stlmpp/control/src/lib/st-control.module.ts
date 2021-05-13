@@ -34,6 +34,7 @@ import { PatternValidatorDirective } from './validator/pattern/pattern.directive
 import { UrlValidatorDirective } from './validator/pattern/url.directive';
 import { RequiredValidatorDirective } from './validator/required/required.directive';
 import { RequiredTrueValidatorDirective } from './validator/required/required-true.directive';
+import { ControlStatusDirective } from './control-status/control-status.directive';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { RequiredTrueValidatorDirective } from './validator/required/required-tr
     ControlValueSelectOption,
     ControlValueDefault,
     FormSubmitDirective,
+    ControlStatusDirective,
     // MODEL
     ModelDirective,
     BetweenValidatorDirective,
@@ -94,6 +96,7 @@ import { RequiredTrueValidatorDirective } from './validator/required/required-tr
     ControlValueSelectOption,
     ControlValueDefault,
     FormSubmitDirective,
+    ControlStatusDirective,
     // MODEL
     ModelDirective,
     BetweenValidatorDirective,

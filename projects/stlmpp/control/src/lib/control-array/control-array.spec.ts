@@ -265,8 +265,8 @@ describe('control array', () => {
 
   it('should patch the values', () => {
     const array = new ControlArray<{ id: number; name: string }>([
-      new ControlGroup({ id: new Control(0), name: new Control('') }),
-      new ControlGroup({ id: new Control(0), name: new Control('') }),
+      new ControlGroup<{ id: number; name: string }>({ id: new Control(0), name: new Control('') }),
+      new ControlGroup<{ id: number; name: string }>({ id: new Control(0), name: new Control('') }),
     ]);
     array.patchValue([{ id: 1 }, { name: 's' }, { name: 's' }]);
     expect(array.value).toEqual([

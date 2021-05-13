@@ -1,5 +1,5 @@
 import { AbstractEmailValidator } from './email';
-import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
@@ -7,7 +7,7 @@ import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][email]:not([control]):not([controlName])',
-  providers: [{ provide: ControlValidator, useExisting: forwardRef(() => EmailValidatorDirective), multi: true }],
+  providers: [{ provide: ControlValidator, useExisting: EmailValidatorDirective, multi: true }],
 })
 export class EmailValidatorDirective extends AbstractEmailValidator {
   private _email = true;

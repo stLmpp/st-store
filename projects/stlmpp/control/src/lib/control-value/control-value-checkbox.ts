@@ -1,10 +1,10 @@
-import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
 import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
   selector: 'input[type=checkbox][control],input[type=checkbox][controlName],input[type=checkbox][model]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueCheckbox), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueCheckbox, multi: true }],
 })
 export class ControlValueCheckbox extends AbstractControlValue<boolean> {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {

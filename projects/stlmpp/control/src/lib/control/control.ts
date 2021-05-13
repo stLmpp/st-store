@@ -76,7 +76,7 @@ export class Control<T = any> implements AbstractControl<T> {
   private readonly _valueChanges$ = new Subject<T>();
   private readonly _attributesChanged$ = new Subject<Record<string, string>>();
   private readonly _classesChanged$ = new Subject<string[]>();
-  private readonly _submit$ = new Subject();
+  private readonly _submit$ = new Subject<void>();
   private readonly _errors$ = new BehaviorSubject<Partial<ValidatorsModel>>({});
 
   private _parent: ControlGroup | undefined;
@@ -175,7 +175,7 @@ export class Control<T = any> implements AbstractControl<T> {
     this._validatorsMap.clear();
     for (const validator of validators) {
       if (validator.async) {
-        this.validationCancel[validator.name] = new Subject();
+        this.validationCancel[validator.name] = new Subject<void>();
       }
       this._validatorsMap.set(validator.name, validator);
     }
@@ -282,7 +282,7 @@ export class Control<T = any> implements AbstractControl<T> {
     }
     this._validatorsMap.set(validator.name, validator);
     if (validator.async) {
-      this.validationCancel[validator.name] = new Subject();
+      this.validationCancel[validator.name] = new Subject<void>();
     }
     this._sendAttributesAndClasses();
     this.runValidator(validator.name);
@@ -299,7 +299,7 @@ export class Control<T = any> implements AbstractControl<T> {
     for (const validator of validators) {
       this._validatorsMap.set(validator.name, validator);
       if (validator.async) {
-        this.validationCancel[validator.name] = new Subject();
+        this.validationCancel[validator.name] = new Subject<void>();
       }
     }
     this._sendAttributesAndClasses();

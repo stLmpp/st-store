@@ -7,5 +7,4 @@ export { GetDeepPipe, getDeep } from './lib/get-deep';
 export { GroupByPipe } from './lib/group-by';
 export { orderByOperator, OrderByPipe } from './lib/order-by';
 export { trackByFactory } from './lib/track-by';
-export { DEFAULT_PIPE_TYPE, DefaultPipe, DefaultPipeType } from './lib/default';
 export { sumByOperator, SumByPipe, sumOperator, SumPipe } from './lib/sum';

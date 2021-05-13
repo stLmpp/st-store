@@ -27,7 +27,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
   private readonly _updateQueue$ = new BehaviorSubject<((state: T) => T)[]>([]);
 
   protected readonly _state$: BehaviorSubject<T>;
-  readonly destroy$ = new Subject();
+  readonly destroy$ = new Subject<void>();
   readonly name?: string;
 
   private _updateQueue(callback: (state: T) => T): void {
