@@ -31,7 +31,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     super();
   }
 
-  private _destroy$ = new Subject();
+  private _destroy$ = new Subject<void>();
   private _markForDisabledAfterContentInit = false;
   private _markForValueAfterContentInit = false;
   private _lastValue: any;

@@ -19,7 +19,7 @@ class ControlComponent {
   providers: [{ provide: ControlValue, useExisting: CustomInputComponent }],
 })
 class CustomInputComponent extends ControlValue implements OnInit, OnDestroy {
-  private _destroy$ = new Subject();
+  private _destroy$ = new Subject<void>();
 
   control = new Control<null | number>(null);
 

@@ -22,7 +22,8 @@ export type ControlGroupOptions = AbstractControlOptions;
 export class ControlGroup<
   T extends Record<any, any> = Record<any, any>,
   RealT extends ControlGroupValueType<T> = ControlGroupValueType<T>
-> implements AbstractControl<RealT> {
+> implements AbstractControl<RealT>
+{
   constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();

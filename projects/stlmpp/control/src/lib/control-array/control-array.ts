@@ -29,7 +29,7 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
   private readonly _originControls: C[];
 
   private _parent: ControlGroup | ControlArray | undefined;
-  private readonly _destroy$ = new Subject();
+  private readonly _destroy$ = new Subject<void>();
   private readonly _value$ = new BehaviorSubject<T[]>([]);
 
   readonly value$ = this._value$.asObservable();

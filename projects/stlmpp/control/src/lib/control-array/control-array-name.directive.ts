@@ -19,7 +19,8 @@ import { AbstractControlDirective } from '../abstract-control';
 })
 export class ControlArrayNameDirective<T = any>
   extends ControlParent
-  implements OnInit, OnDestroy, Iterable<ControlType<T>> {
+  implements OnInit, OnDestroy, Iterable<ControlType<T>>
+{
   constructor(@Optional() @Host() @SkipSelf() private controlParent?: ControlParent) {
     super();
   }

@@ -25,7 +25,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
   constructor(private keyValueDiffers: KeyValueDiffers, @Host() @Optional() private controlParent?: ControlParent) {}
 
   private readonly _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
-  private readonly _destroy$ = new Subject();
+  private readonly _destroy$ = new Subject<void>();
   private _control!: Control;
   private _lastErrors: Partial<ValidatorsModel> = {};
 
