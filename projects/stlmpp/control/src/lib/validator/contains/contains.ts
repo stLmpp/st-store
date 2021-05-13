@@ -7,7 +7,7 @@ import { Nullable } from '../../util';
 @Directive()
 export abstract class AbstractContainsValidators<
   T extends Nullable<string | any[]> = any,
-  U = T extends Array<infer RealType> ? RealType : string
+  U = [T] extends [Array<infer RealType>] ? RealType : string
 > extends ControlValidator<T, boolean> {
   @Input() contains!: string | NonNullable<U>;
   @Input() compareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is;

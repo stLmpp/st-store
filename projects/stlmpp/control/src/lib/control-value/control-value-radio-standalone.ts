@@ -1,10 +1,10 @@
-import { Directive, ElementRef, forwardRef, HostBinding, HostListener, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostBinding, HostListener, Input, Renderer2 } from '@angular/core';
 import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
   selector: 'input[type=radio][control],input[type=radio][controlName],input[type=radio][model]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueRadioStandalone), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueRadioStandalone, multi: true }],
 })
 export class ControlValueRadioStandalone extends AbstractControlValue {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {

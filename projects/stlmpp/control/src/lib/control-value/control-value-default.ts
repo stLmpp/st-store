@@ -1,4 +1,4 @@
-import { Directive, forwardRef, HostListener } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
@@ -11,7 +11,7 @@ import { AbstractControlValue } from './abstract-control-value';
     input[model]:not([type=checkbox]):not([type=color]):not([type=date]):not([type=week]):not([type=time])
     :not([type=month]):not([type=date]):not([type=datetime-local]):not([type=file]):not([type=number]):not([type=radio]),
     textarea[control],textarea[controlName],textarea[model]`,
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueDefault), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueDefault, multi: true }],
 })
 export class ControlValueDefault extends AbstractControlValue<string> {
   @HostListener('input', ['$event'])

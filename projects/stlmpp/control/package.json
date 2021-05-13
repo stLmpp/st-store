@@ -2,12 +2,12 @@
   "name": "@stlmpp/control",
   "version": "5.1.3",
   "peerDependencies": {
-    "@angular/common": ">= 9 < 12",
-    "@angular/core": ">= 9 < 12"
+    "@angular/common": ">= 12 < 13",
+    "@angular/core": ">= 12 < 13"
   },
   "dependencies": {
-    "date-fns": "~2.19.0",
-    "tslib": "~2.0.3",
-    "st-utils": "~1.5.0"
+    "date-fns": "~2.21.3",
+    "tslib": "~2.2.0",
+    "st-utils": "~1.7.0"
   }
 }

@@ -35,7 +35,7 @@ class ControlComponent {
   controlGroupNested = new ControlGroup<GroupNested>({
     id: new Control<number | undefined>(undefined),
     name: new Control(''),
-    nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('') }),
+    nested: new ControlGroup<Group>({ id: new Control<number | undefined>(undefined), name: new Control('') }),
   });
 }
 

@@ -1,5 +1,5 @@
 import { AbstractUrlValidator } from './url';
-import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { PatternValidationError } from './pattern';
@@ -8,7 +8,7 @@ import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][url]:not([control]):not([controlName])',
-  providers: [{ provide: ControlValidator, useExisting: forwardRef(() => UrlValidatorDirective), multi: true }],
+  providers: [{ provide: ControlValidator, useExisting: UrlValidatorDirective, multi: true }],
 })
 export class UrlValidatorDirective extends AbstractUrlValidator {
   private _url = true;

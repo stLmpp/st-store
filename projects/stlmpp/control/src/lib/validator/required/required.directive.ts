@@ -1,12 +1,12 @@
 import { AbstractRequiredValidator } from './required';
-import { Directive, forwardRef, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
 
 @Directive({
   selector: '[model][required]:not([control]):not([controlName])',
-  providers: [{ provide: ControlValidator, useExisting: forwardRef(() => RequiredValidatorDirective), multi: true }],
+  providers: [{ provide: ControlValidator, useExisting: RequiredValidatorDirective, multi: true }],
 })
 export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidator<T> {
   private _required = false;

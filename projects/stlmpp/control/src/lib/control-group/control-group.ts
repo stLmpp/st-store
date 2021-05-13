@@ -14,13 +14,15 @@ export type ControlGroupType<T extends Record<any, any>> = {
 };
 
 export type ControlGroupValueType<T extends Record<any, any>> = {
-  [K in keyof T]: T[K] extends Control<infer U> ? U : T[K];
+  [K in keyof T]: [T[K]] extends [Control<infer U>] ? U : T[K];
 };
 
 export type ControlGroupOptions = AbstractControlOptions;
 
-export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT = ControlGroupValueType<T>>
-  implements AbstractControl<RealT> {
+export class ControlGroup<
+  T extends Record<any, any> = Record<any, any>,
+  RealT extends ControlGroupValueType<T> = ControlGroupValueType<T>
+> implements AbstractControl<RealT> {
   constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();
@@ -136,7 +138,7 @@ export class ControlGroup<T extends Record<any, any> = Record<any, any>, RealT =
   patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): void {
     for (const [key, control] of this._entries()) {
       const valueKey = (value as any)[key];
-      if ((control instanceof Control && key in value) || !isNil(valueKey)) {
+      if ((control instanceof Control && key in (value as object)) || !isNil(valueKey)) {
         control.patchValue(valueKey, options);
       }
     }

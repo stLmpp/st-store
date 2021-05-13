@@ -15,7 +15,7 @@ import { Validators } from '../validator/validators';
 })
 class ControlComponent {
   @Input() control = new Control('');
-  @Input() controlGroup = new ControlGroup({ control: new Control('') });
+  @Input() controlGroup = new ControlGroup<{ control: string }>({ control: new Control('') });
 }
 
 describe('control', () => {
@@ -76,7 +76,7 @@ describe('control', () => {
 
   it('should get the parent if exists', () => {
     const control = new Control('');
-    const controlGroup = new ControlGroup({ control: new Control('') });
+    const controlGroup = new ControlGroup<{ control: string }>({ control: new Control('') });
     expect(control.parent).toBeUndefined();
     expect(controlGroup.get('control').parent).toBeDefined();
   });

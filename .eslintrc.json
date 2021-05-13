@@ -1,6 +1,6 @@
 {
   "root": true,
-  "ignorePatterns": ["projects/**/*"],
+  "ignorePatterns": ["projects/**/*", "**/*.js"],
   "overrides": [
     {
       "files": ["*.ts"],
@@ -41,7 +41,6 @@
         ],
         "arrow-body-style": ["error", "as-needed"],
         "prefer-arrow-callback": ["error"],
-        "prefer-arrow/prefer-arrow-functions": ["off"],
         "no-shadow": ["off"],
         "prefer-const": ["error", { "destructuring": "all" }],
         "@typescript-eslint/explicit-member-accessibility": ["off", { "accessibility": "explicit" }],
@@ -73,7 +72,6 @@
             "format": ["camelCase"],
             "leadingUnderscore": "allow"
           },
-
           {
             "selector": "memberLike",
             "modifiers": ["private"],
@@ -83,6 +81,11 @@
           {
             "selector": "memberLike",
             "modifiers": ["protected"],
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "memberLike",
             "format": ["camelCase"],
             "leadingUnderscore": "allow"
           },
@@ -159,17 +162,16 @@
               "abstract-method",
               "method",
 
-              "private-static-method",
-              "protected-static-method",
-              "public-static-method",
-
-              "static-method",
-
               "private-static-field",
               "protected-static-field",
               "public-static-field",
-
               "static-field",
+
+              "private-static-method",
+              "protected-static-method",
+              "public-static-method",
+              "static-method",
+
               "instance-field",
               "abstract-field"
             ]
@@ -215,6 +217,12 @@
         "@angular-eslint/template/no-call-expression": ["error"],
         "@angular-eslint/template/use-track-by-function": ["warn"],
         "@angular-eslint/template/banana-in-box": ["error"]
+      }
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "@angular-eslint/component-max-inline-declarations": ["off"]
       }
     }
   ]

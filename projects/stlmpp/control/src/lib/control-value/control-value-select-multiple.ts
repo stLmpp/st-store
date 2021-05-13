@@ -3,7 +3,6 @@ import {
   ContentChildren,
   Directive,
   ElementRef,
-  forwardRef,
   HostListener,
   Input,
   QueryList,
@@ -15,7 +14,7 @@ import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
   selector: 'select[multiple][control],select[multiple][controlName],select[multiple][model]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueSelectMultiple), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueSelectMultiple, multi: true }],
 })
 export class ControlValueSelectMultiple extends AbstractControlValue<any[]> implements AfterContentInit {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {

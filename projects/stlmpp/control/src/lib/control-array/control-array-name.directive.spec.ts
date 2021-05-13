@@ -1,11 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlArray } from './control-array';
 import { ControlArrayNameDirective } from './control-array-name.directive';
 import { Control } from '../control/control';
 import { ControlNameDirective } from '../control/control-name.directive';
 import { ControlGroup } from '../control-group/control-group';
+import { By } from '@angular/platform-browser';
+import { triggerEvent } from '../util-tests';
 
 @Component({ template: '<div controlArrayName="not exists"></div>' })
 class WithoutParent {}
@@ -17,7 +19,7 @@ class ControlNotExists {
 
 @Component({ template: '<div [controlGroup]="controlGroup"><div controlArrayName="notArray"></div></div>' })
 class ControlArrayNameNotArray {
-  controlGroup = new ControlGroup({ notArray: new Control('') });
+  controlGroup = new ControlGroup<{ notArray: string }>({ notArray: new Control('') });
 }
 
 @Component({
@@ -43,11 +45,31 @@ class ControlArrayParent {
   controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control('')]) });
 }
 
+@Component({
+  template: `
+    <div [controlGroup]="controlGroup">
+      <div controlArrayName="array">
+        <input [controlName]="0" />
+      </div>
+    </div>
+  `,
+})
+class ControlNgContainer {
+  controlGroup = new ControlGroup<{ array: string[] }>({ array: new ControlArray([new Control('')]) });
+}
+
 describe('control array name directive', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [WithoutParent, ControlNotExists, ControlArrayNameNotArray, ControlComponent, ControlArrayParent],
+      declarations: [
+        WithoutParent,
+        ControlNotExists,
+        ControlArrayNameNotArray,
+        ControlComponent,
+        ControlArrayParent,
+        ControlNgContainer,
+      ],
     }).compileComponents();
   });
 
@@ -105,5 +127,19 @@ describe('control array name directive', () => {
     expect(fix.componentInstance.controlNameDirective.controlParent).toBe(
       fix.componentInstance.controlArrayNameDirective
     );
+  });
+
+  it('should work with ng-container', () => {
+    let fix: ComponentFixture<ControlNgContainer> | undefined;
+    expect(() => {
+      fix = TestBed.createComponent(ControlNgContainer);
+      fix.detectChanges();
+    }).not.toThrow();
+    if (fix) {
+      const input = fix.debugElement.query(By.css('input'));
+      triggerEvent(input, 'input', '2');
+      fix.detectChanges();
+      expect(fix.componentInstance.controlGroup.get('array').get(0)?.value).toBe('2');
+    }
   });
 });

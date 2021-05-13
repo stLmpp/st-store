@@ -16,7 +16,7 @@ import {
 import { BaseControlDirective } from '../control/control.directive';
 import { Control } from '../control/control';
 import { takeUntil } from 'rxjs/operators';
-import { AbstractControlOptions } from '../abstract-control';
+import { AbstractControlDirective, AbstractControlOptions } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValidator } from '../validator/validator';
 import { coerceArray } from 'st-utils';
@@ -24,7 +24,11 @@ import { ControlUpdateOn } from '../control-update-on';
 
 export type ModelOptions = Omit<AbstractControlOptions, 'disabled'>;
 
-@Directive({ selector: '[model]:not([control]):not([controlName])', exportAs: 'model' })
+@Directive({
+  selector: '[model]:not([control]):not([controlName])',
+  exportAs: 'model',
+  providers: [{ provide: AbstractControlDirective, useExisting: ModelDirective }],
+})
 export class ModelDirective<T = any> extends BaseControlDirective<T> implements OnInit {
   constructor(
     elementRef: ElementRef,

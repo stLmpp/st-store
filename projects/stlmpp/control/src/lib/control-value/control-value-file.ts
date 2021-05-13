@@ -1,11 +1,11 @@
-import { Directive, forwardRef, HostListener } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
 import { isNil } from 'st-utils';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
   selector: 'input[type=file][control],input[type=file][controlName],input[type=file][model]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueFile), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueFile, multi: true }],
 })
 export class ControlValueFile extends AbstractControlValue<FileList | null> {
   @HostListener('change', ['$event'])

@@ -1,4 +1,4 @@
-import { Component, DebugElement, Directive, forwardRef, Input, ViewChild } from '@angular/core';
+import { Component, DebugElement, Directive, Input, ViewChild } from '@angular/core';
 import { Control, ControlState } from './control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
@@ -21,7 +21,7 @@ class ComponentWithoutControlValue {
 
 @Directive({
   selector: '[withoutSets][control]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => WithoutSets), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: WithoutSets, multi: true }],
 })
 class WithoutSets extends ControlValue {
   setValue(value: any): void {}
@@ -29,7 +29,7 @@ class WithoutSets extends ControlValue {
 
 @Directive({
   selector: '[withStateChanged][control]',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => WithStateChanged), multi: true }],
+  providers: [{ provide: ControlValue, useExisting: WithStateChanged, multi: true }],
   exportAs: 'withStateChanged',
 })
 class WithStateChanged extends ControlValue {

@@ -1,11 +1,11 @@
-import { Directive, forwardRef, HostListener } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 import { ControlValue } from './control-value';
 import { AbstractControlValue } from './abstract-control-value';
 
 @Directive({
   selector: `input[type=number][control],input[type=number][controlName],input[type=number][model],
     input[type=range][control],input[type=range][controlName],input[type=range][model]`,
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => ControlValueNumber) }],
+  providers: [{ provide: ControlValue, useExisting: ControlValueNumber }],
 })
 export class ControlValueNumber extends AbstractControlValue<number | null> {
   @HostListener('input', ['$event'])

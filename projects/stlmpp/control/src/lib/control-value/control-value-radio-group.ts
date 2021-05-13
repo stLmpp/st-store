@@ -3,7 +3,6 @@ import {
   ContentChildren,
   Directive,
   ElementRef,
-  forwardRef,
   Input,
   OnDestroy,
   QueryList,
@@ -23,8 +22,8 @@ let uniqueID = 0;
     radio-group[controlName],[radioGroup][controlName],
     radio-group[model],[radioGroup][model]`,
   providers: [
-    { provide: ControlValue, useExisting: forwardRef(() => ControlValueRadioGroup), multi: true },
-    { provide: ControlValueRadioParent, useExisting: forwardRef(() => ControlValueRadioGroup) },
+    { provide: ControlValue, useExisting: ControlValueRadioGroup, multi: true },
+    { provide: ControlValueRadioParent, useExisting: ControlValueRadioGroup },
   ],
 })
 export class ControlValueRadioGroup extends ControlValueRadioParent implements AfterContentInit, OnDestroy {

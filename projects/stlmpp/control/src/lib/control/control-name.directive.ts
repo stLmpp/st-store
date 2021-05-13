@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Directive,
   ElementRef,
-  forwardRef,
   Host,
   Inject,
   Input,
@@ -19,13 +18,15 @@ import { ControlParent } from '../control-parent';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Control } from './control';
 import { ControlChild } from '../control-child';
+import { AbstractControlDirective } from '../abstract-control';
 
 @Directive({
   selector: '[controlName]',
   exportAs: 'controlName',
   providers: [
-    { provide: ControlChild, useExisting: forwardRef(() => ControlNameDirective) },
-    { provide: ControlDirective, useExisting: forwardRef(() => ControlNameDirective) },
+    { provide: ControlChild, useExisting: ControlNameDirective },
+    { provide: ControlDirective, useExisting: ControlNameDirective },
+    { provide: AbstractControlDirective, useExisting: ControlNameDirective },
   ],
 })
 export class ControlNameDirective<T = any> extends ControlDirective<T> implements OnInit {
@@ -42,28 +43,30 @@ export class ControlNameDirective<T = any> extends ControlDirective<T> implement
   }
 
   private _initialized = false;
+  private _controlName!: string | number;
 
   @Input()
   set controlName(controlName: string | number) {
     this._controlName = controlName;
     this.init();
   }
-  private _controlName!: string | number;
 
   init(): void {
-    if (this._initialized) {
-      if (!this.controlParent) {
-        throw new ControlParentNotFound('controlName', this._controlName);
-      }
-      this.control = this.controlParent.get(this._controlName) as Control;
-      if (!this.control) {
-        throw new ControlNameNotFound('controlName', this._controlName);
-      }
-      if (!(this.control instanceof Control)) {
-        throw new ControlNameDoesNotMatch('controlName', this._controlName);
-      }
-      super.init();
+    if (!this._initialized) {
+      return;
     }
+    if (!this.controlParent) {
+      throw new ControlParentNotFound('controlName', this._controlName);
+    }
+    const control = this.controlParent.get(this._controlName);
+    if (!control) {
+      throw new ControlNameNotFound('controlName', this._controlName);
+    }
+    if (!(control instanceof Control)) {
+      throw new ControlNameDoesNotMatch('controlName', this._controlName);
+    }
+    this.control = control;
+    super.init();
   }
 
   ngOnInit(): void {

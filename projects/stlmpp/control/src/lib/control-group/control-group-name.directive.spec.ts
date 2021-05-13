@@ -1,11 +1,13 @@
 import { Component, Directive, Input, Self, ViewChild } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { ControlGroup } from './control-group';
 import { ControlGroupNameDirective } from './control-group-name.directive';
 import { Control } from '../control/control';
 import { ControlNameDirective } from '../control/control-name.directive';
 import { ControlGroupDirective } from './control-group.directive';
+import { By } from '@angular/platform-browser';
+import { triggerEvent } from '../util-tests';
 
 @Component({ template: '<div controlGroupName="not exists"></div>' })
 class WithoutParent {}
@@ -29,14 +31,14 @@ class ChangeControlName {
   @Input() controlGroupName = 'group1';
 
   controlGroup = new ControlGroup<{ group1: { control: string }; group2: { control: string } }>({
-    group1: new ControlGroup({ control: new Control('') }),
-    group2: new ControlGroup({ control: new Control('') }),
+    group1: new ControlGroup<{ control: string }>({ control: new Control('') }),
+    group2: new ControlGroup<{ control: string }>({ control: new Control('') }),
   });
 }
 
 @Component({ template: '<div [controlGroup]="controlGroup"><div controlGroupName="notGroup"></div></div>' })
 class ControlGroupNameNotGroup {
-  controlGroup = new ControlGroup({ notGroup: new Control('') });
+  controlGroup = new ControlGroup<{ notGroup: string }>({ notGroup: new Control('') });
 }
 
 @Directive({ selector: '[customDir]', exportAs: 'customDir' })
@@ -45,7 +47,7 @@ class CustomDirective {
 }
 
 @Component({
-  template: ` <div [controlGroup]="controlGroup">
+  template: `<div [controlGroup]="controlGroup">
     <div controlGroupName="controlGroup" customDir #customDir="customDir">
       <input controlName="control" />
     </div>
@@ -54,7 +56,20 @@ class CustomDirective {
 class CustomDirComponent {
   @ViewChild('customDir') customDirective!: CustomDirective;
   controlGroup = new ControlGroup<{ controlGroup: { control: string } }>({
-    controlGroup: new ControlGroup({ control: new Control('') }),
+    controlGroup: new ControlGroup<{ control: string }>({ control: new Control('') }),
+  });
+}
+
+@Component({
+  template: `<div [controlGroup]="controlGroup">
+    <ng-container controlGroupName="controlGroup">
+      <input controlName="control" />
+    </ng-container>
+  </div>`,
+})
+class ControlNgContainer {
+  controlGroup = new ControlGroup<{ controlGroup: { control: string } }>({
+    controlGroup: new ControlGroup<{ control: string }>({ control: new Control('') }),
   });
 }
 
@@ -69,6 +84,7 @@ describe('control group name directive', () => {
         ControlGroupNameNotGroup,
         CustomDirective,
         CustomDirComponent,
+        ControlNgContainer,
       ],
     }).compileComponents();
   });
@@ -117,5 +133,19 @@ describe('control group name directive', () => {
     expect(customInputFixture.componentInstance.customDirective.controlGroupDirective).toBeInstanceOf(
       ControlGroupDirective
     );
+  });
+
+  it('should work with ng-container', () => {
+    let fix: ComponentFixture<ControlNgContainer> | undefined;
+    expect(() => {
+      fix = TestBed.createComponent(ControlNgContainer);
+      fix.detectChanges();
+    }).not.toThrow();
+    if (fix) {
+      const input = fix.debugElement.query(By.css('input'));
+      triggerEvent(input, 'input', '2');
+      fix.detectChanges();
+      expect(fix.componentInstance.controlGroup.get('controlGroup').get('control').value).toBe('2');
+    }
   });
 });

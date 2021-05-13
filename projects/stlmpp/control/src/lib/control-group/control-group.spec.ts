@@ -42,7 +42,17 @@ class ControlComponent {
   controlGroupNested = new ControlGroup<GroupNested>({
     id: new Control<number | undefined>(undefined),
     name: new Control(''),
-    nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('') }),
+    nested: new ControlGroup<Group>({ id: new Control<number | undefined>(undefined), name: new Control('') }),
+  });
+}
+
+@Component({
+  template: `<ng-container [controlGroup]="controlGroup"></ng-container>`,
+})
+class ControlNgContainer {
+  controlGroup = new ControlGroup<Group>({
+    id: new Control<number | undefined>(undefined),
+    name: new Control(''),
   });
 }
 
@@ -53,7 +63,7 @@ describe('control group', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CommonModule, StControlModule],
-      declarations: [ControlComponent],
+      declarations: [ControlComponent, ControlNgContainer],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -257,7 +267,7 @@ describe('control group', () => {
     component.controlGroupNested = new ControlGroup<GroupNested>({
       id: new Control<number | undefined>(1),
       name: new Control(''),
-      nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('string') }),
+      nested: new ControlGroup<Group>({ id: new Control<number | undefined>(undefined), name: new Control('string') }),
     });
     fixture.detectChanges();
     const controlGroup = component.controlGroupNested;
@@ -278,7 +288,10 @@ describe('control group', () => {
       {
         id: new Control<number | undefined>(1),
         name: new Control(''),
-        nested: new ControlGroup({ id: new Control<number | undefined>(undefined), name: new Control('string') }),
+        nested: new ControlGroup<Group>({
+          id: new Control<number | undefined>(undefined),
+          name: new Control('string'),
+        }),
       },
       { updateOn: 'submit' }
     );
@@ -362,5 +375,12 @@ describe('control group', () => {
     component.controlGroup.patchValue({ id: undefined });
     fixture.detectChanges();
     expect(component.controlGroup.value).toEqual({ id: undefined, name: '' });
+  });
+
+  it('should work with ng-container', () => {
+    expect(() => {
+      const fix = TestBed.createComponent(ControlNgContainer);
+      fix.detectChanges();
+    }).not.toThrow();
   });
 });

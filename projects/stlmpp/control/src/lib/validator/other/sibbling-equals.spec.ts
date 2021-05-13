@@ -28,7 +28,7 @@ class WithoutSibbling {
   </div>`,
 })
 class SibblingNotControl {
-  controlGroup = new ControlGroup({
+  controlGroup = new ControlGroup<{ control: string; sibbling: object }>({
     control: new Control('A', [Validators.sibblingEquals('sibbling')]),
     sibbling: new ControlGroup({}),
   });

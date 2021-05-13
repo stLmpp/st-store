@@ -1,4 +1,4 @@
-import { Component, DebugElement, forwardRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, DebugElement, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
@@ -16,7 +16,7 @@ class ControlComponent {
 @Component({
   selector: 'custom-input',
   template: '<input class="input" [control]="control">',
-  providers: [{ provide: ControlValue, useExisting: forwardRef(() => CustomInputComponent) }],
+  providers: [{ provide: ControlValue, useExisting: CustomInputComponent }],
 })
 class CustomInputComponent extends ControlValue implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
