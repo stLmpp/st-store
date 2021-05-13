@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Entries, isAnyControl } from './util';
+import { Entries } from './util';
 import { isArray, isObject } from 'st-utils';
 import { Control, ControlOptions } from './control/control';
 import { ControlArray, ControlArrayOptions } from './control-array/control-array';
 import { ControlType } from './control/control-type';
 import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-group/control-group';
 import { ControlValidator } from './validator/validator';
+import { isAnyControl } from './is-any-control';
 
 export type ControlBuilderTupple<T> = [value: T, validatorsOrOptions?: ControlOptions<T> | ControlValidator<T>[]];
 

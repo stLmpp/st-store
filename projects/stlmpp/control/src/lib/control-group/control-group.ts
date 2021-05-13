@@ -4,10 +4,10 @@ import { isNil } from 'st-utils';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
-import { Control, ControlUpdateOptions } from '../control/control';
+import { Control, ControlUpdateOptions, isControl } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { ControlArray } from '../control-array/control-array';
-import { getUniqueId, isControl } from '../util';
+import { getUniqueId } from '../util';
 
 export type ControlGroupType<T extends Record<any, any>> = {
   [K in keyof T]: ControlType<T[K]>;
@@ -179,4 +179,8 @@ export class ControlGroup<
       control.markAsInvalid(invalid);
     }
   }
+}
+
+export function isControlGroup(value: any): value is ControlGroup {
+  return value instanceof ControlGroup;
 }

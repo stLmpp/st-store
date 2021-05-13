@@ -18,7 +18,7 @@ import { ControlParent } from '../control-parent';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
 import { ControlChild } from '../control-child';
 import { AbstractControlDirective } from '../abstract-control';
-import { isControl } from '../util';
+import { isControl } from './control';
 
 @Directive({
   selector: '[controlName]',
