@@ -4,7 +4,6 @@ import { StoreOptions } from '../type';
 import { isFunction } from 'st-utils';
 import { StorePersistLocalStorageStrategy, StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
-import { OnDestroy } from '@angular/core';
 
 export function getPersistKey<T extends Record<any, any>>(name: string, persist: keyof T): string {
   return '__ST_STORE__' + name + '.' + (persist ?? '');
@@ -26,7 +25,7 @@ function mergePersistedValue<T extends Record<any, any>>({
   return initialState;
 }
 
-export class Store<T extends Record<any, any>, E = any> extends State<T> implements OnDestroy {
+export class Store<T extends Record<any, any>, E = any> extends State<T> {
   constructor(private _options: StoreOptions<T>) {
     super(mergePersistedValue(_options), { name: _options.name });
     this._persistStrategy = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
@@ -124,8 +123,4 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
   }
 
   postUpdate(): void {}
-
-  ngOnDestroy(): void {
-    this.destroy();
-  }
 }
