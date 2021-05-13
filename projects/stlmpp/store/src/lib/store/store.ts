@@ -42,11 +42,6 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
   /** @internal */
   protected _useDevCopy = true;
 
-  /** @deprecated */
-  private _getPersistKey(): string {
-    return getPersistKey(this._options.name, this._options.persistKey);
-  }
-
   private _setPersist(state: T): void {
     if (this._options.persistStrategy) {
       const key = getPersistKey(this._options.name, this._options.persistKey);
@@ -104,26 +99,12 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
     this._error$.next(error);
   }
 
-  /**
-   * @deprecated since 5.1.0 (use Store.setState)
-   */
-  set(state: T): void {
-    this.setState(state);
-  }
-
   setState(state: T): void {
     if (this._useDevCopy) {
       state = devCopy(state);
     }
     this._setPersist(state);
     super.setState(state);
-  }
-
-  /**
-   * @deprecated since 5.1.0 (use Store.updateState)
-   */
-  update(state: T | Partial<T> | ((oldState: T) => T)): void {
-    this.updateState(state);
   }
 
   updateState(state: T | Partial<T> | ((oldState: T) => T)): void {

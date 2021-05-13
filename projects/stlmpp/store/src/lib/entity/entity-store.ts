@@ -129,13 +129,6 @@ export class EntityStore<
     }
   }
 
-  /**
-   * @deprecated since version 5.1.0 (use EntityStore.updateState)
-   */
-  update(state: State | Partial<State> | ((oldState: State) => State)): void {
-    this.updateState(state);
-  }
-
   updateState(state: State | Partial<State> | ((oldState: State) => State)): void {
     const callback = isFunction(state) ? state : (oldState: State) => ({ ...oldState, ...state });
     super.updateState(oldState => {
