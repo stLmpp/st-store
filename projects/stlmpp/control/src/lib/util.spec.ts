@@ -1,7 +1,8 @@
-import { isAnyControl, isControl, isControlArray, isControlGroup, isEmptyValue } from './util';
-import { Control } from './control/control';
-import { ControlGroup } from './control-group/control-group';
-import { ControlArray } from './control-array/control-array';
+import { isEmptyValue } from './util';
+import { Control, isControl } from './control/control';
+import { ControlGroup, isControlGroup } from './control-group/control-group';
+import { ControlArray, isControlArray } from './control-array/control-array';
+import { isAnyControl } from './is-any-control';
 
 describe('utils', () => {
   it('should check whether the control value is empty', () => {

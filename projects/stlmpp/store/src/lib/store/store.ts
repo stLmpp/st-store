@@ -4,7 +4,6 @@ import { StoreOptions } from '../type';
 import { isFunction } from 'st-utils';
 import { StorePersistLocalStorageStrategy, StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
-import { OnDestroy } from '@angular/core';
 
 export function getPersistKey<T extends Record<any, any>>(name: string, persist: keyof T): string {
   return '__ST_STORE__' + name + '.' + (persist ?? '');
@@ -26,7 +25,7 @@ function mergePersistedValue<T extends Record<any, any>>({
   return initialState;
 }
 
-export class Store<T extends Record<any, any>, E = any> extends State<T> implements OnDestroy {
+export class Store<T extends Record<any, any>, E = any> extends State<T> {
   constructor(private _options: StoreOptions<T>) {
     super(mergePersistedValue(_options), { name: _options.name });
     this._persistStrategy = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
@@ -41,11 +40,6 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
 
   /** @internal */
   protected _useDevCopy = true;
-
-  /** @deprecated */
-  private _getPersistKey(): string {
-    return getPersistKey(this._options.name, this._options.persistKey);
-  }
 
   private _setPersist(state: T): void {
     if (this._options.persistStrategy) {
@@ -104,26 +98,12 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
     this._error$.next(error);
   }
 
-  /**
-   * @deprecated since 5.1.0 (use Store.setState)
-   */
-  set(state: T): void {
-    this.setState(state);
-  }
-
   setState(state: T): void {
     if (this._useDevCopy) {
       state = devCopy(state);
     }
     this._setPersist(state);
     super.setState(state);
-  }
-
-  /**
-   * @deprecated since 5.1.0 (use Store.updateState)
-   */
-  update(state: T | Partial<T> | ((oldState: T) => T)): void {
-    this.updateState(state);
   }
 
   updateState(state: T | Partial<T> | ((oldState: T) => T)): void {
@@ -143,8 +123,4 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> impleme
   }
 
   postUpdate(): void {}
-
-  ngOnDestroy(): void {
-    this.destroy();
-  }
 }

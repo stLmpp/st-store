@@ -2,12 +2,12 @@
  * Public API Surface of control
  */
 
-export { Control, ControlOptions, ControlUpdateOptions, ControlState } from './lib/control/control';
+export { Control, ControlOptions, ControlUpdateOptions, ControlState, isControl } from './lib/control/control';
 export { ControlNameDirective } from './lib/control/control-name.directive';
 export { ControlDirective } from './lib/control/control.directive';
 
 export { ControlArrayNameDirective } from './lib/control-array/control-array-name.directive';
-export { ControlArray, ControlArrayOptions } from './lib/control-array/control-array';
+export { ControlArray, ControlArrayOptions, isControlArray } from './lib/control-array/control-array';
 
 export { ControlErrorCase, ControlErrorCaseContext } from './lib/control-error/control-error-case';
 export { ControlError, ControlErrorShowWhen } from './lib/control-error/control-error';
@@ -17,9 +17,12 @@ export {
   ControlGroupOptions,
   ControlGroupType,
   ControlGroupValueType,
+  isControlGroup,
 } from './lib/control-group/control-group';
 export { ControlGroupNameDirective } from './lib/control-group/control-group-name.directive';
 export { ControlGroupDirective } from './lib/control-group/control-group.directive';
+
+export { ControlStatusDirective } from './lib/control-status/control-status.directive';
 
 export { AbstractControlValue } from './lib/control-value/abstract-control-value';
 export { ControlValue } from './lib/control-value/control-value';
@@ -86,4 +89,4 @@ export { ControlParentNotFound, ControlValueNotFound, ControlNameNotFound, Contr
 export { FormSubmitDirective } from './lib/form-submit.directive';
 export { StControlModule } from './lib/st-control.module';
 
-export { isControl, isControlGroup, isControlArray, isAnyControl } from './lib/util';
+export { isAnyControl } from './lib/is-any-control';

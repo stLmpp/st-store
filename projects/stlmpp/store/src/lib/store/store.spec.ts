@@ -72,13 +72,6 @@ describe('Store', () => {
     expect(key).toBe('__ST_STORE__simple.name');
   });
 
-  // TODO remove on release 6.0.0
-  it('should return the persist key (deprecated)', () => {
-    // @ts-ignore
-    const key = store._getPersistKey();
-    expect(key).toBe('__ST_STORE__simple.name');
-  });
-
   it('should create with custom persist strategy', () => {
     // @ts-ignore
     expect(storeCustomPersist._persistStrategy).toBeInstanceOf(StorePersistCustomStrategy);
@@ -107,25 +100,11 @@ describe('Store', () => {
     expect(newStore.getState().id).toBe(1);
   });
 
-  // TODO remove on release 6.0.0
-  it('should call setState', () => {
-    spyOn(store, 'setState');
-    store.set({ id: 1, name: '1' });
-    expect(store.setState).toHaveBeenCalled();
-  });
-
-  // TODO remove on release 6.0.0
-  it('should call updateState', () => {
-    spyOn(store, 'updateState');
-    store.update({ id: 1 });
-    expect(store.updateState).toHaveBeenCalled();
-  });
-
   it('should destroy the store', () => {
     const spy = jasmine.createSpy();
     store.selectState().subscribe(spy);
     expect(spy).toHaveBeenCalledTimes(1);
-    store.ngOnDestroy();
+    store.destroy();
     store.updateState({ id: 1 });
     expect(spy).toHaveBeenCalledTimes(1);
   });

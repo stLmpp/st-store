@@ -4,7 +4,7 @@ import { ControlGroupDirective } from './control-group.directive';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
 import { ControlChild } from '../control-child';
 import { AbstractControlDirective } from '../abstract-control';
-import { isControlGroup } from '../util';
+import { isControlGroup } from './control-group';
 
 @Directive({
   selector: '[controlGroupName]',

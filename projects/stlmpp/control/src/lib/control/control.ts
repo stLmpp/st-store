@@ -464,3 +464,7 @@ export class Control<T = any> implements AbstractControl<T> {
     this._submit$.next();
   }
 }
+
+export function isControl(value: any): value is Control {
+  return value instanceof Control;
+}

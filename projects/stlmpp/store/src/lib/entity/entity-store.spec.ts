@@ -467,11 +467,4 @@ describe('Entity Store', () => {
     store.setError(null);
     expect(store.getError()).toBeNull();
   });
-
-  // TODO remove on release 6.0.0
-  it('should call updateState', () => {
-    spyOn(store, 'updateState');
-    store.update({ list: [1] });
-    expect(store.updateState).toHaveBeenCalled();
-  });
 });

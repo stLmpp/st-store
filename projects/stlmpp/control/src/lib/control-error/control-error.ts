@@ -16,8 +16,7 @@ import { Subject } from 'rxjs';
 import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
-import { Control } from '../control/control';
-import { isControl } from '../util';
+import { Control, isControl } from '../control/control';
 
 export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
 

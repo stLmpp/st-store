@@ -2,12 +2,11 @@ import { Directive, Host, Input, OnDestroy, OnInit, Optional, SkipSelf } from '@
 import { ControlParent } from '../control-parent';
 import { ControlGroup } from '../control-group/control-group';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
-import { ControlArray } from './control-array';
+import { ControlArray, isControlArray } from './control-array';
 import { ControlChild } from '../control-child';
 import { Control } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { AbstractControlDirective } from '../abstract-control';
-import { isControlArray } from '../util';
 
 @Directive({
   selector: '[controlArrayName]',

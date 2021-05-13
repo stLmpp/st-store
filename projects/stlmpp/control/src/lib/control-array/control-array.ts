@@ -224,3 +224,7 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
     this._destroy$.complete();
   }
 }
+
+export function isControlArray(value: any): value is ControlArray {
+  return value instanceof ControlArray;
+}
