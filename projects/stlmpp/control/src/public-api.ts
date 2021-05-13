@@ -85,3 +85,5 @@ export { ControlUpdateOn } from './lib/control-update-on';
 export { ControlParentNotFound, ControlValueNotFound, ControlNameNotFound, ControlNameDoesNotMatch } from './lib/error';
 export { FormSubmitDirective } from './lib/form-submit.directive';
 export { StControlModule } from './lib/st-control.module';
+
+export { isControl, isControlGroup, isControlArray, isAnyControl } from './lib/util';

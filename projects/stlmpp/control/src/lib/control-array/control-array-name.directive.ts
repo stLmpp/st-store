@@ -7,6 +7,7 @@ import { ControlChild } from '../control-child';
 import { Control } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { AbstractControlDirective } from '../abstract-control';
+import { isControlArray } from '../util';
 
 @Directive({
   selector: '[controlArrayName]',
@@ -19,8 +20,7 @@ import { AbstractControlDirective } from '../abstract-control';
 })
 export class ControlArrayNameDirective<T = any>
   extends ControlParent
-  implements OnInit, OnDestroy, Iterable<ControlType<T>>
-{
+  implements OnInit, OnDestroy, Iterable<ControlType<T>> {
   constructor(@Optional() @Host() @SkipSelf() private controlParent?: ControlParent) {
     super();
   }
@@ -47,7 +47,7 @@ export class ControlArrayNameDirective<T = any>
     if (!control) {
       throw new ControlNameNotFound('controlArrayName', this._controlArrayName);
     }
-    if (!(control instanceof ControlArray)) {
+    if (!isControlArray(control)) {
       throw new ControlNameDoesNotMatch('controlArrayName', this._controlArrayName);
     }
     this.control = control;
@@ -70,7 +70,7 @@ export class ControlArrayNameDirective<T = any>
   }
 
   ngOnDestroy(): void {
-    if (this.control instanceof ControlArray) {
+    if (isControlArray(this.control)) {
       this.control.destroy();
     }
     super.ngOnDestroy();

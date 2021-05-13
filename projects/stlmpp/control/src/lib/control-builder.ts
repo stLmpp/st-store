@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Entries } from './util';
+import { Entries, isAnyControl } from './util';
 import { isArray, isObject } from 'st-utils';
 import { Control, ControlOptions } from './control/control';
 import { ControlArray, ControlArrayOptions } from './control-array/control-array';
@@ -40,7 +40,7 @@ export class ControlBuilder {
   group<T>(controls: ControlBuilderGroup<T>, options?: ControlGroupOptions): ControlGroup<T> {
     const newControls: ControlGroupType<any> = (Object.entries(controls) as Entries<ControlBuilderGroup<T>>).reduce(
       (acc: Record<any, any>, [key, value]) => {
-        if (value instanceof Control || value instanceof ControlGroup || value instanceof ControlArray) {
+        if (isAnyControl(value)) {
           acc[key] = value;
         } else if (isObject(value) && !isArray(value)) {
           acc[key] = this.group(value as any);
@@ -69,6 +69,7 @@ export class ControlBuilder {
     } else {
       const newControls: ControlType<any>[] = controls.map(control => {
         if (control instanceof Control || control instanceof ControlGroup || control instanceof ControlArray) {
+          // Can't use isAnyControl here, because the type guard is not working properly
           return control;
         } else if (isArray(control)) {
           return this.control<T>(control);

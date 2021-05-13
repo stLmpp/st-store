@@ -7,7 +7,7 @@ import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { ControlArray } from '../control-array/control-array';
-import { getUniqueId } from '../util';
+import { getUniqueId, isControl } from '../util';
 
 export type ControlGroupType<T extends Record<any, any>> = {
   [K in keyof T]: ControlType<T[K]>;
@@ -22,8 +22,7 @@ export type ControlGroupOptions = AbstractControlOptions;
 export class ControlGroup<
   T extends Record<any, any> = Record<any, any>,
   RealT extends ControlGroupValueType<T> = ControlGroupValueType<T>
-> implements AbstractControl<RealT>
-{
+> implements AbstractControl<RealT> {
   constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();
@@ -139,7 +138,7 @@ export class ControlGroup<
   patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): void {
     for (const [key, control] of this._entries()) {
       const valueKey = (value as any)[key];
-      if ((control instanceof Control && key in (value as object)) || !isNil(valueKey)) {
+      if ((isControl(control) && key in (value as object)) || !isNil(valueKey)) {
         control.patchValue(valueKey, options);
       }
     }

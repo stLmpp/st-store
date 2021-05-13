@@ -2,9 +2,9 @@ import { Directive, Host, Input, OnInit, Optional, SkipSelf } from '@angular/cor
 import { ControlParent } from '../control-parent';
 import { ControlGroupDirective } from './control-group.directive';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
-import { ControlGroup } from './control-group';
 import { ControlChild } from '../control-child';
 import { AbstractControlDirective } from '../abstract-control';
+import { isControlGroup } from '../util';
 
 @Directive({
   selector: '[controlGroupName]',
@@ -41,7 +41,7 @@ export class ControlGroupNameDirective<T = any> extends ControlGroupDirective<T>
     if (!control) {
       throw new ControlNameNotFound('controlGroupName', this._controlGroupName);
     }
-    if (!(control instanceof ControlGroup)) {
+    if (!isControlGroup(control)) {
       throw new ControlNameDoesNotMatch('controlGroupName', this._controlGroupName);
     }
     this.control = control;

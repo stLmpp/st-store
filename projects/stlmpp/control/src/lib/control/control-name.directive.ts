@@ -16,9 +16,9 @@ import { ControlDirective } from './control.directive';
 import { ControlValue } from '../control-value/control-value';
 import { ControlParent } from '../control-parent';
 import { ControlNameDoesNotMatch, ControlNameNotFound, ControlParentNotFound } from '../error';
-import { Control } from './control';
 import { ControlChild } from '../control-child';
 import { AbstractControlDirective } from '../abstract-control';
+import { isControl } from '../util';
 
 @Directive({
   selector: '[controlName]',
@@ -62,7 +62,7 @@ export class ControlNameDirective<T = any> extends ControlDirective<T> implement
     if (!control) {
       throw new ControlNameNotFound('controlName', this._controlName);
     }
-    if (!(control instanceof Control)) {
+    if (!isControl(control)) {
       throw new ControlNameDoesNotMatch('controlName', this._controlName);
     }
     this.control = control;
