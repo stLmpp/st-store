@@ -21,6 +21,8 @@ export {
 export { ControlGroupNameDirective } from './lib/control-group/control-group-name.directive';
 export { ControlGroupDirective } from './lib/control-group/control-group.directive';
 
+export { ControlStatusDirective } from './lib/control-status/control-status.directive';
+
 export { AbstractControlValue } from './lib/control-value/abstract-control-value';
 export { ControlValue } from './lib/control-value/control-value';
 export { ControlValueCheckbox } from './lib/control-value/control-value-checkbox';
