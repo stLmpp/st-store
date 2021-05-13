@@ -104,7 +104,7 @@ describe('Store', () => {
     const spy = jasmine.createSpy();
     store.selectState().subscribe(spy);
     expect(spy).toHaveBeenCalledTimes(1);
-    store.ngOnDestroy();
+    store.destroy();
     store.updateState({ id: 1 });
     expect(spy).toHaveBeenCalledTimes(1);
   });
