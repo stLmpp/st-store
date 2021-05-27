@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Directive,
   ElementRef,
@@ -25,7 +26,10 @@ import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
 
 @Directive()
-export abstract class BaseControlDirective<T = any> extends AbstractControlDirective implements OnDestroy, OnChanges {
+export abstract class BaseControlDirective<T = any>
+  extends AbstractControlDirective
+  implements OnDestroy, OnChanges, AfterViewInit
+{
   constructor(
     private elementRef: ElementRef,
     private renderer2: Renderer2,
@@ -41,6 +45,8 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
     this._controlValues = coerceArray(controlValues);
   }
 
+  private _focusAfterViewInit = false;
+  private _viewInitialized = false;
   private _attrDiffer!: KeyValueDiffer<string, string>;
   private _classesDiffer!: IterableDiffer<string>;
   private readonly _controlValues: ControlValue<T>[];
@@ -137,6 +143,24 @@ export abstract class BaseControlDirective<T = any> extends AbstractControlDirec
     this.control.init();
     if (!isNil(this._disabled) && this.control.disabled !== this._disabled) {
       this.control.disable(this._disabled);
+    }
+    if (this.control.initialFocus && !this._focusAfterViewInit) {
+      if (this._viewInitialized) {
+        for (const controlValue of this._controlValues) {
+          controlValue.focus?.();
+        }
+      } else {
+        this._focusAfterViewInit = true;
+      }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this._viewInitialized = true;
+    if (this._focusAfterViewInit && this.control) {
+      for (const controlValue of this._controlValues) {
+        controlValue.focus?.();
+      }
     }
   }
 

@@ -81,6 +81,10 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     }
   }
 
+  focus(): void {
+    this.children.first?.elementRef?.nativeElement?.focus();
+  }
+
   ngAfterContentInit(): void {
     this.allChildren.changes
       .pipe(takeUntil(this._destroy$), startWith(this.allChildren))

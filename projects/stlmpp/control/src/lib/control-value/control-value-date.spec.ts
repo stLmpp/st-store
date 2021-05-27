@@ -17,7 +17,7 @@ import { Control } from '../control/control';
 class ControlComponent {
   controlDate = new Control<Date | null>(null);
   controlWeek = new Control<string | null>(null);
-  controlTime = new Control<string | null>(null);
+  controlTime = new Control<string | null>(null, { initialFocus: true });
   controlMonth = new Control<Date | null>(null);
   controlDatetime = new Control<Date | null>(null);
 }
@@ -57,6 +57,11 @@ describe('control value date', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
+  });
+
+  it('should start with focus', () => {
+    const input = fixture.debugElement.query(By.css('input[type=time]')).nativeElement;
+    expect(input).toBe(document.activeElement);
   });
 
   describe('date', () => {

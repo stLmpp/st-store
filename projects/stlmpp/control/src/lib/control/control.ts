@@ -9,8 +9,9 @@ import { ControlGroup } from '../control-group/control-group';
 import { ControlValidator } from '../validator/validator';
 import { ValidatorsModel } from '../validator/validators';
 
-export interface ControlOptions<T = any> extends AbstractControlOptions {
+export interface ControlOptions<T = any, M = any> extends AbstractControlOptions<M> {
   validators?: ControlValidator[];
+  initialFocus?: boolean;
 }
 
 export interface ControlUpdateOptions {
@@ -51,11 +52,13 @@ function toControlOptions(options: ControlOptions | ControlValidator | ControlVa
   return newOptions;
 }
 
-export class Control<T = any> implements AbstractControl<T> {
-  constructor(value: T, options?: ControlOptions<T> | ControlValidator<T> | ControlValidator<T>[]) {
+export class Control<T = any, M = any> implements AbstractControl<T, M> {
+  constructor(value: T, options?: ControlOptions<T, M> | ControlValidator<T> | ControlValidator<T>[]) {
     this._initialValue = value;
     this._initialOptions = toControlOptions(options);
     this._updateOn = this._initialOptions.updateOn!;
+    this._initialFocus = this._initialOptions.initialFocus ?? false;
+    this.metadata = this._initialOptions.metadata;
     if (this._initialOptions.disabled) {
       this._disabled = this._initialOptions.disabled;
     }
@@ -78,6 +81,7 @@ export class Control<T = any> implements AbstractControl<T> {
   private readonly _classesChanged$ = new Subject<string[]>();
   private readonly _submit$ = new Subject<void>();
   private readonly _errors$ = new BehaviorSubject<Partial<ValidatorsModel>>({});
+  private readonly _initialFocus: boolean;
 
   private _parent: ControlGroup | undefined;
   private _dirty = false;
@@ -85,14 +89,13 @@ export class Control<T = any> implements AbstractControl<T> {
   private _invalid = false;
   private _pending = 0;
   private _disabled = false;
-  private _updateOn!: ControlUpdateOn;
+  private _updateOn: ControlUpdateOn;
 
   readonly errors$ = this._errors$.asObservable();
-  readonly errorList$: Observable<
-    KeyValue<keyof ValidatorsModel, ValidatorsModel[keyof ValidatorsModel]>[]
-  > = this.errors$.pipe(
-    map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
-  );
+  readonly errorList$: Observable<KeyValue<keyof ValidatorsModel, ValidatorsModel[keyof ValidatorsModel]>[]> =
+    this.errors$.pipe(
+      map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
+    );
   readonly hasErrors$ = this.errors$.pipe(map(errors => !isObjectEmpty(errors)));
   readonly validationCancel: Record<keyof ValidatorsModel, Subject<void>> = {};
   readonly disabledChanged$ = this._disabledChanged$.asObservable();
@@ -109,6 +112,8 @@ export class Control<T = any> implements AbstractControl<T> {
   readonly classesChanged$ = this._classesChanged$.asObservable();
   /** @internal */
   readonly submit$ = this._submit$.asObservable();
+
+  metadata?: M;
 
   get parent(): ControlGroup | undefined {
     return this._parent;
@@ -161,6 +166,11 @@ export class Control<T = any> implements AbstractControl<T> {
   /** @internal */
   get updateOn(): ControlUpdateOn {
     return this._updateOn;
+  }
+
+  /** @internal */
+  get initialFocus(): boolean {
+    return this._initialFocus;
   }
 
   get value(): T {

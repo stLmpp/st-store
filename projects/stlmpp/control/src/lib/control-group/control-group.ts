@@ -17,13 +17,16 @@ export type ControlGroupValueType<T extends Record<any, any>> = {
   [K in keyof T]: [T[K]] extends [Control<infer U>] ? U : T[K];
 };
 
-export type ControlGroupOptions = AbstractControlOptions;
+export type ControlGroupOptions<M = any> = AbstractControlOptions<M>;
 
 export class ControlGroup<
   T extends Record<any, any> = Record<any, any>,
+  M = any,
   RealT extends ControlGroupValueType<T> = ControlGroupValueType<T>
-> implements AbstractControl<RealT> {
-  constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions) {
+> implements AbstractControl<RealT, M>
+{
+  constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions<M>) {
+    this.metadata = options?.metadata;
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();
     this.value$ = combineLatest(values$).pipe(
@@ -49,6 +52,8 @@ export class ControlGroup<
 
   /** @internal */
   submitted = false;
+
+  metadata?: M;
 
   get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;

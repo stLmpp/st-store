@@ -3,7 +3,7 @@ import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from './control-update-on';
 import { Directive, Input } from '@angular/core';
 
-export interface AbstractControl<T = any> {
+export interface AbstractControl<T = any, M = any> {
   value$: Observable<T>;
   valueChanges$: Observable<T>;
   value: T;
@@ -18,6 +18,7 @@ export interface AbstractControl<T = any> {
   disabled: boolean;
   enabled: boolean;
   uniqueId: number;
+  metadata?: M;
   /** @internal */
   setUpdateOn(updateOn: ControlUpdateOn): void;
   markAsDirty(dirty?: boolean): void;
@@ -76,7 +77,8 @@ export abstract class AbstractControlDirective<T = any> {
   }
 }
 
-export interface AbstractControlOptions {
+export interface AbstractControlOptions<M = any> {
   updateOn?: ControlUpdateOn;
   disabled?: boolean;
+  metadata?: M;
 }

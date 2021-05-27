@@ -16,7 +16,7 @@ import { triggerEvent } from '../util-tests';
 })
 class ControlComponent {
   @ViewChild(ControlValueRadio) controlValueRadio!: ControlValueRadio;
-  control = new Control(1);
+  control = new Control(1, { initialFocus: true });
 }
 
 @Component({
@@ -41,6 +41,14 @@ class ModelComponent {
   model = 1;
 }
 
+@Component({
+  template: ` <radio-group [control]="control"> </radio-group> `,
+})
+class ControlNoChildrenComponent {
+  @ViewChild(ControlValueRadio) controlValueRadio!: ControlValueRadio;
+  control = new Control(1, { initialFocus: true });
+}
+
 describe('control value radio group', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
@@ -50,7 +58,7 @@ describe('control value radio group', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ControlComponent, ControlDisabled, ModelComponent],
+      declarations: [ControlComponent, ControlDisabled, ModelComponent, ControlNoChildrenComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -95,6 +103,17 @@ describe('control value radio group', () => {
   it('should work with model', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
+    }).not.toThrow();
+  });
+
+  it('should start with focus', () => {
+    expect(radio1.nativeElement).toBe(document.activeElement);
+  });
+
+  it('should not throw if initial focus with no childrens', () => {
+    expect(() => {
+      const fix = TestBed.createComponent(ControlNoChildrenComponent);
+      fix.detectChanges();
     }).not.toThrow();
   });
 });

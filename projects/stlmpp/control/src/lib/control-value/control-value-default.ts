@@ -13,10 +13,14 @@ import { AbstractControlValue } from './abstract-control-value';
     textarea[control],textarea[controlName],textarea[model]`,
   providers: [{ provide: ControlValue, useExisting: ControlValueDefault, multi: true }],
 })
-export class ControlValueDefault extends AbstractControlValue<string> {
+export class ControlValueDefault extends AbstractControlValue<string, HTMLInputElement> {
   @HostListener('input', ['$event'])
   onInput($event: InputEvent): void {
     const value = ($event.target as HTMLInputElement).value;
     this.onChange$.next(value);
+  }
+
+  focus(): void {
+    this.elementRef.nativeElement.focus();
   }
 }

@@ -17,7 +17,7 @@ import { AbstractControlValue } from './abstract-control-value';
   selector: 'select:not([multiple])[control],select:not([multiple])[controlName],select:not([multiple])[model]',
   providers: [{ provide: ControlValue, useExisting: ControlValueSelect, multi: true }],
 })
-export class ControlValueSelect extends AbstractControlValue implements AfterContentInit {
+export class ControlValueSelect extends AbstractControlValue<any, HTMLSelectElement> implements AfterContentInit {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }
@@ -55,6 +55,10 @@ export class ControlValueSelect extends AbstractControlValue implements AfterCon
     } else {
       this._setValue(value);
     }
+  }
+
+  focus(): void {
+    this.elementRef.nativeElement.focus();
   }
 
   ngAfterContentInit(): void {
