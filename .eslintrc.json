@@ -216,7 +216,8 @@
         "@angular-eslint/template/no-negated-async": ["off"],
         "@angular-eslint/template/no-call-expression": ["error"],
         "@angular-eslint/template/use-track-by-function": ["warn"],
-        "@angular-eslint/template/banana-in-box": ["error"]
+        "@angular-eslint/template/banana-in-box": ["error"],
+        "@angular-eslint/template/eqeqeq": "error"
       }
     },
     {
