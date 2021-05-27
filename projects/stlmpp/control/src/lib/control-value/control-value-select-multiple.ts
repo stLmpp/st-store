@@ -16,7 +16,10 @@ import { AbstractControlValue } from './abstract-control-value';
   selector: 'select[multiple][control],select[multiple][controlName],select[multiple][model]',
   providers: [{ provide: ControlValue, useExisting: ControlValueSelectMultiple, multi: true }],
 })
-export class ControlValueSelectMultiple extends AbstractControlValue<any[]> implements AfterContentInit {
+export class ControlValueSelectMultiple
+  extends AbstractControlValue<any[], HTMLSelectElement>
+  implements AfterContentInit
+{
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLSelectElement>) {
     super(renderer2, elementRef);
   }
@@ -74,6 +77,10 @@ export class ControlValueSelectMultiple extends AbstractControlValue<any[]> impl
     } else {
       this._setValue(value ?? []);
     }
+  }
+
+  focus(): void {
+    this.elementRef.nativeElement.focus();
   }
 
   ngAfterContentInit(): void {

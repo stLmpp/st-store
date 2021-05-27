@@ -6,7 +6,7 @@ import { AbstractControlValue } from './abstract-control-value';
   selector: 'input[type=radio][control],input[type=radio][controlName],input[type=radio][model]',
   providers: [{ provide: ControlValue, useExisting: ControlValueRadioStandalone, multi: true }],
 })
-export class ControlValueRadioStandalone extends AbstractControlValue {
+export class ControlValueRadioStandalone extends AbstractControlValue<any, HTMLInputElement> {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }

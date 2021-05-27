@@ -62,6 +62,39 @@ class StartDisabled {
   disabled = true;
 }
 
+@Component({ template: '<input [control]="control">' })
+class ControlInitialFocus {
+  control = new Control('', { initialFocus: true });
+}
+
+@Component({ template: '<input [control]="control">' })
+class ControlInitialFocusLazy {
+  control?: Control<string>;
+}
+
+@Directive({
+  selector: '[withoutFocus][control]',
+  providers: [{ provide: ControlValue, useExisting: WithoutFocus, multi: true }],
+  exportAs: 'withoutFocus',
+})
+class WithoutFocus extends ControlValue {
+  setValue(value: any): void {}
+}
+
+@Component({
+  template: '<div [control]="control" withoutFocus></div>',
+})
+class WithoutFocusComponent {
+  control = new Control('', { initialFocus: true });
+}
+
+@Component({
+  template: '<div [control]="control" withoutFocus></div>',
+})
+class WithoutFocusLazyComponent {
+  control?: Control<string>;
+}
+
 describe('control directive', () => {
   let component: ControlComponent;
   let fixture: ComponentFixture<ControlComponent>;
@@ -79,6 +112,11 @@ describe('control directive', () => {
         WithoutSetsComponent,
         WithStateChanged,
         StartDisabled,
+        ControlInitialFocus,
+        ControlInitialFocusLazy,
+        WithoutFocus,
+        WithoutFocusComponent,
+        WithoutFocusLazyComponent,
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
@@ -236,5 +274,41 @@ describe('control directive', () => {
     comp.control = new Control('', { disabled: false });
     fix.detectChanges();
     expect(comp.control.disabled).toBeTrue();
+  });
+
+  it('should start with focus', () => {
+    const fix = TestBed.createComponent(ControlInitialFocus);
+    fix.detectChanges();
+    const inp = fix.debugElement.query(By.css('input')).nativeElement;
+    const focused = document.activeElement;
+    expect(inp).toBe(focused);
+  });
+
+  it('should start with focus (lazy control)', () => {
+    const fix = TestBed.createComponent(ControlInitialFocusLazy);
+    const comp = fix.componentInstance;
+    fix.detectChanges();
+    comp.control = new Control('', { initialFocus: true });
+    fix.detectChanges();
+    const inp = fix.debugElement.query(By.css('input')).nativeElement;
+    const focused = document.activeElement;
+    expect(inp).toBe(focused);
+  });
+
+  it(`should not throw error when focus method doesn't exists in the ControlValue`, () => {
+    expect(() => {
+      const fix = TestBed.createComponent(WithoutFocusComponent);
+      fix.detectChanges();
+    }).not.toThrow();
+  });
+
+  it(`should not throw error when focus method doesn't exists in the ControlValue (lazy control)`, () => {
+    expect(() => {
+      const fix = TestBed.createComponent(WithoutFocusLazyComponent);
+      const comp = fix.componentInstance;
+      fix.detectChanges();
+      comp.control = new Control('', { initialFocus: true });
+      fix.detectChanges();
+    }).not.toThrow();
   });
 });

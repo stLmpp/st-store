@@ -8,11 +8,13 @@ import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { getUniqueId } from '../util';
 
-export type ControlArrayOptions = AbstractControlOptions;
+export type ControlArrayOptions<M = any> = AbstractControlOptions<M>;
 
-export class ControlArray<T = any, C extends Control | ControlGroup | ControlArray = ControlType<T>>
-  implements Iterable<C>, AbstractControl<T[]> {
-  constructor(private _controls: C[], private options?: ControlArrayOptions) {
+export class ControlArray<T = any, M = any, C extends Control | ControlGroup | ControlArray = ControlType<T>>
+  implements Iterable<C>, AbstractControl<T[], M>
+{
+  constructor(private _controls: C[], private options?: ControlArrayOptions<M>) {
+    this.metadata = options?.metadata;
     this._originControls = [..._controls];
     for (const control of _controls) {
       this._registerParent(control);
@@ -35,6 +37,8 @@ export class ControlArray<T = any, C extends Control | ControlGroup | ControlArr
   readonly value$ = this._value$.asObservable();
   readonly valueChanges$ = this.value$.pipe(skip(1));
   readonly uniqueId = getUniqueId();
+
+  metadata?: M;
 
   get parent(): ControlGroup | ControlArray | undefined {
     return this._parent;

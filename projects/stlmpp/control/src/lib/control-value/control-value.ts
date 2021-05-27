@@ -7,5 +7,6 @@ export abstract class ControlValue<T = any> {
 
   setDisabled?(disabled: boolean): void;
   stateChanged?(state: ControlState): void;
+  focus?(): void;
   abstract setValue(value: T): void;
 }

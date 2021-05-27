@@ -6,7 +6,7 @@ import { AbstractControlValue } from './abstract-control-value';
   selector: 'input[type=checkbox][control],input[type=checkbox][controlName],input[type=checkbox][model]',
   providers: [{ provide: ControlValue, useExisting: ControlValueCheckbox, multi: true }],
 })
-export class ControlValueCheckbox extends AbstractControlValue<boolean> {
+export class ControlValueCheckbox extends AbstractControlValue<boolean, HTMLInputElement> {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }
@@ -27,5 +27,9 @@ export class ControlValueCheckbox extends AbstractControlValue<boolean> {
   setValue(value: boolean): void {
     this.renderer2.setProperty(this.elementRef.nativeElement, 'checked', value);
     this.renderer2.setAttribute(this.elementRef.nativeElement, 'aria-checked', '' + value);
+  }
+
+  focus(): void {
+    this.elementRef.nativeElement.focus();
   }
 }

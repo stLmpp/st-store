@@ -7,7 +7,7 @@ import { Control } from '../control/control';
 
 @Component({ template: '<input type="checkbox" [control]="control" [indeterminate]="indeterminate">' })
 class ControlComponent {
-  control = new Control(false);
+  control = new Control(false, { initialFocus: true });
   indeterminate = false;
 }
 
@@ -56,5 +56,9 @@ describe('control value checkbox', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
+  });
+
+  it('should start with focus', () => {
+    expect(input.nativeElement).toBe(document.activeElement);
   });
 });

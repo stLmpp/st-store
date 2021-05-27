@@ -1,9 +1,10 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Control } from '../control/control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
+import { ControlValueSelect } from './control-value-select';
 
 @Component({
   template: `
@@ -19,7 +20,7 @@ import { triggerEvent } from '../util-tests';
   `,
 })
 class ControlComponent {
-  control = new Control<number[]>([]);
+  control = new Control<number[]>([], { initialFocus: true });
   controlWithValue = new Control<number[]>([1]);
 }
 
@@ -104,5 +105,9 @@ describe('control value select multiple', () => {
     component.control.setValue([15]);
     fixture.detectChanges();
     expect(select.nativeElement.selectedIndex).toBe(-1);
+  });
+
+  it('should start with focus', () => {
+    expect(select.nativeElement).toBe(document.activeElement);
   });
 });

@@ -108,7 +108,7 @@ export type ControlValueDateInputType = 'week' | 'time' | 'month' | 'date' | 'da
     input[type=month][control],input[type=month][controlName],input[type=month][model]`,
   providers: [{ provide: ControlValue, useExisting: ControlValueDate, multi: true }],
 })
-export class ControlValueDate extends AbstractControlValue<string | Date | null> {
+export class ControlValueDate extends AbstractControlValue<string | Date | null, HTMLInputElement> {
   constructor(renderer2: Renderer2, elementRef: ElementRef<HTMLInputElement>) {
     super(renderer2, elementRef);
   }
@@ -126,5 +126,9 @@ export class ControlValueDate extends AbstractControlValue<string | Date | null>
     const toValue = transformer[this.type].toValue;
     value = toValue(value);
     super.setValue(value);
+  }
+
+  focus(): void {
+    this.elementRef.nativeElement.focus();
   }
 }

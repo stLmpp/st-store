@@ -7,7 +7,7 @@ import { triggerEvent } from '../util-tests';
 
 @Component({ template: '<input type="number" [control]="control">' })
 class ControlComponent {
-  control = new Control<number | null>(null);
+  control = new Control<number | null>(null, { initialFocus: true });
 }
 
 @Component({ template: '<input type="number" [(model)]="model">' })
@@ -49,5 +49,9 @@ describe('control value number', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
+  });
+
+  it('should start with focus', () => {
+    expect(input.nativeElement).toBe(document.activeElement);
   });
 });

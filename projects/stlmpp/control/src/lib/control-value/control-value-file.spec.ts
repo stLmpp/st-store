@@ -8,7 +8,7 @@ import { ControlValueFile } from './control-value-file';
 @Component({ template: `<input type="file" [control]="control" />` })
 class ControlComponent {
   @ViewChild(ControlValueFile) controlValueFile!: ControlValueFile;
-  control = new Control<FileList | null>(null);
+  control = new Control<FileList | null>(null, { initialFocus: true });
 }
 
 @Component({ template: '<input type="file" [(model)]="model">' })
@@ -56,5 +56,9 @@ describe('control value file', () => {
     input.triggerEventHandler('change', { target: { files: [] } });
     fixture.detectChanges();
     expect(sub).toHaveBeenCalledTimes(1);
+  });
+
+  it('should start with focus', () => {
+    expect(input.nativeElement).toBe(document.activeElement);
   });
 });

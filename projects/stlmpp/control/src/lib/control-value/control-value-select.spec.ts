@@ -17,7 +17,7 @@ import { triggerEvent } from '../util-tests';
   `,
 })
 class ControlComponent {
-  control = new Control<number | null>(null);
+  control = new Control<number | null>(null, { initialFocus: true });
   controlWithValue = new Control(1);
 }
 
@@ -74,5 +74,9 @@ describe('control value select', () => {
     expect(() => {
       TestBed.createComponent(ModelComponent).detectChanges();
     }).not.toThrow();
+  });
+
+  it('should start with focus', () => {
+    expect(select.nativeElement).toBe(document.activeElement);
   });
 });
