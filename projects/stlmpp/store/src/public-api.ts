@@ -28,7 +28,7 @@ export {
   StateComponentConfigInput,
   QueryOptions,
 } from './lib/type';
-export { StMap } from './lib/map';
+export { StMap, StMapView } from './lib/map';
 export { EntityStore } from './lib/entity/entity-store';
 export { EntityQuery } from './lib/entity/entity-query';
 export { Store } from './lib/store/store';
