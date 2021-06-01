@@ -130,7 +130,7 @@ export abstract class StMapBase<T extends Record<any, any>> {
   }
 
   abstract filter(callback: EntityPredicate<T>): StMap<T> | StMapView<T>;
-  abstract map(callback: EntityUpdateWithId<T>): StMap<T> | StMapView<T>;
+  abstract map<R extends Record<any, any>>(callback: EntityUpdateWithId<T, R>): StMap<R> | StMapView<R>;
   abstract find(callback: EntityPredicate<T>): T | undefined;
   abstract forEach(callback: EntityFn<T, void>): void;
   abstract some(callback: EntityPredicate<T>): boolean;
@@ -221,7 +221,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
     return stMap;
   }
 
-  map(callback: EntityUpdateWithId<T>): StMap<T> {
+  map<R extends Record<any, any>>(callback: EntityUpdateWithId<T, R>): StMap<R> {
     const stMap = this._createMap();
     for (const [key, entity] of this) {
       stMap.set(key, callback(entity, key));
@@ -446,7 +446,7 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
     return stMap.toView();
   }
 
-  map(callback: EntityUpdateWithId<T>): StMapView<T> {
+  map<R extends Record<any, any>>(callback: EntityUpdateWithId<T, R>): StMapView<R> {
     const stMap = new StMap<T>(this._idGetter);
     for (const [key, entity] of this.entries) {
       stMap.set(key, callback(entity, key));

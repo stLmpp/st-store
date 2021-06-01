@@ -113,6 +113,15 @@ describe('StMap', () => {
       expect(mapped.get(2)).toEqual({ id: 2, name: '2' });
     });
 
+    it('should map to another type', () => {
+      const mapped = map.map((entity, key) => ({ ...entity, name: '' + key, other: 'Teste' }));
+      expect(mapped.length).toBe(2);
+      expect(mapped.has(1)).toBeTrue();
+      expect(mapped.has(2)).toBeTrue();
+      expect(mapped.get(1)).toEqual({ id: 1, name: '1', other: 'Teste' });
+      expect(mapped.get(2)).toEqual({ id: 2, name: '2', other: 'Teste' });
+    });
+
     it('should find', () => {
       const found = map.find((_, key) => key === 1);
       expect(found).toBeDefined();
