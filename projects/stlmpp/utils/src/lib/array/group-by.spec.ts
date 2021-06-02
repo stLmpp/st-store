@@ -1,6 +1,6 @@
 import { GroupByPipe } from './group-by';
 import { TestBed } from '@angular/core/testing';
-import { IdName } from './util-test';
+import { IdName } from '../util-test';
 
 describe('group by', () => {
   let groupByPipe: GroupByPipe;

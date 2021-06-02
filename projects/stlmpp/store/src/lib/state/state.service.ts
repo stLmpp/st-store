@@ -28,8 +28,6 @@ export class StateService {
     return this._states.get(name);
   }
 
-  destroy(name: string): void;
-  destroy(state: State<any>): void;
   destroy(nameOrState: string | State<any>): void {
     const state: State<any> | undefined = isString(nameOrState) ? this._states.get(nameOrState) : nameOrState;
     if (state) {

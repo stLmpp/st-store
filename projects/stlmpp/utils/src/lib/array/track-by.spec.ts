@@ -1,5 +1,5 @@
 import { trackByFactory } from './track-by';
-import { IdName } from './util-test';
+import { IdName } from '../util-test';
 
 describe('track by', () => {
   let obj: IdName;

@@ -9,7 +9,7 @@ export const sumByOperator = <T extends Record<any, any>, K extends ConditionalK
   key: K
 ): OperatorFunction<T[], number> => map<T[], number>(values => sumBy<T, K>(values, key));
 
-@Pipe({ name: 'stSumBy' })
+@Pipe({ name: 'sumBy' })
 export class SumByPipe implements PipeTransform {
   transform<T extends Record<any, any>, K extends ConditionalKeys<T, number | null | undefined>>(
     value: T[],
@@ -19,7 +19,7 @@ export class SumByPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'stSum' })
+@Pipe({ name: 'sum' })
 export class SumPipe implements PipeTransform {
   transform(value: number[]): number {
     return sum(value);

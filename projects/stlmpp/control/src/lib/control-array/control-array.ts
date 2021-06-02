@@ -128,26 +128,49 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     return this._controls[index];
   }
 
-  push(control: C): void {
-    this._controls.push(control);
-    this._registerParent(control);
-    if (this.options?.updateOn) {
-      control.setUpdateOn(this.options.updateOn);
+  push(...controls: C[]): void {
+    this._controls.push(...controls);
+    for (const control of controls) {
+      this._registerParent(control);
+      if (this.options?.updateOn) {
+        control.setUpdateOn(this.options.updateOn);
+      }
     }
     this._setValue$();
   }
 
-  insert(index: number, control: C): void {
-    this._controls.splice(index, 0, control);
-    this._registerParent(control);
-    if (this.options?.updateOn) {
-      control.setUpdateOn(this.options.updateOn);
+  insert(index: number, ...controls: C[]): void {
+    this._controls.splice(index, 0, ...controls);
+    for (const control of controls) {
+      this._registerParent(control);
+      if (this.options?.updateOn) {
+        control.setUpdateOn(this.options.updateOn);
+      }
     }
     this._setValue$();
   }
 
-  removeAt(index: number): void {
-    this._controls.splice(index, 1);
+  removeAt(...indices: number[]): void {
+    let setValue = false;
+    for (const index of indices) {
+      if (this.get(index)) {
+        this._controls.splice(index, 1);
+        setValue = true;
+      }
+    }
+    if (setValue) {
+      this._setValue$();
+    }
+  }
+
+  move(fromIndex: number, toIndex: number): void {
+    fromIndex = Math.max(fromIndex, 0);
+    toIndex = Math.min(toIndex, this.length - 1);
+    if (fromIndex === toIndex) {
+      return;
+    }
+    const [control] = this._controls.splice(fromIndex, 1);
+    this._controls.splice(toIndex, 0, control);
     this._setValue$();
   }
 
@@ -159,7 +182,7 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     for (let index = 0, len = values.length; index < len; index++) {
       const control = this.get(index);
       if (control) {
-        this._controls[index].setValue(values[index] as any, options);
+        control.setValue(values[index], options);
       }
     }
   }

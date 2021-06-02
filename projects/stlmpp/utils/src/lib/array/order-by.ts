@@ -10,7 +10,7 @@ export function orderByOperator<T>(
   return map(array => orderBy(array, keyOrCommand, order));
 }
 
-@Pipe({ name: 'stOrderBy' })
+@Pipe({ name: 'orderBy' })
 export class OrderByPipe implements PipeTransform {
   transform<T = any, K extends keyof T = keyof T>(
     value: T[],

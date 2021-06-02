@@ -16,7 +16,7 @@ export function getDeep<T = any, R = any>(obj: T, path: string | string[], defau
   return path.reduce((acc, key) => (acc as any)?.[key], obj) ?? defaultValue;
 }
 
-@Pipe({ name: 'stGetDeep' })
+@Pipe({ name: 'getDeep' })
 export class GetDeepPipe implements PipeTransform {
   transform<T = any, K extends keyof T = keyof T, R = T[K]>(value: T, key: K): R;
   transform<T = any, R = any>(value: T, key: string): R;
