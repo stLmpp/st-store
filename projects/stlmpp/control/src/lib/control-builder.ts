@@ -58,6 +58,7 @@ export class ControlBuilder {
   array<T extends any[]>(controls: ControlArray<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T extends Record<any, any>>(controls: ControlGroupType<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T extends Record<any, any>>(controls: ControlBuilderGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
+  array<T extends Record<any, any>>(controls: ControlGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: T[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: ControlBuilderTupple<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: Control<T>[], options?: ControlArrayOptions): ControlArray<T>;
