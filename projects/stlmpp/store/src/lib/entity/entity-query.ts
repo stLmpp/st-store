@@ -58,12 +58,12 @@ export class EntityQuery<
 
   private _activeKeys$ = this.select('activeKeys');
 
-  all$: Observable<StMapView<T>> = this._entities$.pipe(map(entities => entities.toView()));
-  activeIds$: Observable<Set<EntityIdType>> = this._activeKeys$;
-  active$: Observable<StMapView<T>> = this.activeIds$.pipe(switchMap(ids => this.selectMany(ids)));
-  hasActive$: Observable<boolean> = this._activeKeys$.pipe(map(activeKeys => !!activeKeys.size));
+  readonly all$: Observable<StMapView<T>> = this._entities$.pipe(map(entities => entities.toView()));
+  readonly activeIds$: Observable<Set<EntityIdType>> = this._activeKeys$;
+  readonly active$: Observable<StMapView<T>> = this.activeIds$.pipe(switchMap(ids => this.selectMany(ids)));
+  readonly hasActive$: Observable<boolean> = this._activeKeys$.pipe(map(activeKeys => !!activeKeys.size));
 
-  trackBy = this._entities.trackBy;
+  readonly trackBy = this._entities.trackBy;
 
   getAll(): StMapView<T> {
     return this._entities.toView();

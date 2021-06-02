@@ -103,6 +103,8 @@ describe('control builder', () => {
     it('should create from control / group / array instance', () => {
       const array = controlBuilder.array<string>([controlBuilder.control<string>('')]);
       expect(array.get(0)).toBeInstanceOf(Control);
+      const arrayGroup = controlBuilder.array<{ id: number }>([controlBuilder.group<{ id: number }>({ id: 1 })]);
+      expect(arrayGroup.get(0)).toBeInstanceOf(ControlGroup);
     });
 
     it('should create array of controls', () => {

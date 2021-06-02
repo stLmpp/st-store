@@ -15,14 +15,14 @@ export class Query<T extends Record<any, any>, E = any> {
   }
 
   /** @internal */
-  protected _store: Store<T, E>;
+  protected readonly _store: Store<T, E>;
 
-  protected _options: QueryOptions;
+  protected readonly _options: QueryOptions;
 
-  state$: Observable<T>;
-  loading$: Observable<boolean>;
-  error$: Observable<E | null>;
-  hasCache$: Observable<boolean>;
+  readonly state$: Observable<T>;
+  readonly loading$: Observable<boolean>;
+  readonly error$: Observable<E | null>;
+  readonly hasCache$: Observable<boolean>;
 
   getState(): T {
     return this._store.getState();

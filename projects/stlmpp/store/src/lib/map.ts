@@ -37,7 +37,7 @@ export abstract class StMapBase<T extends Record<any, any>> {
   protected _state: { [id: string]: T } = {};
   protected _keys = new Set<EntityIdType>();
 
-  [stMapSymbol] = true;
+  readonly [stMapSymbol] = true;
 
   protected _search<K extends ConditionalKeys<T, string>>(
     map: StMapView<T>,
@@ -67,7 +67,7 @@ export abstract class StMapBase<T extends Record<any, any>> {
     return map.filter(predicate);
   }
 
-  trackBy: TrackByFunction<T> = (_, element) => this._idGetter(element);
+  readonly trackBy: TrackByFunction<T> = (_, element) => this._idGetter(element);
 
   get state(): { [id: string]: T } {
     return { ...this._state };
