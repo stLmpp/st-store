@@ -9,7 +9,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ControlValue } from './control-value';
-import { isNil } from 'st-utils';
+import { isNotNil } from 'st-utils';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { ControlValueRadioParent } from './control-value-radio-parent';
@@ -71,7 +71,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
   }
 
   setValue(value: any): void {
-    if (!this.allChildren && !isNil(value)) {
+    if (!this.allChildren && isNotNil(value)) {
       this._markForValueAfterContentInit = true;
       this._lastValue = value;
     } else {

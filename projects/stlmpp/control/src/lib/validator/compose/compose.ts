@@ -1,6 +1,6 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
-import { coerceArray, isNil, isObjectEmpty } from 'st-utils';
+import { coerceArray, isNotNil, isObjectEmpty } from 'st-utils';
 
 export class ComposeValidator extends ControlValidator<any, Record<string, any>> {
   constructor(validators: ControlValidator[]) {
@@ -25,7 +25,7 @@ export class ComposeValidator extends ControlValidator<any, Record<string, any>>
   validate(control: Control): Record<string, any> | null {
     const errors = this._validators.reduce((acc, validator) => {
       const error = validator.validate(control);
-      if (!isNil(error)) {
+      if (isNotNil(error)) {
         return { ...acc, [validator.name]: error };
       }
       return acc;

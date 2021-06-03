@@ -1,7 +1,7 @@
 import { BehaviorSubject, isObservable, Observable, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, map, pluck, take, takeUntil } from 'rxjs/operators';
 import { Entries, getUniqueId } from '../util';
-import { isArray, isNil, isObjectEmpty, isString, uniq, uniqBy } from 'st-utils';
+import { isArray, isNil, isNotNil, isObjectEmpty, isString, uniq, uniqBy } from 'st-utils';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { KeyValue } from '@angular/common';
@@ -181,7 +181,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return [...this._validatorsMap.keys()];
   }
 
-  private _setInitialValidators(validators: ControlValidator[] = []): void {
+  private _setInitialValidators(validators: ControlValidator[] = []): this {
     this._validatorsMap.clear();
     for (const validator of validators) {
       if (validator.async) {
@@ -189,9 +189,10 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       }
       this._validatorsMap.set(validator.name, validator);
     }
+    return this;
   }
 
-  private _sendClasses(): void {
+  private _sendClasses(): this {
     const classes = [...this._validatorsMap.values()].reduce((acc: string[], validator) => {
       if (isString(validator.classes)) {
         acc.push(validator.classes);
@@ -201,33 +202,35 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       return acc;
     }, []);
     this._classesChanged$.next(uniq(classes));
+    return this;
   }
 
-  private _sendAttributes(): void {
+  private _sendAttributes(): this {
     const attrs = [...this._validatorsMap.values()].reduce((acc, validator) => ({ ...acc, ...validator.attrs }), {});
     this._attributesChanged$.next(attrs);
+    return this;
   }
 
-  private _sendAttributesAndClasses(): void {
-    this._sendAttributes();
-    this._sendClasses();
+  private _sendAttributesAndClasses(): this {
+    return this._sendAttributes()._sendClasses();
   }
 
-  private _stateChanged(): void {
+  private _stateChanged(): this {
     this._stateChanged$.next(this.getState());
+    return this;
   }
 
-  private _addPending(): void {
+  private _addPending(): this {
     this._pending++;
-    this._stateChanged();
+    return this._stateChanged();
   }
 
-  private _removePending(): void {
+  private _removePending(): this {
     this._pending = Math.max(this._pending - 1, 0);
-    this._stateChanged();
+    return this._stateChanged();
   }
 
-  private _emitChange(value: T, options?: ControlUpdateOptions): void {
+  private _emitChange(value: T, options?: ControlUpdateOptions): this {
     options = controlUpdateOptions(options);
     if (options.emitChange) {
       this._valueChanges$.next(value);
@@ -235,11 +238,12 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     if (options.emitInternalValue$) {
       this.internalValueChanges$.next(value);
     }
+    return this;
   }
 
-  private _cancelPendingValidation(name: keyof ValidatorsModel): void {
+  private _cancelPendingValidation(name: keyof ValidatorsModel): this {
     this.validationCancel[name].next();
-    this._removePending();
+    return this._removePending();
   }
 
   private _getValidationError(validator: ControlValidator): Observable<any> | any | undefined {
@@ -250,61 +254,64 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   }
 
   /** @internal */
-  init(): void {
+  init(): this {
     this._sendAttributesAndClasses();
     if (this._initialOptions.disabled) {
       this.disable(this._initialOptions.disabled);
     }
-    this.runValidators();
+    return this.runValidators();
   }
 
   /** @internal */
-  setUpdateOn(updateOn?: ControlUpdateOn): void {
+  setUpdateOn(updateOn?: ControlUpdateOn): this {
     if (updateOn) {
       this.updateOn = updateOn;
     }
+    return this;
   }
 
-  markAsTouched(touched = true): void {
+  markAsTouched(touched = true): this {
     if (this._touched !== touched) {
       this._touched = touched;
       this._stateChanged();
     }
+    return this;
   }
 
-  markAsDirty(dirty = true): void {
+  markAsDirty(dirty = true): this {
     if (this._dirty !== dirty) {
       this._dirty = dirty;
       this._stateChanged();
     }
+    return this;
   }
 
-  markAsInvalid(invalid = true): void {
+  markAsInvalid(invalid = true): this {
     if (this._invalid !== invalid) {
       this._invalid = invalid;
       this._stateChanged();
     }
+    return this;
   }
 
-  setValidator(validator: ControlValidator): void {
+  setValidator(validator: ControlValidator): this {
     if (this._validatorsMap.has(validator.name)) {
-      return;
+      return this;
     }
     this._validatorsMap.set(validator.name, validator);
     if (validator.async) {
       this.validationCancel[validator.name] = new Subject<void>();
     }
-    this._sendAttributesAndClasses();
-    this.runValidator(validator.name);
+    return this._sendAttributesAndClasses().runValidator(validator.name);
   }
 
-  setValidators(validators: ControlValidator[]): void {
+  setValidators(validators: ControlValidator[]): this {
     validators = uniqBy(
       validators.filter(validator => !this._validatorsMap.has(validator.name)),
       'name'
     );
     if (!validators.length) {
-      return;
+      return this;
     }
     for (const validator of validators) {
       this._validatorsMap.set(validator.name, validator);
@@ -312,8 +319,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
         this.validationCancel[validator.name] = new Subject<void>();
       }
     }
-    this._sendAttributesAndClasses();
-    this.runValidators(validators.map(validator => validator.name));
+    return this._sendAttributesAndClasses().runValidators(validators.map(validator => validator.name));
   }
 
   getState(): ControlState {
@@ -321,7 +327,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return { dirty, disabled, enabled, invalid, pending, pristine, touched, untouched, valid };
   }
 
-  removeValidator(name: keyof ValidatorsModel): void {
+  removeValidator(name: keyof ValidatorsModel): this {
     if (this._validatorsMap.has(name)) {
       if (this.pending) {
         this._cancelPendingValidation(name);
@@ -332,12 +338,13 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       this._validatorsMap.delete(name);
       this._sendAttributesAndClasses();
     }
+    return this;
   }
 
-  removeValidators(names: (keyof ValidatorsModel)[]): void {
+  removeValidators(names: (keyof ValidatorsModel)[]): this {
     names = names.filter(name => this._validatorsMap.has(name));
     if (!names.length) {
-      return;
+      return this;
     }
     for (const name of names) {
       if (this.pending) {
@@ -348,25 +355,37 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       }
       this._validatorsMap.delete(name);
     }
-    this._sendAttributesAndClasses();
+    return this._sendAttributesAndClasses();
   }
 
-  setValue(value: T, options?: ControlUpdateOptions): void {
+  hasValidator(name: keyof ValidatorsModel): boolean {
+    return this._validatorsMap.has(name);
+  }
+
+  hasValidators(names: (keyof ValidatorsModel)[]): boolean {
+    return names.some(name => this.hasValidator(name));
+  }
+
+  hasAnyValidators(): boolean {
+    return !!this._validatorsMap.size;
+  }
+
+  setValue(value: T, options?: ControlUpdateOptions): this {
     if (value !== this.value) {
       this._value$.next(value);
-      this._emitChange(value, options);
-      this.runValidators();
+      this._emitChange(value, options).runValidators();
     }
+    return this;
   }
 
-  patchValue(value: T, options?: ControlUpdateOptions): void {
-    this.setValue(value, options);
+  patchValue(value: T, options?: ControlUpdateOptions): this {
+    return this.setValue(value, options);
   }
 
-  runValidator(name: keyof ValidatorsModel): void {
+  runValidator(name: keyof ValidatorsModel): this {
     const validator = this._validatorsMap.get(name);
     if (!validator) {
-      return;
+      return this;
     }
     const validationError = this._getValidationError(validator);
     if (isObservable(validationError)) {
@@ -395,21 +414,28 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
         this.addError(name, validationError);
       }
     }
+    return this;
   }
 
-  runValidators(names?: (keyof ValidatorsModel)[]): void {
+  runValidators(names?: (keyof ValidatorsModel)[]): this {
     names ??= this.validators;
     for (const validator of names) {
       this.runValidator(validator);
     }
+    return this;
   }
 
-  hasErrors(): boolean {
+  hasAnyError(): boolean {
     return !!this.getErrors();
   }
 
   hasError(name: keyof ValidatorsModel): boolean {
-    return !isNil(this._errors$.value[name]);
+    return isNotNil(this._errors$.value[name]);
+  }
+
+  hasErrors(names: (keyof ValidatorsModel)[]): boolean {
+    const errors = this.getErrors();
+    return !!errors && names.some(name => isNotNil(errors[name]));
   }
 
   getError<K extends keyof ValidatorsModel>(name: K): ValidatorsModel[K] | undefined {
@@ -433,32 +459,32 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this.errors$.pipe(pluck(name), distinctUntilChanged());
   }
 
-  updateError(callback: (state: Partial<ValidatorsModel>) => Partial<ValidatorsModel>): void {
+  updateError(callback: (state: Partial<ValidatorsModel>) => Partial<ValidatorsModel>): this {
     const newErrors = callback(this._errors$.value);
     this._invalid = !isObjectEmpty(newErrors);
     this._errors$.next(newErrors);
-    this._stateChanged();
+    return this._stateChanged();
   }
 
-  removeError(name: keyof ValidatorsModel): void {
-    this.updateError(state => Object.fromEntries(Object.entries(state).filter(([key]) => key !== name)));
+  removeError(name: keyof ValidatorsModel): this {
+    return this.updateError(state => Object.fromEntries(Object.entries(state).filter(([key]) => key !== name)));
   }
 
-  addError<K extends keyof ValidatorsModel>(name: K, error: ValidatorsModel[K]): void {
-    this.updateError(state => ({ ...state, [name]: error }));
+  addError<K extends keyof ValidatorsModel>(name: K, error: ValidatorsModel[K]): this {
+    return this.updateError(state => ({ ...state, [name]: error }));
   }
 
-  disable(disabled = true): void {
+  disable(disabled = true): this {
     this._disabled = disabled;
     this._disabledChanged$.next();
-    this._stateChanged();
+    return this._stateChanged();
   }
 
-  enable(enable = true): void {
-    this.disable(!enable);
+  enable(enable = true): this {
+    return this.disable(!enable);
   }
 
-  reset(): void {
+  reset(): this {
     this._setInitialValidators(this._initialOptions.validators);
     this._errors$.next({});
     this.setValue(this._initialValue);
@@ -466,12 +492,13 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     this._touched = false;
     this._disabled = !!this._initialOptions.disabled;
     this._disabledChanged$.next();
-    this._stateChanged();
+    return this._stateChanged();
   }
 
   /** @internal */
-  submit(): void {
+  submit(): this {
     this._submit$.next();
+    return this;
   }
 }
 

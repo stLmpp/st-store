@@ -424,11 +424,11 @@ describe('control', () => {
   it('should check if has any error', () => {
     component.control.setValidator(Validators.required);
     fixture.detectChanges();
-    expect(component.control.hasErrors()).toBeTrue();
+    expect(component.control.hasAnyError()).toBeTrue();
     triggerEvent(input, 'input', 'A');
     triggerEvent(input, 'blur');
     fixture.detectChanges();
-    expect(component.control.hasErrors()).toBeFalse();
+    expect(component.control.hasAnyError()).toBeFalse();
   });
 
   it('should emit if has any error', () => {
