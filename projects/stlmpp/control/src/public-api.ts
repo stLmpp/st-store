@@ -58,6 +58,7 @@ export { SibblingEqualsValidationError, SibblingEqualsValidator } from './lib/va
 export { UrlValidator } from './lib/validator/pattern/url';
 export { ControlValidator, ControlValidatorAttributes } from './lib/validator/validator';
 export { Validators, ValidatorsModel } from './lib/validator/validators';
+export { WhiteSpaceValidator } from './lib/validator/white-space/white-space';
 
 export { BetweenValidatorDirective } from './lib/validator/between/between.directive';
 export { ContainsValidatorDirective } from './lib/validator/contains/contains.directive';
@@ -72,6 +73,7 @@ export { PatternValidatorDirective } from './lib/validator/pattern/pattern.direc
 export { RequiredValidatorDirective } from './lib/validator/required/required.directive';
 export { RequiredTrueValidatorDirective } from './lib/validator/required/required-true.directive';
 export { UrlValidatorDirective } from './lib/validator/pattern/url.directive';
+export { WhiteSpaceValidatorDirective } from './lib/validator/white-space/white-space.directive';
 
 export { ModelDirective, ModelOptions } from './lib/model/model.directive';
 

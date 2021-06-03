@@ -35,6 +35,7 @@ import { UrlValidatorDirective } from './validator/pattern/url.directive';
 import { RequiredValidatorDirective } from './validator/required/required.directive';
 import { RequiredTrueValidatorDirective } from './validator/required/required-true.directive';
 import { ControlStatusDirective } from './control-status/control-status.directive';
+import { WhiteSpaceValidatorDirective } from './validator/white-space/white-space.directive';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { ControlStatusDirective } from './control-status/control-status.directiv
     UrlValidatorDirective,
     RequiredValidatorDirective,
     RequiredTrueValidatorDirective,
+    WhiteSpaceValidatorDirective,
   ],
   exports: [
     ControlDirective,
@@ -112,6 +114,7 @@ import { ControlStatusDirective } from './control-status/control-status.directiv
     UrlValidatorDirective,
     RequiredValidatorDirective,
     RequiredTrueValidatorDirective,
+    WhiteSpaceValidatorDirective,
   ],
 })
 export class StControlModule {
