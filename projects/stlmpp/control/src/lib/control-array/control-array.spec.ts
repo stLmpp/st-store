@@ -429,4 +429,22 @@ describe('control array', () => {
     array.markAsInvalid(false);
     expect(array.invalid).toBeFalse();
   });
+
+  it('should replace a control', () => {
+    const array = component.array;
+    array.setValue(['1', '2']);
+    fixture.detectChanges();
+    array.replace(0, new Control('4'));
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('4');
+  });
+
+  it('should not replace if control doesnt exists', () => {
+    const array = component.array;
+    array.setValue(['1', '2']);
+    fixture.detectChanges();
+    array.replace(5, new Control('5'));
+    expect(array.length).toBe(2);
+    expect(array.get(5)).toBeUndefined();
+  });
 });

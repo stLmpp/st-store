@@ -11,9 +11,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { ControlError, ControlErrorShowWhen } from './control-error';
-import { ValidatorsModel } from '../validator/validators';
+import { ValidatorsKeys, ValidatorsModel } from '../validator/validators';
 
-export class ControlErrorCaseContext<K extends keyof ValidatorsModel> {
+export class ControlErrorCaseContext<K extends ValidatorsKeys> {
   constructor(error: ValidatorsModel[K]) {
     this.setError(error);
   }
@@ -27,7 +27,7 @@ export class ControlErrorCaseContext<K extends keyof ValidatorsModel> {
 }
 
 @Directive({ selector: '[error]', exportAs: 'controlErrorCase' })
-export class ControlErrorCase<K extends keyof ValidatorsModel> implements OnInit, OnChanges, OnDestroy {
+export class ControlErrorCase<K extends ValidatorsKeys> implements OnInit, OnChanges, OnDestroy {
   constructor(
     @Host() @Optional() private controlError: ControlError,
     public viewContainerRef: ViewContainerRef,
@@ -82,7 +82,7 @@ export class ControlErrorCase<K extends keyof ValidatorsModel> implements OnInit
     this.controlError.removeCase(this.error);
   }
 
-  static ngTemplateContextGuard<K2 extends keyof ValidatorsModel>(
+  static ngTemplateContextGuard<K2 extends ValidatorsKeys>(
     dir: ControlErrorCase<K2>,
     ctx: unknown
   ): ctx is ControlErrorCaseContext<K2> {

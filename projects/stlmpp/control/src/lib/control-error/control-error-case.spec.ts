@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
 import { ControlErrorShowWhen } from './control-error';
 import { Control } from '../control/control';
-import { Validators, ValidatorsModel } from '../validator/validators';
+import { Validators, ValidatorsKeys } from '../validator/validators';
 
 @Component({ template: `<small *error="'required'"></small>` })
 class WithoutControlError {}
@@ -34,7 +34,7 @@ class ControlComponent {
 class ControlErrorCaseChange {
   control = new Control('', [Validators.required, Validators.minLength(3)]);
   when: ControlErrorShowWhen = 'dirty';
-  error: keyof ValidatorsModel = 'required';
+  error: ValidatorsKeys = 'required';
 }
 
 describe('control error case', () => {

@@ -97,3 +97,5 @@ export interface ValidatorsModel {
   lesser: LesserValidationError<Nullable<Date | number>>;
   requiredTrue: boolean;
 }
+
+export type ValidatorsKeys = keyof ValidatorsModel;

@@ -1,13 +1,13 @@
 import { BehaviorSubject, isObservable, Observable, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, map, pluck, take, takeUntil } from 'rxjs/operators';
 import { Entries, getUniqueId } from '../util';
-import { isArray, isNil, isNotNil, isObjectEmpty, isString, uniq, uniqBy } from 'st-utils';
+import { isArray, isKeyof, isNil, isNotNil, isObjectEmpty, isString, uniq, uniqBy } from 'st-utils';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
 import { KeyValue } from '@angular/common';
 import { ControlGroup } from '../control-group/control-group';
 import { ControlValidator } from '../validator/validator';
-import { ValidatorsModel } from '../validator/validators';
+import { ValidatorsKeys, ValidatorsModel } from '../validator/validators';
 
 export interface ControlOptions<T = any, M = any> extends AbstractControlOptions<M> {
   validators?: ControlValidator[];
@@ -26,6 +26,10 @@ function controlUpdateOptions(options?: ControlUpdateOptions): ControlUpdateOpti
 
 function isControlValidator(value: ControlOptions | ControlValidator | undefined): value is ControlValidator {
   return !!(value as ControlValidator)?.name;
+}
+
+function resolveValidatorName(nameOrValidator: ValidatorsKeys | ControlValidator): ValidatorsKeys {
+  return isKeyof<ValidatorsModel, ValidatorsKeys>(nameOrValidator) ? nameOrValidator : nameOrValidator.name;
 }
 
 export interface ControlState {
@@ -72,7 +76,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
 
   private readonly _initialValue: T;
   private readonly _initialOptions: ControlOptions<T>;
-  private readonly _validatorsMap = new Map<keyof ValidatorsModel, ControlValidator>();
+  private readonly _validatorsMap = new Map<ValidatorsKeys, ControlValidator>();
   private readonly _disabledChanged$ = new BehaviorSubject<void>(undefined);
   private readonly _stateChanged$ = new Subject<ControlState>();
   private readonly _value$: BehaviorSubject<T>;
@@ -92,12 +96,11 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   private _updateOn: ControlUpdateOn;
 
   readonly errors$ = this._errors$.asObservable();
-  readonly errorList$: Observable<KeyValue<keyof ValidatorsModel, ValidatorsModel[keyof ValidatorsModel]>[]> =
-    this.errors$.pipe(
-      map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
-    );
+  readonly errorList$: Observable<KeyValue<ValidatorsKeys, ValidatorsModel[ValidatorsKeys]>[]> = this.errors$.pipe(
+    map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
+  );
   readonly hasErrors$ = this.errors$.pipe(map(errors => !isObjectEmpty(errors)));
-  readonly validationCancel: Record<keyof ValidatorsModel, Subject<void>> = {};
+  readonly validationCancel: Record<ValidatorsKeys, Subject<void>> = {};
   readonly disabledChanged$ = this._disabledChanged$.asObservable();
   readonly stateChanged$ = this._stateChanged$.asObservable();
   readonly value$: Observable<T>;
@@ -177,7 +180,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this._value$.value;
   }
 
-  get validators(): (keyof ValidatorsModel)[] {
+  get validators(): ValidatorsKeys[] {
     return [...this._validatorsMap.keys()];
   }
 
@@ -241,7 +244,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this;
   }
 
-  private _cancelPendingValidation(name: keyof ValidatorsModel): this {
+  private _cancelPendingValidation(name: ValidatorsKeys): this {
     this.validationCancel[name].next();
     return this._removePending();
   }
@@ -327,7 +330,8 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return { dirty, disabled, enabled, invalid, pending, pristine, touched, untouched, valid };
   }
 
-  removeValidator(name: keyof ValidatorsModel): this {
+  removeValidator(nameOrValidator: ValidatorsKeys | ControlValidator): this {
+    const name = resolveValidatorName(nameOrValidator);
     if (this._validatorsMap.has(name)) {
       if (this.pending) {
         this._cancelPendingValidation(name);
@@ -341,7 +345,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this;
   }
 
-  removeValidators(names: (keyof ValidatorsModel)[]): this {
+  removeValidators(names: ValidatorsKeys[]): this {
     names = names.filter(name => this._validatorsMap.has(name));
     if (!names.length) {
       return this;
@@ -358,12 +362,13 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this._sendAttributesAndClasses();
   }
 
-  hasValidator(name: keyof ValidatorsModel): boolean {
+  hasValidator(nameOrValidator: ValidatorsKeys | ControlValidator): boolean {
+    const name = isKeyof<ValidatorsModel, ValidatorsKeys>(nameOrValidator) ? nameOrValidator : nameOrValidator.name;
     return this._validatorsMap.has(name);
   }
 
-  hasValidators(names: (keyof ValidatorsModel)[]): boolean {
-    return names.some(name => this.hasValidator(name));
+  hasValidators(namesOrValidators: Array<ValidatorsKeys | ControlValidator>): boolean {
+    return namesOrValidators.some(nameOrValidator => this.hasValidator(nameOrValidator));
   }
 
   hasAnyValidators(): boolean {
@@ -382,7 +387,8 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this.setValue(value, options);
   }
 
-  runValidator(name: keyof ValidatorsModel): this {
+  runValidator(nameOrValidator: ValidatorsKeys | ControlValidator): this {
+    const name = resolveValidatorName(nameOrValidator);
     const validator = this._validatorsMap.get(name);
     if (!validator) {
       return this;
@@ -417,7 +423,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this;
   }
 
-  runValidators(names?: (keyof ValidatorsModel)[]): this {
+  runValidators(names?: Array<ValidatorsKeys | ControlValidator>): this {
     names ??= this.validators;
     for (const validator of names) {
       this.runValidator(validator);
@@ -429,16 +435,20 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return !!this.getErrors();
   }
 
-  hasError(name: keyof ValidatorsModel): boolean {
+  hasError(nameOrValidator: ValidatorsKeys | ControlValidator): boolean {
+    const name = resolveValidatorName(nameOrValidator);
     return isNotNil(this._errors$.value[name]);
   }
 
-  hasErrors(names: (keyof ValidatorsModel)[]): boolean {
+  hasErrors(namesOrValidators: Array<ValidatorsKeys | ControlValidator>): boolean {
     const errors = this.getErrors();
-    return !!errors && names.some(name => isNotNil(errors[name]));
+    return (
+      !!errors && namesOrValidators.some(nameOrValidator => isNotNil(errors[resolveValidatorName(nameOrValidator)]))
+    );
   }
 
-  getError<K extends keyof ValidatorsModel>(name: K): ValidatorsModel[K] | undefined {
+  getError<K extends ValidatorsKeys>(nameOrValidator: K | ControlValidator): ValidatorsModel[K] | undefined {
+    const name = resolveValidatorName(nameOrValidator);
     return this._errors$.value[name];
   }
 
@@ -451,11 +461,15 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     }
   }
 
-  selectHasError(name: keyof ValidatorsModel): Observable<boolean> {
+  selectHasError(nameOrValidator: ValidatorsKeys | ControlValidator): Observable<boolean> {
+    const name = resolveValidatorName(nameOrValidator);
     return this.selectError(name).pipe(map(error => isNil(error)));
   }
 
-  selectError<K extends keyof ValidatorsModel>(name: K): Observable<ValidatorsModel[K] | undefined> {
+  selectError<K extends ValidatorsKeys>(
+    nameOrValidator: K | ControlValidator
+  ): Observable<ValidatorsModel[K] | undefined> {
+    const name = resolveValidatorName(nameOrValidator);
     return this.errors$.pipe(pluck(name), distinctUntilChanged());
   }
 
@@ -466,11 +480,12 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this._stateChanged();
   }
 
-  removeError(name: keyof ValidatorsModel): this {
+  removeError(nameOrValidator: ValidatorsKeys | ControlValidator): this {
+    const name = resolveValidatorName(nameOrValidator);
     return this.updateError(state => Object.fromEntries(Object.entries(state).filter(([key]) => key !== name)));
   }
 
-  addError<K extends keyof ValidatorsModel>(name: K, error: ValidatorsModel[K]): this {
+  addError<K extends ValidatorsKeys>(name: K, error: ValidatorsModel[K]): this {
     return this.updateError(state => ({ ...state, [name]: error }));
   }
 
