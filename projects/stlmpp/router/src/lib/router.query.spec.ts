@@ -139,6 +139,30 @@ describe('Router Query', () => {
       expect(sub).toHaveBeenCalledTimes(4);
     });
 
+    it('should distinct multiples (keys)', async () => {
+      router.initialNavigation();
+      await router.navigate(['/users', 1, 'details', 2, 'user', 3]);
+      await wait();
+      const sub = jasmine.createSpy('sub');
+      routerQuery.selectParams(['idUser']).subscribe(sub);
+      expect(sub).toHaveBeenCalledTimes(1);
+      await router.navigate(['/users', 1, 'details', 2, 'user', 4]);
+      await wait();
+      expect(sub).toHaveBeenCalledTimes(2);
+      await router.navigate(['/users', 1]);
+      await wait();
+      expect(sub).toHaveBeenCalledTimes(3);
+      await router.navigate(['/users', 1, 'details', 1, 'user', 1]);
+      await wait();
+      expect(sub).toHaveBeenCalledTimes(3);
+      await router.navigate(['/users', 2, 'details', 1, 'user', 1]);
+      await wait();
+      expect(sub).toHaveBeenCalledTimes(3);
+      await router.navigate(['/users', 1, 'details', 1]);
+      await wait();
+      expect(sub).toHaveBeenCalledTimes(3);
+    });
+
     it('should distinct one', async () => {
       router.initialNavigation();
       await router.navigate(['/users', 1, 'details', 2, 'user', 3]);

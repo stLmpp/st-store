@@ -8,7 +8,7 @@ import { ControlGroup, ControlGroupOptions, ControlGroupType } from './control-g
 import { ControlValidator } from './validator/validator';
 import { isAnyControl } from './is-any-control';
 
-export type ControlBuilderTupple<T> = [value: T, validatorsOrOptions?: ControlOptions<T> | ControlValidator<T>[]];
+export type ControlBuilderTuple<T> = [value: T, validatorsOrOptions?: ControlOptions<T> | ControlValidator<T>[]];
 
 export type ControlBuilderGroup<T extends Record<any, any>> = {
   [K in keyof T]: ControlBuilderGroupItem<T[K]>;
@@ -20,14 +20,14 @@ export type ControlBuilderGroupItem<T> = [T] extends [Control<infer C>]
   ? ControlArray<U>
   : [T] extends [Record<any, any>]
   ? ControlBuilderGroup<T>
-  : ControlBuilderTupple<T> | T | Control<T>;
+  : ControlBuilderTuple<T> | T | Control<T>;
 
 @Injectable()
 export class ControlBuilder {
   control<T>(value: T, options?: ControlValidator<T> | ControlValidator<T>[] | ControlOptions<T>): Control;
-  control<T>(tuple: ControlBuilderTupple<T>): Control;
+  control<T>(tuple: ControlBuilderTuple<T>): Control;
   control<T>(
-    value: T | ControlBuilderTupple<T>,
+    value: T | ControlBuilderTuple<T>,
     options?: ControlValidator | ControlValidator[] | ControlOptions
   ): Control {
     if (isArray(value)) {
@@ -60,10 +60,10 @@ export class ControlBuilder {
   array<T extends Record<any, any>>(controls: ControlBuilderGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T extends Record<any, any>>(controls: ControlGroup<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: T[], options?: ControlArrayOptions): ControlArray<T>;
-  array<T>(controls: ControlBuilderTupple<T>[], options?: ControlArrayOptions): ControlArray<T>;
+  array<T>(controls: ControlBuilderTuple<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(controls: Control<T>[], options?: ControlArrayOptions): ControlArray<T>;
   array<T>(
-    controls: Array<ControlBuilderTupple<T> | Control<T> | ControlGroup<T> | ControlArray<T> | ControlBuilderGroup<T>>,
+    controls: Array<ControlBuilderTuple<T> | Control<T> | ControlGroup<T> | ControlArray<T> | ControlBuilderGroup<T>>,
     options?: ControlArrayOptions
   ): ControlArray<T> {
     if (!controls.length) {

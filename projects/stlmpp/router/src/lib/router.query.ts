@@ -12,8 +12,7 @@ import {
 } from '@angular/router';
 import { BehaviorSubject, Observable, OperatorFunction, Subject } from 'rxjs';
 import { auditTime, distinctUntilChanged, filter, map, pluck, takeUntil } from 'rxjs/operators';
-import { isNil, isString } from 'st-utils';
-import { isEqualParams } from './util';
+import { isNil, isObjectEqualShallow, isString } from 'st-utils';
 
 type ParamType = 'queryParamMap' | 'paramMap';
 
@@ -89,7 +88,7 @@ export class RouterQuery implements OnDestroy {
       params$ = this._queryParams$;
     }
     return params$.pipe(
-      distinctUntilChanged(isEqualParams),
+      distinctUntilChanged((paramsA, paramsB) => isObjectEqualShallow(paramsA, paramsB)),
       map(params => convertToParamMap(params))
     );
   }
@@ -124,7 +123,7 @@ export class RouterQuery implements OnDestroy {
     } else {
       return paramMap$.pipe(
         map(paramsRoute => this._reduceParams(params, paramsRoute)),
-        distinctUntilChanged(isEqualParams)
+        distinctUntilChanged((paramsA, paramsB) => isObjectEqualShallow(paramsA, paramsB))
       );
     }
   }

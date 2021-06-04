@@ -4,4 +4,3 @@
 
 export { StRouterModule } from './lib/st-router.module';
 export { RouterQuery } from './lib/router.query';
-export { isEqualParams } from './lib/util';

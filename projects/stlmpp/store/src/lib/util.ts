@@ -1,14 +1,19 @@
-import { isArray, isNumber, isObject, isObjectEmpty, IdGetterFn, isString } from 'st-utils';
+import { getFirstKey, IdGetterFn, isArray, isNumber, isObject, isObjectEmpty, isString } from 'st-utils';
 import { environment } from './environment';
 import { copy } from 'copy-anything';
-import { MonoTypeOperatorFunction } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
 import { EntityIdType } from './type';
 
+/**
+ * @description Transform an array of objects with an id, to an object of entities,
+ * <br> and returns the object and an {@link Set} of ids
+ * @param {T[]} entities
+ * @param {IdGetterFn<T>} idGetter
+ * @returns {[Record<string, T>, Set<EntityIdType>]}
+ */
 export function toEntities<T extends Record<any, any>>(
   entities: T[],
   idGetter: IdGetterFn<T>
-): [{ [id: string]: T }, Set<EntityIdType>] {
+): [Record<string, T>, Set<EntityIdType>] {
   return entities.reduce(
     (acc, item) => {
       const key = idGetter(item);
@@ -20,6 +25,11 @@ export function toEntities<T extends Record<any, any>>(
   );
 }
 
+/**
+ * @description Deep copy and deep freeze an object in development mode
+ * @param {T} value
+ * @returns {T}
+ */
 export function devCopy<T>(value: T): T {
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
     if (environment.isDev) {
@@ -34,6 +44,11 @@ export function devCopy<T>(value: T): T {
   return value;
 }
 
+/**
+ * @description Deep freeze an object
+ * @param {T} object
+ * @returns {T}
+ */
 export function deepFreeze<T>(object: T): T {
   if (!object || !isObject(object)) {
     return object;
@@ -55,8 +70,14 @@ export function deepFreeze<T>(object: T): T {
   return object;
 }
 
+/**
+ * @description tries to predict if the id is a number or string
+ * @param {Record<string, T>} object
+ * @param {IdGetterFn<T>} idGetter
+ * @returns {(key: EntityIdType) => EntityIdType}
+ */
 export function predictIdType<T extends Record<any, any>>(
-  object: { [id: string]: T },
+  object: Record<string, T>,
   idGetter: IdGetterFn<T>
 ): (key: EntityIdType) => EntityIdType {
   if (!object || isObjectEmpty(object)) {
@@ -68,33 +89,11 @@ export function predictIdType<T extends Record<any, any>>(
   return isNumber(idGetter(firstItem)) ? Number : key => key;
 }
 
-export function getFirstKey<T extends Record<any, any>>(object: T): keyof T | undefined {
-  for (const key in object) {
-    if (object.hasOwnProperty(key)) {
-      return key;
-    }
-  }
-  return undefined;
-}
-
-export function distinctUntilManyChanged<T = any>(): MonoTypeOperatorFunction<T[]> {
-  return distinctUntilChanged<T[]>((manyA: T[], manyB: T[]) => {
-    if (manyA === manyB) {
-      return true;
-    }
-    if ((!manyA && manyB) || (manyA && !manyB) || manyA.length !== manyB.length) {
-      return false;
-    }
-    let index = manyA.length;
-    while (index--) {
-      if (manyA[index] !== manyB[index]) {
-        return false;
-      }
-    }
-    return true;
-  });
-}
-
+/**
+ * @description check if a value is {@link EntityIdType}
+ * @param value
+ * @returns {value is EntityIdType}
+ */
 export function isEntityId(value: any): value is EntityIdType {
   return isNumber(value) || isString(value);
 }

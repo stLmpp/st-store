@@ -1,3 +1,6 @@
+/**
+ * @description internal class to control deep copy and deep freeze
+ */
 export class Environment {
   get isDev(): boolean {
     return this._isDev;

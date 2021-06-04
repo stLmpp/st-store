@@ -27,6 +27,10 @@ export {
   StateComponentConfig,
   StateComponentConfigInput,
   QueryOptions,
+  SimpleChangeCustom,
+  SimpleChangesCustom,
+  EntityFn,
+  EntityType,
 } from './lib/type';
 export { StMap, StMapView } from './lib/map';
 export { EntityStore } from './lib/entity/entity-store';

@@ -52,7 +52,7 @@ describe('between validator directive', () => {
     input = fixture.debugElement.query(By.css('input'));
   });
 
-  it('should validate if value is between (tupple)', () => {
+  it('should validate if value is between (tuple)', () => {
     expect(component.modelDirective.isValid).toBeTrue();
     triggerEvent(input, 'input', 12);
     triggerEvent(input, 'blur');

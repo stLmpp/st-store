@@ -80,7 +80,7 @@ export { ModelDirective, ModelOptions } from './lib/model/model.directive';
 export {
   ControlBuilder,
   ControlBuilderGroupItem,
-  ControlBuilderTupple,
+  ControlBuilderTuple,
   ControlBuilderGroup,
 } from './lib/control-builder';
 

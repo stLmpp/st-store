@@ -1,7 +1,17 @@
-import { entityInitialState, SimpleEntityQuery, SimpleEntityStore, simpleInitialState, wait } from '../util-test';
+import {
+  entityInitialState,
+  IdName,
+  IdNameEntity,
+  SimpleEntityQuery,
+  SimpleEntityStore,
+  simpleInitialState,
+  wait,
+} from '../util-test';
 import { TestBed } from '@angular/core/testing';
 import { map, take } from 'rxjs/operators';
-import { isEqualEntity } from './entity-query';
+import { EntityStore } from './entity-store';
+import { EntityState } from '../type';
+import { EntityQuery } from './entity-query';
 
 describe('Entity Query', () => {
   let query: SimpleEntityQuery;
@@ -41,9 +51,9 @@ describe('Entity Query', () => {
     const subscriber1 = jasmine.createSpy('subscriber1');
     query.selectEntity(1).subscribe(subscriber1);
     store.add({ id: 2, name: '2' });
-    expect(subscriber1).toHaveBeenCalledTimes(1);
-    store.updateEntity(1, { name: '1' });
     expect(subscriber1).toHaveBeenCalledTimes(2);
+    store.updateEntity(1, { name: '1' });
+    expect(subscriber1).toHaveBeenCalledTimes(3);
     expect(subscriber1).toHaveBeenCalledWith({ id: 1, name: '1' });
     const subscriberName1 = jasmine.createSpy('subscriberName1');
     query.selectEntity(1, 'name').subscribe(subscriberName1);
@@ -52,7 +62,7 @@ describe('Entity Query', () => {
     query.selectEntity(1, 'name').subscribe(subscriber2);
     store.updateEntity(1, { other: '1' });
     expect(subscriber2).toHaveBeenCalledTimes(1);
-    expect(subscriber1).toHaveBeenCalledTimes(3);
+    expect(subscriber1).toHaveBeenCalledTimes(4);
     expect(subscriber1).toHaveBeenCalledWith({ id: 1, name: '1', other: '1' });
   });
 
@@ -122,23 +132,6 @@ describe('Entity Query', () => {
     ]);
   });
 
-  it('should not emit if equal entity', () => {
-    const subscriber = jasmine.createSpy('subscriber');
-    query.selectEntity(1).subscribe(subscriber);
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.add({ id: 5, name: '5' });
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.updateEntity(5, { other: '2' });
-    expect(subscriber).toHaveBeenCalledTimes(1);
-    store.upsert([
-      { id: 1, other: '2' },
-      { id: 5, other: '67' },
-    ]);
-    expect(subscriber).toHaveBeenCalledTimes(2);
-    store.remove(1);
-    expect(subscriber).toHaveBeenCalledTimes(3);
-  });
-
   it('should not emit if equal active ids', () => {
     store.setEntities([
       { id: 1, name: '1' },
@@ -187,14 +180,6 @@ describe('Entity Query', () => {
     expect(subscriber).toHaveBeenCalledTimes(4);
     store.updateEntity(3, { other: '3' });
     expect(subscriber).toHaveBeenCalledTimes(5);
-  });
-
-  it('should define if entity is equal', () => {
-    expect(isEqualEntity({ id: 1, nome: 'Guilherme' }, { nome: 'Guilherme', id: 1 })).toBeTrue();
-    const entity = { id: 2 };
-    expect(isEqualEntity(entity, entity)).toBeTrue();
-    expect(isEqualEntity(entity, undefined)).toBeFalse();
-    expect(isEqualEntity(undefined, entity)).toBeFalse();
   });
 
   it('should return all entities', done => {
@@ -304,5 +289,26 @@ describe('Entity Query', () => {
         done();
       });
     });
+  });
+
+  it('should use a different distinct until changed function', () => {
+    const st = new EntityStore<EntityState<IdNameEntity>>({
+      name: 'should use a different distinct until changed function',
+    });
+    const qr = new EntityQuery<EntityState<IdNameEntity>>(st, {
+      distinctUntilChangedEntity: true,
+      distinctUntilChangedEntityFn: (a, b) => a?.id === b?.id,
+    });
+    st.setEntities([
+      { id: 1, name: '1' },
+      { id: 2, name: '2' },
+    ]);
+    const spy = jasmine.createSpy();
+    qr.selectEntity(1).subscribe(spy);
+    expect(spy).toHaveBeenCalledTimes(1);
+    st.updateEntity(2, { name: '3' });
+    expect(spy).toHaveBeenCalledTimes(1);
+    st.updateEntity(1, { id: 5 });
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });

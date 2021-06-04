@@ -4,7 +4,7 @@ import { groupBy, GroupedTuple } from 'st-utils';
 @Pipe({ name: 'groupBy' })
 export class GroupByPipe implements PipeTransform {
   /**
-   * @description Groups an array into a tupple {@link groupBy}
+   * @description Groups an array into a tuple {@link groupBy}
    * @param {T[]} value
    * @param {K} key
    * @returns {GroupedTuple<T, K>}
