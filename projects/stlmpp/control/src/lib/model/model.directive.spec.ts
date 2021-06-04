@@ -8,7 +8,7 @@ import { ControlUpdateOn } from '../control-update-on';
 
 @Component({
   template: `
-    <input class="input1" [(model)]="model" required #input1="model" />
+    <input class="input1" [(model)]="model" required #input1="model" [modelMetadata]="metadata" />
     <input class="input2" [(model)]="model" #input2="model" />
     <input class="input3" [(model)]="model" #input3="model" [modelUpdateOn]="updateOn" />
   `,
@@ -19,6 +19,7 @@ class ModelComponent {
   @ViewChild('input3') input3Directive!: ModelDirective;
   model = 'teste';
   updateOn: ControlUpdateOn = 'blur';
+  metadata = 'metadata';
 }
 
 describe('StModel Directive', () => {
@@ -78,5 +79,12 @@ describe('StModel Directive', () => {
     triggerEvent(input3, 'input', 'teste3');
     fixture.detectChanges();
     expect(component.model).toBe('teste3');
+  });
+
+  it('should store metadata', () => {
+    expect(component.input1Directive.control.metadata).toBe(component.metadata);
+    component.metadata = 'teste';
+    fixture.detectChanges();
+    expect(component.input1Directive.control.metadata).toBe('teste');
   });
 });
