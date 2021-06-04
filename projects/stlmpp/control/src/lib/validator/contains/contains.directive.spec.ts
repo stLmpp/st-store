@@ -11,14 +11,6 @@ class ModelComponent {
   contains = 'a';
 }
 
-@Component({ template: '<input [(model)]="model" [contains]="contains" [containsCompareWith]="compareWith">' })
-class ModelArrayComponent {
-  @ViewChild(ModelDirective) modelDirective!: ModelDirective;
-  model = [{ id: 1 }, { id: 2 }, { id: 3 }];
-  contains = 1;
-  compareWith = Object.is;
-}
-
 describe('contains validator directive', () => {
   let fixture: ComponentFixture<ModelComponent>;
   let component: ModelComponent;
@@ -27,7 +19,7 @@ describe('contains validator directive', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [ModelComponent, ModelArrayComponent],
+      declarations: [ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ModelComponent);
     component = fixture.componentInstance;
@@ -46,14 +38,5 @@ describe('contains validator directive', () => {
     component.contains = 'e';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
-  });
-
-  it('should rerun validator if @Input() compareWith changes', () => {
-    const fix = TestBed.createComponent(ModelArrayComponent);
-    fix.detectChanges();
-    expect(fix.componentInstance.modelDirective.isValid).toBeFalse();
-    fix.componentInstance.compareWith = (valueA, valueB) => valueA.id === valueB;
-    fix.detectChanges();
-    expect(fix.componentInstance.modelDirective.isValid).toBeTrue();
   });
 });
