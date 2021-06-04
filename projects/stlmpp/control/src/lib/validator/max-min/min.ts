@@ -3,14 +3,14 @@ import { getTypeAndValue, MaxMinValidationError, MaxMinType } from './max';
 import { isNil, isString } from 'st-utils';
 import { isBefore, parseISO } from 'date-fns';
 import { Control } from '../../control/control';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 @Directive()
-export abstract class AbstractMinValidator<T extends Nullable<Date | number>> extends ControlValidator<
-  T,
-  MaxMinValidationError<T>
-> {
+export abstract class AbstractMinValidator<T extends Nullable<Date | number>>
+  extends ControlValidator<T, MaxMinValidationError<T>>
+  implements OnChanges
+{
   @HostBinding('attr.min')
   get minAttr(): string {
     return '' + this.attrs.min;
@@ -28,7 +28,7 @@ export abstract class AbstractMinValidator<T extends Nullable<Date | number>> ex
 
   attrs: ControlValidatorAttributes = {};
 
-  name = 'min';
+  readonly name = 'min';
 
   validate({ value }: Control<T>): MaxMinValidationError<T> | null {
     if (isNil(value)) {
@@ -42,6 +42,13 @@ export abstract class AbstractMinValidator<T extends Nullable<Date | number>> ex
         const newValue = isString(value) ? parseISO(value) : (value as Date);
         return isBefore(newValue, this._min) ? ({ actual: newValue, required: this._min } as any) : null;
       }
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const minChange = changes.min;
+    if (minChange && !minChange.isFirstChange()) {
+      this.validationChange$.next();
     }
   }
 }

@@ -43,8 +43,6 @@ describe('white space validator directive', () => {
   it('should not validate if input is set to false', () => {
     component.whiteSpace = false;
     fixture.detectChanges();
-    component.modelDirective.control.runValidators();
-    fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });
 

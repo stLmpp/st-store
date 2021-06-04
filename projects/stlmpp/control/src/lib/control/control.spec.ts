@@ -408,11 +408,6 @@ describe('control', () => {
     expect(sub).toHaveBeenCalledWith('11');
   });
 
-  it('should set async initial validator', () => {
-    const control = new Control('', [new AsyncValidator()]);
-    expect(control.validationCancel.asyncValidator).toBeDefined();
-  });
-
   it('should get all errors', () => {
     component.control.setValidators([Validators.email, Validators.minLength(3)]);
     fixture.detectChanges();

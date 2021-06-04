@@ -3,7 +3,7 @@ import { isArray, isNil, isString } from 'st-utils';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 
 export class AbstractRequiredValidator<T = any> extends ControlValidator<T, boolean> {
-  name = 'required';
+  readonly name = 'required';
 
   attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
 

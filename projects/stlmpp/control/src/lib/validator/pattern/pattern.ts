@@ -1,7 +1,7 @@
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
 import { isRegExp } from 'st-utils';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 export interface PatternValidationError {
@@ -10,7 +10,10 @@ export interface PatternValidationError {
 }
 
 @Directive()
-export abstract class AbstractPatternValidator extends ControlValidator<Nullable<string>, PatternValidationError> {
+export abstract class AbstractPatternValidator
+  extends ControlValidator<Nullable<string>, PatternValidationError>
+  implements OnChanges
+{
   @HostBinding('attr.pattern')
   get patternAttr(): string {
     return this.attrs.pattern ? '' + this.attrs.pattern : '';
@@ -29,14 +32,22 @@ export abstract class AbstractPatternValidator extends ControlValidator<Nullable
 
   protected regExp!: RegExp;
 
+  abstract readonly name: string;
+
   attrs: ControlValidatorAttributes = {};
-  name = 'pattern';
 
   validate({ value }: Control<Nullable<string>>): PatternValidationError | null {
     if (!value) {
       return null;
     }
     return !this.regExp.test(value) ? { actual: value, expected: this.regExp.source } : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const patternChange = changes.pattern;
+    if (patternChange && !patternChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 }
 
@@ -45,4 +56,6 @@ export class PatternValidator extends AbstractPatternValidator {
     super();
     this.pattern = pattern;
   }
+
+  readonly name = 'pattern';
 }

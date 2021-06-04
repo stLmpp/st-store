@@ -1,5 +1,5 @@
 import { AbstractRequiredTrueValidator } from './required-true';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
@@ -9,7 +9,7 @@ import { Nullable } from '../../util';
   selector: '[model][requiredTrue]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: RequiredTrueValidatorDirective, multi: true }],
 })
-export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidator {
+export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidator implements OnChanges {
   private _requiredTrue = false;
 
   @HostBinding('attr.required')
@@ -36,6 +36,13 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
       return null;
     }
     return super.validate(control);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const requiredTrueChange = changes.requiredTrue;
+    if (requiredTrueChange && !requiredTrueChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 
   static ngAcceptInputType_requiredTrue: BooleanInput;

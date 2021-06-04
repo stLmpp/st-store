@@ -1,5 +1,5 @@
 import { AbstractUrlValidator } from './url';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { PatternValidationError } from './pattern';
@@ -10,7 +10,7 @@ import { Nullable } from '../../util';
   selector: '[model][url]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: UrlValidatorDirective, multi: true }],
 })
-export class UrlValidatorDirective extends AbstractUrlValidator {
+export class UrlValidatorDirective extends AbstractUrlValidator implements OnChanges {
   private _url = true;
 
   @HostBinding('attr.pattern')
@@ -33,6 +33,14 @@ export class UrlValidatorDirective extends AbstractUrlValidator {
       return null;
     }
     return super.validate(control);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const urlChange = changes.url;
+    if (urlChange && !urlChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
+    super.ngOnChanges(changes);
   }
 
   static ngAcceptInputType_url: BooleanInput;

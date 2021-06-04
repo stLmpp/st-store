@@ -10,7 +10,7 @@ import { ControlUpdateOn } from '../control-update-on';
   template: `
     <input class="input1" [(model)]="model" required #input1="model" />
     <input class="input2" [(model)]="model" #input2="model" />
-    <input class="input3" [(model)]="model" #input3="model" [updateOn]="updateOn" />
+    <input class="input3" [(model)]="model" #input3="model" [modelUpdateOn]="updateOn" />
   `,
 })
 class ModelComponent {

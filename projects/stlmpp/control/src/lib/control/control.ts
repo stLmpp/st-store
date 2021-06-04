@@ -20,6 +20,12 @@ export interface ControlUpdateOptions {
   emitInternalValue$?: boolean;
 }
 
+interface ControlValidatorMap {
+  validator: ControlValidator;
+  cancelPending: Subject<void>;
+  destroy: Subject<void>;
+}
+
 function controlUpdateOptions(options?: ControlUpdateOptions): ControlUpdateOptions {
   return { emitChange: true, emitInternalValue$: true, ...options };
 }
@@ -76,7 +82,6 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
 
   private readonly _initialValue: T;
   private readonly _initialOptions: ControlOptions<T>;
-  private readonly _validatorsMap = new Map<ValidatorsKeys, ControlValidator>();
   private readonly _disabledChanged$ = new BehaviorSubject<void>(undefined);
   private readonly _stateChanged$ = new Subject<ControlState>();
   private readonly _value$: BehaviorSubject<T>;
@@ -86,6 +91,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   private readonly _submit$ = new Subject<void>();
   private readonly _errors$ = new BehaviorSubject<Partial<ValidatorsModel>>({});
   private readonly _initialFocus: boolean;
+  private readonly _validatorsMap = new Map<ValidatorsKeys, ControlValidatorMap>();
 
   private _parent: ControlGroup | undefined;
   private _dirty = false;
@@ -100,7 +106,6 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     map(errors => (Object.entries(errors) as Entries<ValidatorsModel>).map(([key, value]) => ({ key, value })))
   );
   readonly hasErrors$ = this.errors$.pipe(map(errors => !isObjectEmpty(errors)));
-  readonly validationCancel: Record<ValidatorsKeys, Subject<void>> = {};
   readonly disabledChanged$ = this._disabledChanged$.asObservable();
   readonly stateChanged$ = this._stateChanged$.asObservable();
   readonly value$: Observable<T>;
@@ -187,16 +192,15 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   private _setInitialValidators(validators: ControlValidator[] = []): this {
     this._validatorsMap.clear();
     for (const validator of validators) {
-      if (validator.async) {
-        this.validationCancel[validator.name] = new Subject<void>();
-      }
-      this._validatorsMap.set(validator.name, validator);
+      const validatorMap: ControlValidatorMap = { validator, destroy: new Subject(), cancelPending: new Subject() };
+      this._validatorsMap.set(validator.name, validatorMap);
+      this._listenToValidatorChanges(validatorMap);
     }
     return this;
   }
 
   private _sendClasses(): this {
-    const classes = [...this._validatorsMap.values()].reduce((acc: string[], validator) => {
+    const classes = [...this._validatorsMap.values()].reduce((acc: string[], { validator }) => {
       if (isString(validator.classes)) {
         acc.push(validator.classes);
       } else if (isArray(validator.classes)) {
@@ -209,7 +213,10 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   }
 
   private _sendAttributes(): this {
-    const attrs = [...this._validatorsMap.values()].reduce((acc, validator) => ({ ...acc, ...validator.attrs }), {});
+    const attrs = [...this._validatorsMap.values()].reduce(
+      (acc, { validator }) => ({ ...acc, ...validator.attrs }),
+      {}
+    );
     this._attributesChanged$.next(attrs);
     return this;
   }
@@ -244,16 +251,44 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     return this;
   }
 
-  private _cancelPendingValidation(name: ValidatorsKeys): this {
-    this.validationCancel[name].next();
+  private _cancelPendingValidation(validator: ControlValidatorMap): this {
+    validator.cancelPending.next();
     return this._removePending();
   }
 
-  private _getValidationError(validator: ControlValidator): Observable<any> | any | undefined {
-    if (validator.async) {
-      this._cancelPendingValidation(validator.name);
+  private _getValidationError(validator: ControlValidatorMap): Observable<any> | any | undefined {
+    if (validator.validator.async) {
+      this._cancelPendingValidation(validator);
     }
-    return validator.validate(this);
+    return validator.validator.validate(this);
+  }
+
+  private _removeValidator(nameOrValidator: ValidatorsKeys | ControlValidator, sendAttrAndClasses = true): this {
+    const name = resolveValidatorName(nameOrValidator);
+    const validator = this._validatorsMap.get(name);
+    if (validator) {
+      if (this.pending) {
+        this._cancelPendingValidation(validator);
+      }
+      validator.cancelPending.complete();
+      validator.destroy.next();
+      validator.destroy.complete();
+      if (this.hasError(name)) {
+        this.removeError(name);
+      }
+      this._validatorsMap.delete(name);
+      if (sendAttrAndClasses) {
+        this._sendAttributesAndClasses();
+      }
+    }
+    return this;
+  }
+
+  private _listenToValidatorChanges(validator: ControlValidatorMap): this {
+    validator.validator.validationChange$.pipe(takeUntil(validator.destroy)).subscribe(() => {
+      this.runValidator(validator.validator);
+    });
+    return this;
   }
 
   /** @internal */
@@ -301,10 +336,9 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
     if (this._validatorsMap.has(validator.name)) {
       return this;
     }
-    this._validatorsMap.set(validator.name, validator);
-    if (validator.async) {
-      this.validationCancel[validator.name] = new Subject<void>();
-    }
+    const validatorMap: ControlValidatorMap = { validator, cancelPending: new Subject(), destroy: new Subject() };
+    this._validatorsMap.set(validator.name, validatorMap);
+    this._listenToValidatorChanges(validatorMap);
     return this._sendAttributesAndClasses().runValidator(validator.name);
   }
 
@@ -317,10 +351,13 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       return this;
     }
     for (const validator of validators) {
-      this._validatorsMap.set(validator.name, validator);
-      if (validator.async) {
-        this.validationCancel[validator.name] = new Subject<void>();
-      }
+      const validatorMap: ControlValidatorMap = {
+        validator,
+        cancelPending: new Subject<void>(),
+        destroy: new Subject(),
+      };
+      this._validatorsMap.set(validator.name, validatorMap);
+      this._listenToValidatorChanges(validatorMap);
     }
     return this._sendAttributesAndClasses().runValidators(validators.map(validator => validator.name));
   }
@@ -331,33 +368,16 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   }
 
   removeValidator(nameOrValidator: ValidatorsKeys | ControlValidator): this {
-    const name = resolveValidatorName(nameOrValidator);
-    if (this._validatorsMap.has(name)) {
-      if (this.pending) {
-        this._cancelPendingValidation(name);
-      }
-      if (this.hasError(name)) {
-        this.removeError(name);
-      }
-      this._validatorsMap.delete(name);
-      this._sendAttributesAndClasses();
-    }
-    return this;
+    return this._removeValidator(nameOrValidator);
   }
 
-  removeValidators(names: ValidatorsKeys[]): this {
-    names = names.filter(name => this._validatorsMap.has(name));
+  removeValidators(namesOrValidators: Array<ValidatorsKeys | ControlValidator>): this {
+    const names = namesOrValidators.map(resolveValidatorName).filter(name => this._validatorsMap.has(name));
     if (!names.length) {
       return this;
     }
     for (const name of names) {
-      if (this.pending) {
-        this._cancelPendingValidation(name);
-      }
-      if (this.hasError(name)) {
-        this.removeError(name);
-      }
-      this._validatorsMap.delete(name);
+      this._removeValidator(name, false);
     }
     return this._sendAttributesAndClasses();
   }
@@ -390,7 +410,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
   runValidator(nameOrValidator: ValidatorsKeys | ControlValidator): this {
     const name = resolveValidatorName(nameOrValidator);
     const validator = this._validatorsMap.get(name);
-    if (!validator) {
+    if (!validator?.validator) {
       return this;
     }
     const validationError = this._getValidationError(validator);
@@ -399,7 +419,7 @@ export class Control<T = any, M = any> implements AbstractControl<T, M> {
       validationError
         .pipe(
           take(1),
-          takeUntil(this.validationCancel[name]),
+          takeUntil(validator.cancelPending),
           catchError(() => {
             this._removePending();
             return of(null);

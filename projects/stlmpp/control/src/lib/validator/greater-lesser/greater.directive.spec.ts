@@ -4,10 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input type="number" [(model)]="model" [greater]="4">' })
+@Component({ template: '<input type="number" [(model)]="model" [greater]="greater">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 5;
+  greater = 4;
 }
 
 describe('greater validator directive', () => {
@@ -29,6 +30,12 @@ describe('greater validator directive', () => {
   it('should validate if value is greater', () => {
     expect(component.modelDirective.isValid).toBeTrue();
     component.model = 2;
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeFalse();
+  });
+
+  it('should rerun validator when @Input() greater changes', () => {
+    component.greater = 5;
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeFalse();
   });

@@ -1,5 +1,5 @@
 import { AbstractRequiredValidator } from './required';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
@@ -8,7 +8,7 @@ import { ControlValidator } from '../validator';
   selector: '[model][required]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: RequiredValidatorDirective, multi: true }],
 })
-export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidator<T> {
+export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidator<T> implements OnChanges {
   private _required = false;
 
   @HostBinding('attr.required')
@@ -35,6 +35,13 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
       return null;
     }
     return super.validate(control);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const requiredChange = changes.required;
+    if (requiredChange && !requiredChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 
   static ngAcceptInputType_required: BooleanInput;

@@ -11,7 +11,7 @@ export class SibblingEqualsValidator<T = any> extends ControlValidator<T, Sibbli
     super();
   }
 
-  name = 'sibblingEquals';
+  readonly name = 'sibblingEquals';
 
   validate(control: Control<T>): SibblingEqualsValidationError | null {
     const parent = control.parent;

@@ -18,7 +18,8 @@ import { ControlGroup } from './control-group/control-group';
 @Directive()
 export abstract class ControlParent<T = any>
   extends AbstractControlDirective
-  implements OnDestroy, OnChanges, AfterContentInit {
+  implements OnDestroy, OnChanges, AfterContentInit
+{
   private readonly _destroy$ = new Subject<void>();
 
   @ContentChildren(ControlChild, { descendants: true }) readonly allControlChilds!: QueryList<ControlChild>;

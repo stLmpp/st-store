@@ -26,7 +26,7 @@ import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
 
 @Directive()
-export abstract class BaseControlDirective<T = any>
+export abstract class BaseControlDirective<T = any, M = any>
   extends AbstractControlDirective
   implements OnDestroy, OnChanges, AfterViewInit
 {
@@ -52,7 +52,7 @@ export abstract class BaseControlDirective<T = any>
   private readonly _controlValues: ControlValue<T>[];
   protected readonly _destroy$ = new Subject<void>();
 
-  control!: Control<T>;
+  control!: Control<T, M>;
 
   protected init(): void {
     this._destroy$.next();
@@ -176,6 +176,6 @@ export abstract class BaseControlDirective<T = any>
 }
 
 @Directive({ selector: '[control]', providers: [{ provide: AbstractControlDirective, useExisting: ControlDirective }] })
-export class ControlDirective<T = any> extends BaseControlDirective<T> {
+export class ControlDirective<T = any, M = any> extends BaseControlDirective<T, M> {
   @Input() control!: Control<T>;
 }

@@ -2,7 +2,7 @@ import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
 import { isDate, isNil } from 'st-utils';
 import { isAfter, isEqual } from 'date-fns';
-import { Directive, Input } from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 export interface LesserValidationError<T extends Nullable<Date | number>> {
@@ -11,13 +11,13 @@ export interface LesserValidationError<T extends Nullable<Date | number>> {
 }
 
 @Directive()
-export abstract class AbstractLesserValidator<T extends Nullable<Date | number>> extends ControlValidator<
-  T,
-  LesserValidationError<T>
-> {
+export abstract class AbstractLesserValidator<T extends Nullable<Date | number>>
+  extends ControlValidator<T, LesserValidationError<T>>
+  implements OnChanges
+{
   @Input() lesser!: NonNullable<T>;
 
-  name = 'lesser';
+  readonly name = 'lesser';
 
   validate(control: Control<T>): LesserValidationError<T> | null {
     const { value } = control;
@@ -30,6 +30,13 @@ export abstract class AbstractLesserValidator<T extends Nullable<Date | number>>
         : null;
     } else {
       return value >= this.lesser ? { expectedLesserThan: this.lesser, actual: value } : null;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const lesserChange = changes.lesser;
+    if (lesserChange && !lesserChange.isFirstChange()) {
+      this.validationChange$.next();
     }
   }
 }

@@ -17,9 +17,10 @@ import { AbstractControlDirective } from '../abstract-control';
     { provide: AbstractControlDirective, useExisting: ControlArrayNameDirective },
   ],
 })
-export class ControlArrayNameDirective<T = any>
+export class ControlArrayNameDirective<T = any, M = any>
   extends ControlParent
-  implements OnInit, OnDestroy, Iterable<ControlType<T>> {
+  implements OnInit, OnDestroy, Iterable<ControlType<T>>
+{
   constructor(@Optional() @Host() @SkipSelf() private controlParent?: ControlParent) {
     super();
   }
@@ -27,7 +28,7 @@ export class ControlArrayNameDirective<T = any>
   private _controlArrayName!: string | number;
   private _initialized = false;
 
-  protected control!: ControlArray<T>;
+  protected control!: ControlArray<T, M>;
 
   @Input()
   set controlArrayName(controlArrayName: string) {

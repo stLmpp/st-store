@@ -2,7 +2,7 @@ import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
 import { isDate, isNil, isString } from 'st-utils';
 import { format, isAfter, parseISO } from 'date-fns';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 export type MaxMinType = 'date' | 'number';
@@ -22,10 +22,10 @@ export function getTypeAndValue(maxMin: string | Date | number): [MaxMinType, Da
 }
 
 @Directive()
-export abstract class AbstractMaxValidator<T extends Nullable<Date | number>> extends ControlValidator<
-  T,
-  MaxMinValidationError<T>
-> {
+export abstract class AbstractMaxValidator<T extends Nullable<Date | number>>
+  extends ControlValidator<T, MaxMinValidationError<T>>
+  implements OnChanges
+{
   @HostBinding('attr.max')
   get maxAttr(): string {
     return '' + this.attrs.max;
@@ -43,7 +43,7 @@ export abstract class AbstractMaxValidator<T extends Nullable<Date | number>> ex
 
   attrs: ControlValidatorAttributes = {};
 
-  name = 'max';
+  readonly name = 'max';
 
   validate({ value }: Control<T>): MaxMinValidationError<T> | null {
     if (isNil(value)) {
@@ -57,6 +57,13 @@ export abstract class AbstractMaxValidator<T extends Nullable<Date | number>> ex
         const newValue = isString(value) ? parseISO(value) : (value as Date);
         return isAfter(newValue, this._max) ? ({ actual: newValue, required: this._max } as any) : null;
       }
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const maxChange = changes.max;
+    if (maxChange && !maxChange.isFirstChange()) {
+      this.validationChange$.next();
     }
   }
 }

@@ -1,14 +1,14 @@
 import { Control } from '../../control/control';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { LengthValidationError } from './max-length';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 @Directive()
-export abstract class AbstractMinLengthValidator<T extends Nullable<string | any[]> = any> extends ControlValidator<
-  T,
-  LengthValidationError
-> {
+export abstract class AbstractMinLengthValidator<T extends Nullable<string | any[]> = any>
+  extends ControlValidator<T, LengthValidationError>
+  implements OnChanges
+{
   @HostBinding('attr.minlength')
   get minlengthAttr(): number {
     return this._minLength;
@@ -21,7 +21,7 @@ export abstract class AbstractMinLengthValidator<T extends Nullable<string | any
   }
   private _minLength!: number;
 
-  name = 'minLength';
+  readonly name = 'minLength';
 
   attrs: ControlValidatorAttributes = {};
 
@@ -31,6 +31,13 @@ export abstract class AbstractMinLengthValidator<T extends Nullable<string | any
     }
     const length = value.length;
     return length < this._minLength ? { actual: length, required: this._minLength } : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const minLengthChange = changes.minLength;
+    if (minLengthChange && !minLengthChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 }
 
