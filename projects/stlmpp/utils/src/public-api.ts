@@ -21,6 +21,5 @@ export { MaxPipe } from './lib/number/max.pipe';
 export { MinPipe } from './lib/number/min.pipe';
 
 // Object
-export { GetDeepPipe, getDeep } from './lib/object/get-deep';
 export { GetPipe } from './lib/object/get.pipe';
 export { StUtilsObjectModule } from './lib/object/object.module';

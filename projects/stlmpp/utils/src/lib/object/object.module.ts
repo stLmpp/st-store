@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { GetPipe } from './get.pipe';
-import { GetDeepPipe } from './get-deep';
 
-const DECLARATIONS = [GetPipe, GetDeepPipe];
+const DECLARATIONS = [GetPipe];
 
 @NgModule({
   declarations: [...DECLARATIONS],

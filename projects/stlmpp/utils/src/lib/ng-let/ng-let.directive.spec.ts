@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgLetModule } from './ng-let.module';
-import { NgLetDirective } from '../../public_api';
 import { By } from '@angular/platform-browser';
+import { NgLetDirective } from './ng-let.directive';
 
 @Component({
   template: `

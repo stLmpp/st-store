@@ -28,7 +28,12 @@
     "test-control": "ng test @stlmpp/control --no-watch --code-coverage",
     "test-all": "yarn test-store && yarn test-utils && yarn test-router && yarn test-control",
     "combine-coverage": "node combine-coverage.js",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "docs-utils": "typedoc projects/stlmpp/utils/src/public-api.ts --out projects/stlmpp/utils/docs --tsconfig projects/stlmpp/utils/tsconfig.lib.json",
+    "docs-store": "typedoc projects/stlmpp/store/src/public-api.ts --out projects/stlmpp/store/docs --tsconfig projects/stlmpp/store/tsconfig.lib.json",
+    "docs-router": "typedoc projects/stlmpp/router/src/public-api.ts --out projects/stlmpp/router/docs --tsconfig projects/stlmpp/router/tsconfig.lib.json",
+    "docs-control": "typedoc projects/stlmpp/control/src/public-api.ts --out projects/stlmpp/control/docs --tsconfig projects/stlmpp/control/tsconfig.lib.json",
+    "docs-all": "yarn docs-utils && yarn docs-store && yarn docs-router && yarn docs-control"
   },
   "private": true,
   "dependencies": {
