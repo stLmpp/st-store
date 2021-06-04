@@ -11,7 +11,7 @@ class ModelComponent {
   contains = 'a';
 }
 
-@Component({ template: '<input [(model)]="model" [contains]="contains" [compareWith]="compareWith">' })
+@Component({ template: '<input [(model)]="model" [contains]="contains" [containsCompareWith]="compareWith">' })
 class ModelArrayComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = [{ id: 1 }, { id: 2 }, { id: 3 }];

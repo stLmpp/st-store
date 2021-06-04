@@ -8,6 +8,6 @@ export abstract class ControlValidator<T = any, E = any> {
   readonly validationChange$ = new Subject<void>();
   attrs?: ControlValidatorAttributes;
   classes?: string | ReadonlyArray<string>;
-  async?: boolean;
+  readonly async: boolean = false;
   abstract validate(control: Control<T>): E | Observable<E | null> | null;
 }

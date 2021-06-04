@@ -20,7 +20,7 @@ export class ComposeValidator extends ControlValidator<any, Record<string, any>>
 
   attrs: Record<string, string | number | boolean | undefined> = {};
   classes: string[] = [];
-  name = 'compose';
+  readonly name = 'compose';
 
   validate(control: Control): Record<string, any> | null {
     const errors = this._validators.reduce((acc, validator) => {

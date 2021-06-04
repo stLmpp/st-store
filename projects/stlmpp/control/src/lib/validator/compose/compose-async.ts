@@ -23,10 +23,10 @@ export class ComposeAsyncValidator extends ControlValidator<any, Record<string, 
   }
   private readonly _validators: ControlValidator[];
 
-  async = true;
   attrs: Record<string, string | number | boolean | undefined> = {};
   classes: string[] = [];
-  name = 'composeAsync';
+  readonly name = 'composeAsync';
+  readonly async = true;
 
   validate(control: Control): Observable<Record<string, any> | null> {
     const errors$: Observable<any>[] = this._validators.map(validator =>

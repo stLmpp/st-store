@@ -13,7 +13,7 @@ export abstract class AbstractContainsValidators<
   implements OnChanges
 {
   @Input() contains!: string | NonNullable<U>;
-  @Input() compareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is;
+  @Input() containsCompareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is;
 
   readonly name = 'contains';
 
@@ -22,7 +22,7 @@ export abstract class AbstractContainsValidators<
       return null;
     }
     if (isArray(value)) {
-      return !value.some(v => this.compareWith(v, this.contains as any)) || null;
+      return !value.some(v => this.containsCompareWith(v, this.contains as any)) || null;
     } else {
       return !value.includes(this.contains as any) || null;
     }
@@ -42,7 +42,7 @@ export class ContainsValidator<
 > extends AbstractContainsValidators<T, U> {
   constructor(
     public contains: NonNullable<U>,
-    public compareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is
+    public containsCompareWith: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean = Object.is
   ) {
     super();
   }
