@@ -1,6 +1,12 @@
 import { Params } from '@angular/router';
 import { isNil } from 'st-utils';
 
+/**
+ * @description Compare two sets of params and returns if they are equal (somewhat like a shallow object equality)
+ * @param {Params} paramsA
+ * @param {Params} paramsB
+ * @returns {boolean}
+ */
 export function isEqualParams(paramsA: Params, paramsB: Params): boolean {
   if (isNil(paramsA) || isNil(paramsB)) {
     return false;
