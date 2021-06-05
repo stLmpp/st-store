@@ -57,7 +57,7 @@ export { RequiredTrueValidator } from './lib/validator/required/required-true';
 export { SibblingEqualsValidationError, SibblingEqualsValidator } from './lib/validator/other/sibbling-equals';
 export { UrlValidator } from './lib/validator/pattern/url';
 export { ControlValidator, ControlValidatorAttributes } from './lib/validator/validator';
-export { Validators, ValidatorsModel } from './lib/validator/validators';
+export { Validators, ValidatorsModel, ValidatorsKeys } from './lib/validator/validators';
 export { WhiteSpaceValidator } from './lib/validator/white-space/white-space';
 
 export { BetweenValidatorDirective } from './lib/validator/between/between.directive';
