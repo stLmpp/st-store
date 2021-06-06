@@ -3,7 +3,7 @@ import { asyncSpawn, errorSymbol, getArg, getSpinner, successSymbol } from './ut
 const spinner = getSpinner();
 
 const args = {
-  all: getArg<boolean>(['all', 'a']),
+  all: getArg<boolean>(['all', 'a']) ?? true,
   control: getArg<boolean>(['control', 'c']),
   router: getArg<boolean>(['router', 'r']),
   store: getArg<boolean>(['store', 's']),
@@ -20,6 +20,8 @@ async function publish(packageName: string): Promise<void> {
     console.error(err);
   }
 }
+
+// TODO figure out the login
 
 async function main(): Promise<void> {
   const { all, control, router, store, utils } = args;
