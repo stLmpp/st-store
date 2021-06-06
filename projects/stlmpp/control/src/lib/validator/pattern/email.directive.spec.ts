@@ -42,4 +42,10 @@ describe('email validator directive', () => {
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });
+
+  it('should rerun the validator when the @Input() email changes', () => {
+    component.email = false;
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
 });

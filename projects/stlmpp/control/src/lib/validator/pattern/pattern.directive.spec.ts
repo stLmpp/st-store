@@ -4,10 +4,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input type="text" [(model)]="model" pattern="^GUI$">' })
+@Component({ template: '<input type="text" [(model)]="model" [pattern]="pattern">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 'teste';
+
+  pattern = '^GUI$';
 }
 
 describe('pattern validator directive', () => {
@@ -29,6 +31,12 @@ describe('pattern validator directive', () => {
   it('should validate if value is valid in the pattern', () => {
     expect(component.modelDirective.isValid).toBeFalse();
     component.model = 'GUI';
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
+
+  it('should rerun the validator if the pattern changes', () => {
+    component.pattern = '^teste$';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

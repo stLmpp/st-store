@@ -13,8 +13,8 @@ import { AbstractControlDirective } from '../abstract-control';
     { provide: AbstractControlDirective, useExisting: ControlGroupDirective },
   ],
 })
-export class ControlGroupDirective<T extends Record<any, any> = Record<any, any>> extends ControlParent {
-  @Input('controlGroup') control!: ControlGroup<T>;
+export class ControlGroupDirective<T extends Record<any, any> = Record<any, any>, M = any> extends ControlParent {
+  @Input('controlGroup') control!: ControlGroup<T, M>;
 
   @HostBinding('class.is-submitted')
   get submitted(): boolean {

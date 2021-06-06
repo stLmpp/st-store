@@ -4,10 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input [(model)]="model" contains="a">' })
+@Component({ template: '<input [(model)]="model" [contains]="contains">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 'teste';
+  contains = 'a';
 }
 
 describe('contains validator directive', () => {
@@ -29,6 +30,12 @@ describe('contains validator directive', () => {
   it('should validate if contains', () => {
     expect(component.modelDirective.isValid).toBeFalse();
     component.model = 'a';
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
+
+  it('should rerun validator if @Input() contains changes', () => {
+    component.contains = 'e';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

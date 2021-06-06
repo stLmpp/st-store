@@ -45,4 +45,10 @@ describe('required-true validator directive', () => {
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });
+
+  it('should rerun validator when @Input() requiredTrue changes', () => {
+    component.required = false;
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
 });

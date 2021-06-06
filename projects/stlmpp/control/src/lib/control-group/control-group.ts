@@ -1,6 +1,6 @@
 import { combineLatest, Observable } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
-import { isNil } from 'st-utils';
+import { isNotNil } from 'st-utils';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from '../control-update-on';
 import { AbstractControl, AbstractControlOptions } from '../abstract-control';
@@ -25,7 +25,7 @@ export class ControlGroup<
   RealT extends ControlGroupValueType<T> = ControlGroupValueType<T>
 > implements AbstractControl<RealT, M>
 {
-  constructor(public controls: ControlGroupType<T>, options?: ControlGroupOptions<M>) {
+  constructor(public controls: ControlGroupType<T>, private options?: ControlGroupOptions<M>) {
     this.metadata = options?.metadata;
     const values$ = this._values().map(value => value.value$);
     const keys = this._keys();
@@ -34,13 +34,7 @@ export class ControlGroup<
     );
     this.valueChanges$ = this.value$.pipe(skip(1));
     for (const control of this._values()) {
-      control.parent = this;
-      if (options?.updateOn) {
-        control.setUpdateOn(options.updateOn);
-      }
-      if (options?.disabled) {
-        control.disable(options.disabled);
-      }
+      this._registerControl(control);
     }
   }
 
@@ -75,13 +69,26 @@ export class ControlGroup<
     return Object.keys(this.controls) as (keyof T)[];
   }
 
+  private _registerControl(control: Control | ControlGroup | ControlArray): this {
+    control.parent = this;
+    if (this.options?.updateOn) {
+      control.setUpdateOn(this.options.updateOn);
+    }
+    const optionsDisabled = this.options?.disabled;
+    if (isNotNil(optionsDisabled)) {
+      control.disable(optionsDisabled);
+    }
+    return this;
+  }
+
   /** @internal */
-  setUpdateOn(updateOn?: ControlUpdateOn): void {
+  setUpdateOn(updateOn?: ControlUpdateOn): this {
     if (updateOn) {
       for (const control of this._values()) {
         control.setUpdateOn(updateOn);
       }
     }
+    return this;
   }
 
   get value(): RealT {
@@ -124,65 +131,73 @@ export class ControlGroup<
     return !this.disabled;
   }
 
-  disable(disabled = true): void {
+  disable(disabled = true): this {
     for (const control of this._values()) {
       control.disable(disabled);
     }
+    return this;
   }
 
-  enable(enable = true): void {
-    this.disable(!enable);
+  enable(enable = true): this {
+    return this.disable(!enable);
   }
 
-  setValue(value: RealT, options?: ControlUpdateOptions): void {
+  setValue(value: RealT, options?: ControlUpdateOptions): this {
     for (const [key, control] of this._entries()) {
       control.setValue((value as any)?.[key], options);
     }
+    return this;
   }
 
-  patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): void {
+  patchValue(value: PartialDeep<RealT> | RealT, options?: ControlUpdateOptions): this {
     for (const [key, control] of this._entries()) {
       const valueKey = (value as any)[key];
-      if ((isControl(control) && key in (value as object)) || !isNil(valueKey)) {
+      if ((isControl(control) && key in (value as object)) || isNotNil(valueKey)) {
         control.patchValue(valueKey, options);
       }
     }
+    return this;
   }
 
   get<K extends keyof T>(key: K): ControlGroupType<T>[K] {
     return this.controls[key];
   }
 
-  reset(): void {
+  reset(): this {
     for (const control of this._values()) {
       control.reset();
     }
     this.submitted = false;
+    return this;
   }
 
-  submit(): void {
+  submit(): this {
     for (const control of this._values()) {
       control.submit();
     }
     this.submitted = true;
+    return this;
   }
 
-  markAsDirty(dirty = true): void {
+  markAsDirty(dirty = true): this {
     for (const control of this._values()) {
       control.markAsDirty(dirty);
     }
+    return this;
   }
 
-  markAsTouched(touched = true): void {
+  markAsTouched(touched = true): this {
     for (const control of this._values()) {
       control.markAsTouched(touched);
     }
+    return this;
   }
 
-  markAsInvalid(invalid = true): void {
+  markAsInvalid(invalid = true): this {
     for (const control of this._values()) {
       control.markAsInvalid(invalid);
     }
+    return this;
   }
 }
 

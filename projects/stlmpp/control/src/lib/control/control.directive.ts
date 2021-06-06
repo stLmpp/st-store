@@ -19,14 +19,14 @@ import {
 import { AbstractControlDirective } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValueNotFound } from '../error';
-import { coerceArray, isNil } from 'st-utils';
+import { coerceArray, isNotNil } from 'st-utils';
 import { Subject } from 'rxjs';
 import { Control } from './control';
 import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
 
 @Directive()
-export abstract class BaseControlDirective<T = any>
+export abstract class BaseControlDirective<T = any, M = any>
   extends AbstractControlDirective
   implements OnDestroy, OnChanges, AfterViewInit
 {
@@ -52,7 +52,7 @@ export abstract class BaseControlDirective<T = any>
   private readonly _controlValues: ControlValue<T>[];
   protected readonly _destroy$ = new Subject<void>();
 
-  control!: Control<T>;
+  control!: Control<T, M>;
 
   protected init(): void {
     this._destroy$.next();
@@ -69,8 +69,7 @@ export abstract class BaseControlDirective<T = any>
           if (!isEmptyValue(value)) {
             this.control.markAsDirty();
           }
-          this.control.markAsTouched();
-          this.control.setValue(value, { emitInternalValue$: false });
+          this.control.markAsTouched().setValue(value, { emitInternalValue$: false });
         } else {
           valueStored = value;
           lastValueSetByControlValue = true;
@@ -141,7 +140,7 @@ export abstract class BaseControlDirective<T = any>
       }
     });
     this.control.init();
-    if (!isNil(this._disabled) && this.control.disabled !== this._disabled) {
+    if (isNotNil(this._disabled) && this.control.disabled !== this._disabled) {
       this.control.disable(this._disabled);
     }
     if (this.control.initialFocus && !this._focusAfterViewInit) {
@@ -177,6 +176,6 @@ export abstract class BaseControlDirective<T = any>
 }
 
 @Directive({ selector: '[control]', providers: [{ provide: AbstractControlDirective, useExisting: ControlDirective }] })
-export class ControlDirective<T = any> extends BaseControlDirective<T> {
+export class ControlDirective<T = any, M = any> extends BaseControlDirective<T, M> {
   @Input() control!: Control<T>;
 }

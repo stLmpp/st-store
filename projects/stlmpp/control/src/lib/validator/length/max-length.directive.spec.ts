@@ -4,10 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input type="text" [(model)]="model" [maxLength]="5">' })
+@Component({ template: '<input type="text" [(model)]="model" [maxLength]="maxLength">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 'teste';
+  maxLength = 5;
 }
 
 describe('max-length validator directive', () => {
@@ -29,6 +30,12 @@ describe('max-length validator directive', () => {
   it('should validate if value is in range', () => {
     expect(component.modelDirective.isValid).toBeTrue();
     component.model = 'testetesteteste';
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeFalse();
+  });
+
+  it('should rerun validator if @Input() maxLength changes', () => {
+    component.maxLength = 4;
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeFalse();
   });

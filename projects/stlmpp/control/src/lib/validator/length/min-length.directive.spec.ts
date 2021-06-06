@@ -4,10 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input type="text" [(model)]="model" [minLength]="5">' })
+@Component({ template: '<input type="text" [(model)]="model" [minLength]="minLength">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 'test';
+  minLength = 5;
 }
 
 describe('min-length validator directive', () => {
@@ -29,6 +30,12 @@ describe('min-length validator directive', () => {
   it('should validate if value is in range', () => {
     expect(component.modelDirective.isValid).toBeFalse();
     component.model = 'testetesteteste';
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
+
+  it('should rerun validator when @Input() minLength changes', () => {
+    component.minLength = 4;
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

@@ -1,6 +1,6 @@
 import { Control } from '../../control/control';
 import { ControlValidator, ControlValidatorAttributes } from '../validator';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Nullable } from '../../util';
 
 export interface LengthValidationError {
@@ -9,10 +9,10 @@ export interface LengthValidationError {
 }
 
 @Directive()
-export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any[]> = any> extends ControlValidator<
-  T,
-  LengthValidationError
-> {
+export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any[]> = any>
+  extends ControlValidator<T, LengthValidationError>
+  implements OnChanges
+{
   @HostBinding('attr.maxlength')
   get maxlengthAttr(): number {
     return this._maxLength;
@@ -25,7 +25,7 @@ export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any
   }
   private _maxLength!: number;
 
-  name = 'maxLength';
+  readonly name = 'maxLength';
 
   attrs: ControlValidatorAttributes = {};
 
@@ -35,6 +35,13 @@ export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any
     }
     const length = value.length;
     return length > this._maxLength ? { actual: length, required: this._maxLength } : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const maxLengthChange = changes.maxLength;
+    if (maxLengthChange && !maxLengthChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 }
 

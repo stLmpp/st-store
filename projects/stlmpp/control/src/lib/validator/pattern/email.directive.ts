@@ -1,5 +1,5 @@
 import { AbstractEmailValidator } from './email';
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
@@ -9,7 +9,7 @@ import { Nullable } from '../../util';
   selector: '[model][email]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: EmailValidatorDirective, multi: true }],
 })
-export class EmailValidatorDirective extends AbstractEmailValidator {
+export class EmailValidatorDirective extends AbstractEmailValidator implements OnChanges {
   private _email = true;
 
   @HostBinding('attr.email')
@@ -32,6 +32,13 @@ export class EmailValidatorDirective extends AbstractEmailValidator {
       return null;
     }
     return super.validate(control);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const emailChange = changes.email;
+    if (emailChange && !emailChange.isFirstChange()) {
+      this.validationChange$.next();
+    }
   }
 
   static ngAcceptInputType_email: BooleanInput;

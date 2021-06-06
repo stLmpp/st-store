@@ -14,7 +14,7 @@ import { isNil, isNumber, isString } from 'st-utils';
 import { ControlNameNotFound, ControlParentNotFound } from '../error';
 import { Subject } from 'rxjs';
 import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
-import { ValidatorsModel } from '../validator/validators';
+import { ValidatorsKeys, ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { Control, isControl } from '../control/control';
 
@@ -24,7 +24,7 @@ export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
 export class ControlError implements OnInit, OnChanges, OnDestroy {
   constructor(private keyValueDiffers: KeyValueDiffers, @Host() @Optional() private controlParent?: ControlParent) {}
 
-  private readonly _cases = new Map<keyof ValidatorsModel, ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>>();
+  private readonly _cases = new Map<ValidatorsKeys, ControlErrorCase<ValidatorsModel[ValidatorsKeys]>>();
   private readonly _destroy$ = new Subject<void>();
   private _control!: Control;
   private _lastErrors: Partial<ValidatorsModel> = {};
@@ -32,7 +32,7 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
   @Input() controlError!: Control | string | number;
   @Input() showWhen: ControlErrorShowWhen = 'touched';
 
-  private _validateShowWhen(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): boolean {
+  private _validateShowWhen(error: ControlErrorCase<ValidatorsModel[ValidatorsKeys]>): boolean {
     return (
       (isNil(error.errorShowWhen) && isNil(this.showWhen)) ||
       this._control[(error.errorShowWhen ?? this.showWhen) as 'dirty' | 'touched']
@@ -62,42 +62,42 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
     this.subToErrorChanges();
   }
 
-  addCase(errorCase: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
+  addCase(errorCase: ControlErrorCase<ValidatorsModel[ValidatorsKeys]>): void {
     this._cases.set(errorCase.error, errorCase);
     if (this._lastErrors[errorCase.error]) {
       this.showError(errorCase.error, this._lastErrors[errorCase.error]);
     }
   }
 
-  removeCase(errorCase: keyof ValidatorsModel): void {
+  removeCase(errorCase: ValidatorsKeys): void {
     if (this._lastErrors[errorCase]) {
       this.removeError(errorCase);
     }
     this._cases.delete(errorCase);
   }
 
-  showError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
+  showError(errorName: ValidatorsKeys, error: ValidatorsModel[ValidatorsKeys]): void {
     const errorCase = this._cases.get(errorName);
     if (errorCase && this._validateShowWhen(errorCase)) {
       errorCase.show(error);
     }
   }
 
-  removeError(errorName: keyof ValidatorsModel): void {
+  removeError(errorName: ValidatorsKeys): void {
     const errorCase = this._cases.get(errorName);
     if (errorCase) {
       errorCase.remove();
     }
   }
 
-  updateError(errorName: keyof ValidatorsModel, error: ValidatorsModel[keyof ValidatorsModel]): void {
+  updateError(errorName: ValidatorsKeys, error: ValidatorsModel[ValidatorsKeys]): void {
     const errorCase = this._cases.get(errorName);
     if (errorCase && this._validateShowWhen(errorCase)) {
       errorCase.update(error);
     }
   }
 
-  childHasUpdate(error: ControlErrorCase<ValidatorsModel[keyof ValidatorsModel]>): void {
+  childHasUpdate(error: ControlErrorCase<ValidatorsModel[ValidatorsKeys]>): void {
     this.removeError(error.error);
     this.addCase(error);
   }

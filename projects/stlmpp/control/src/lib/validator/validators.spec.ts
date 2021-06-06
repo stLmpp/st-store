@@ -16,6 +16,7 @@ import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
 import { SibblingEqualsValidator } from './other/sibbling-equals';
+import { WhiteSpaceValidator } from './white-space/white-space';
 
 describe('validators', () => {
   it('should return required validator', () => {
@@ -66,5 +67,8 @@ describe('validators', () => {
   });
   it('should return requiredTrue validator', () => {
     expect(Validators.requiredTrue).toBeInstanceOf(RequiredTrueValidator);
+  });
+  it('should return whiteSpace validator', () => {
+    expect(Validators.whiteSpace).toBeInstanceOf(WhiteSpaceValidator);
   });
 });

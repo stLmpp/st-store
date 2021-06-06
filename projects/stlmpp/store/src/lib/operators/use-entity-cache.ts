@@ -2,6 +2,12 @@ import { EntityStore } from '../entity/entity-store';
 import { EntityIdType, EntityState } from '../type';
 import { MonoTypeOperatorFunction, Observable } from 'rxjs';
 
+/**
+ * @description same as {@link useCache}, but for one specific entity
+ * @param {EntityIdType} id
+ * @param {EntityStore<EntityState>} store
+ * @returns {MonoTypeOperatorFunction<T>}
+ */
 export function useEntityCache<T>(id: EntityIdType, store: EntityStore<EntityState<any>>): MonoTypeOperatorFunction<T> {
   return source =>
     new Observable<T>(subscriber => {

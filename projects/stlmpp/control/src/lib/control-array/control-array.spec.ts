@@ -254,6 +254,71 @@ describe('control array', () => {
     expect(sub).toHaveBeenCalledWith(['']);
   });
 
+  it('should not remove at if index doesnt exist', () => {
+    const array = component.array;
+    const sub = jasmine.createSpy();
+    array.value$.subscribe(sub);
+    expect(sub).toHaveBeenCalledWith(['', '']);
+    expect(sub).toHaveBeenCalledTimes(1);
+    array.removeAt(3);
+    expect(array.length).toBe(2);
+    expect(sub).toHaveBeenCalledTimes(1);
+  });
+
+  it('should move', () => {
+    const array = component.array;
+    array.clear();
+    fixture.detectChanges();
+    expect(array.length).toBe(0);
+    array.push(new Control('1'), new Control('2'), new Control('3'), new Control('4'), new Control('5'));
+    fixture.detectChanges();
+    expect(array.length).toBe(5);
+    array.move(0, 4);
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('2');
+    expect(array.get(1)?.value).toBe('3');
+    expect(array.get(2)?.value).toBe('4');
+    expect(array.get(3)?.value).toBe('5');
+    expect(array.get(4)?.value).toBe('1');
+  });
+
+  it('should not move out of bounds', () => {
+    const array = component.array;
+    array.clear();
+    fixture.detectChanges();
+    expect(array.length).toBe(0);
+    array.push(new Control('1'), new Control('2'), new Control('3'), new Control('4'), new Control('5'));
+    fixture.detectChanges();
+    expect(array.length).toBe(5);
+    array.move(-1, 0);
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('1');
+    array.move(0, 5);
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('2');
+    expect(array.get(1)?.value).toBe('3');
+    expect(array.get(2)?.value).toBe('4');
+    expect(array.get(3)?.value).toBe('5');
+    expect(array.get(4)?.value).toBe('1');
+  });
+
+  it('should not move if the indices are equal', () => {
+    const array = component.array;
+    array.clear();
+    fixture.detectChanges();
+    expect(array.length).toBe(0);
+    array.push(new Control('1'), new Control('2'), new Control('3'), new Control('4'), new Control('5'));
+    fixture.detectChanges();
+    expect(array.length).toBe(5);
+    array.move(1, 1);
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('1');
+    expect(array.get(1)?.value).toBe('2');
+    expect(array.get(2)?.value).toBe('3');
+    expect(array.get(3)?.value).toBe('4');
+    expect(array.get(4)?.value).toBe('5');
+  });
+
   it('should set the value', () => {
     const array = component.array;
     array.setValue(['a', 'b', 'c']);
@@ -363,5 +428,23 @@ describe('control array', () => {
     expect(array.invalid).toBeTrue();
     array.markAsInvalid(false);
     expect(array.invalid).toBeFalse();
+  });
+
+  it('should replace a control', () => {
+    const array = component.array;
+    array.setValue(['1', '2']);
+    fixture.detectChanges();
+    array.replace(0, new Control('4'));
+    fixture.detectChanges();
+    expect(array.get(0)?.value).toBe('4');
+  });
+
+  it('should not replace if control doesnt exists', () => {
+    const array = component.array;
+    array.setValue(['1', '2']);
+    fixture.detectChanges();
+    array.replace(5, new Control('5'));
+    expect(array.length).toBe(2);
+    expect(array.get(5)).toBeUndefined();
   });
 });

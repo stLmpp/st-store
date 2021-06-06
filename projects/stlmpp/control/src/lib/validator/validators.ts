@@ -9,13 +9,14 @@ import { ControlValidator } from './validator';
 import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
-import { SibblingEqualsValidator, SibblingEqualsValidationError } from './other/sibbling-equals';
+import { SibblingEqualsValidationError, SibblingEqualsValidator } from './other/sibbling-equals';
 import { UrlValidator } from './pattern/url';
 import { GreaterValidationError, GreaterValidator } from './greater-lesser/greater';
 import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';
 import { BetweenValidator } from './between/between';
 import { RequiredTrueValidator } from './required/required-true';
 import { Nullable } from '../util';
+import { WhiteSpaceValidator } from './white-space/white-space';
 
 // @dynamic
 export class Validators {
@@ -46,11 +47,8 @@ export class Validators {
   static composeAsync(...validators: ControlValidator[]): ComposeAsyncValidator {
     return new ComposeAsyncValidator(validators);
   }
-  static contains<T extends Nullable<string | any[]> = any, U = T extends Array<infer RealType> ? RealType : string>(
-    value: NonNullable<U>,
-    compareWith?: (valueA: NonNullable<U>, valueB: NonNullable<U>) => boolean
-  ): ContainsValidator<T, U> {
-    return new ContainsValidator<T, U>(value, compareWith);
+  static contains(value: NonNullable<string>): ContainsValidator {
+    return new ContainsValidator(value);
   }
   static sibblingEquals<T = any>(
     sibblingName: string,
@@ -77,6 +75,9 @@ export class Validators {
   static get requiredTrue(): RequiredTrueValidator {
     return new RequiredTrueValidator();
   }
+  static get whiteSpace(): WhiteSpaceValidator {
+    return new WhiteSpaceValidator();
+  }
 }
 
 export interface ValidatorsModel {
@@ -96,4 +97,7 @@ export interface ValidatorsModel {
   greater: GreaterValidationError<Nullable<Date | number>>;
   lesser: LesserValidationError<Nullable<Date | number>>;
   requiredTrue: boolean;
+  whiteSpace: boolean;
 }
+
+export type ValidatorsKeys = keyof ValidatorsModel;

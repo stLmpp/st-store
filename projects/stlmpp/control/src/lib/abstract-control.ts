@@ -20,17 +20,17 @@ export interface AbstractControl<T = any, M = any> {
   uniqueId: number;
   metadata?: M;
   /** @internal */
-  setUpdateOn(updateOn: ControlUpdateOn): void;
-  markAsDirty(dirty?: boolean): void;
-  markAsTouched(touched?: boolean): void;
+  setUpdateOn(updateOn: ControlUpdateOn): this;
+  markAsDirty(dirty?: boolean): this;
+  markAsTouched(touched?: boolean): this;
   markAsInvalid(invalid?: boolean): void;
-  setValue(value: T): void;
-  patchValue(value: PartialDeep<T> | T): void;
-  disable(disabled?: boolean): void;
-  enable(enabled?: boolean): void;
-  reset(): void;
+  setValue(value: T): this;
+  patchValue(value: PartialDeep<T> | T): this;
+  disable(disabled?: boolean): this;
+  enable(enabled?: boolean): this;
+  reset(): this;
   /** @internal */
-  submit(): void;
+  submit(): this;
 }
 
 @Directive()

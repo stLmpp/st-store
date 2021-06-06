@@ -2,6 +2,11 @@ import { EntityStore } from '../entity/entity-store';
 import { Store } from '../store/store';
 import { Observable, OperatorFunction } from 'rxjs';
 
+/**
+ * @description use cached value of the store, if it has any
+ * @param {EntityStore | Store} store
+ * @returns {OperatorFunction<T, T>}
+ */
 export function useCache<T>(store: EntityStore | Store<any>): OperatorFunction<T, T> {
   return (source: Observable<T>) =>
     new Observable<T>(subscriber => {

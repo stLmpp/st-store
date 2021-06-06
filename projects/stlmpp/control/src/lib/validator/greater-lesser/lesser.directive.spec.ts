@@ -4,10 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 
-@Component({ template: '<input type="number" [(model)]="model" [lesser]="4">' })
+@Component({ template: '<input type="number" [(model)]="model" [lesser]="lesser">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
   model = 5;
+  lesser = 4;
 }
 
 describe('lesser validator directive', () => {
@@ -29,6 +30,12 @@ describe('lesser validator directive', () => {
   it('should validate if value is lesser', () => {
     expect(component.modelDirective.isValid).toBeFalse();
     component.model = 2;
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
+
+  it('should rerun validator when @Input() lesser changes', () => {
+    component.lesser = 6;
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

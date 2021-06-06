@@ -3,8 +3,17 @@ import { environment } from './environment';
 import { StateService } from './state/state.service';
 
 export interface StStoreModuleConfig {
+  /**
+   * @description if true, disable the deep copy and deep freeze
+   */
   production?: boolean;
+  /**
+   * @description if false, disable the deep copy
+   */
   copyData?: boolean;
+  /**
+   * @description if false, disable the deep freeze
+   */
   freezeData?: boolean;
 }
 

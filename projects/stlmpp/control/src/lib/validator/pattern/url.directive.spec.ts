@@ -42,4 +42,10 @@ describe('url validator directive', () => {
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });
+
+  it('should rerun the validator if the @Input() url changes', () => {
+    component.url = false;
+    fixture.detectChanges();
+    expect(component.modelDirective.isValid).toBeTrue();
+  });
 });

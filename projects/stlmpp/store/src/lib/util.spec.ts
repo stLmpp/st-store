@@ -1,5 +1,4 @@
-import { deepFreeze, devCopy, distinctUntilManyChanged, getFirstKey, predictIdType } from './util';
-import { BehaviorSubject } from 'rxjs';
+import { deepFreeze, devCopy, predictIdType } from './util';
 import { environment } from './environment';
 import { IdGetter, parseIdGetter } from 'st-utils';
 
@@ -45,45 +44,6 @@ describe('Utils', () => {
     });
   });
 
-  describe('distinctUntilManyChanged', () => {
-    let state: BehaviorSubject<number[]>;
-
-    beforeEach(() => {
-      state = new BehaviorSubject([1, 2, 3]);
-    });
-
-    it('should distinct', () => {
-      const subscriber = jasmine.createSpy('subscriber');
-      state.pipe(distinctUntilManyChanged()).subscribe(subscriber);
-      expect(subscriber).toHaveBeenCalledTimes(1);
-      state.next([1, 2, 3]);
-      expect(subscriber).toHaveBeenCalledTimes(1);
-      const sub2 = jasmine.createSpy('sub2');
-      const array = [1, 2, 3];
-      state.next(array);
-      state.pipe(distinctUntilManyChanged()).subscribe(sub2);
-      expect(sub2).toHaveBeenCalledTimes(1);
-      state.next(array);
-      expect(sub2).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not distinct', () => {
-      const sub = jasmine.createSpy('sub');
-      state.pipe(distinctUntilManyChanged()).subscribe(sub);
-      expect(sub).toHaveBeenCalledTimes(1);
-      state.next([1, 2]);
-      expect(sub).toHaveBeenCalledTimes(2);
-      state.next([1, 2, 3]);
-      expect(sub).toHaveBeenCalledTimes(3);
-      state.next([3, 2, 1]);
-      expect(sub).toHaveBeenCalledTimes(4);
-      state.next(undefined as any);
-      expect(sub).toHaveBeenCalledTimes(5);
-      state.next([1, 2, 3]);
-      expect(sub).toHaveBeenCalledTimes(6);
-    });
-  });
-
   describe('devCopy', () => {
     beforeEach(() => {
       environment.reset();
@@ -114,22 +74,6 @@ describe('Utils', () => {
       const objCopy = devCopy(obj);
       objCopy.a = 2;
       expect(obj.a).toBe(1);
-    });
-  });
-
-  describe('getFirstKey', () => {
-    it('should return he first key', () => {
-      expect(getFirstKey({ key: 1 })).toBe('key');
-    });
-
-    it('should return undefined if no keys are found', () => {
-      expect(getFirstKey({})).toBeUndefined();
-    });
-
-    it('should return undefined if no keys are found with hasOwnProperty', () => {
-      const objParent = { a: 1 };
-      const obj = Object.create(objParent);
-      expect(getFirstKey(obj)).toBeUndefined();
     });
   });
 });

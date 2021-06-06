@@ -16,14 +16,14 @@ export abstract class AbstractBetweenValidator<T extends Nullable<Date | number>
   T,
   BetweenError<T>
 > {
-  @Input() inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true];
+  @Input('betweenInclusiveness') inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true];
 
   abstract start: NonNullable<T>;
   abstract end: NonNullable<T>;
 
-  name = 'between';
+  readonly name = 'between';
 
-  validate({ value }: Control<T>): BetweenError<T> | null {
+  validate({ value, metadata }: Control<T>): BetweenError<T> | null {
     if (isNil(value)) {
       return null;
     }

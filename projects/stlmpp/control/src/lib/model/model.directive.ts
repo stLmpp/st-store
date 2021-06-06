@@ -29,7 +29,7 @@ export type ModelOptions = Omit<AbstractControlOptions, 'disabled'>;
   exportAs: 'model',
   providers: [{ provide: AbstractControlDirective, useExisting: ModelDirective }],
 })
-export class ModelDirective<T = any> extends BaseControlDirective<T> implements OnInit {
+export class ModelDirective<T = any, M = any> extends BaseControlDirective<T, M> implements OnInit {
   constructor(
     elementRef: ElementRef,
     renderer2: Renderer2,
@@ -46,7 +46,8 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
   }
 
   private readonly _controlValidators: ControlValidator<T>[] = [];
-  private _updateOn: ControlUpdateOn = 'change';
+  private _modelUpdateOn: ControlUpdateOn = 'change';
+  private _modeMetadata?: M;
 
   @Input()
   set model(value: T) {
@@ -58,13 +59,25 @@ export class ModelDirective<T = any> extends BaseControlDirective<T> implements 
   @Output() readonly modelChange = new EventEmitter<T>();
 
   @Input()
-  set updateOn(updateOn: ControlUpdateOn) {
+  set modelUpdateOn(updateOn: ControlUpdateOn) {
     this.control?.setUpdateOn(updateOn);
-    this._updateOn = updateOn;
+    this._modelUpdateOn = updateOn;
+  }
+
+  @Input()
+  set modelMetadata(metadata: M) {
+    if (this.control) {
+      this.control.metadata = metadata;
+    }
+    this._modeMetadata = metadata;
   }
 
   ngOnInit(): void {
-    this.control = new Control<T>(this._model, { updateOn: this._updateOn, validators: this._controlValidators });
+    this.control = new Control<T>(this._model, {
+      updateOn: this._modelUpdateOn,
+      validators: this._controlValidators,
+      metadata: this._modeMetadata,
+    });
     this.init();
     this.control.valueChanges$.pipe(takeUntil(this._destroy$)).subscribe(value => {
       this.modelChange.next(value);

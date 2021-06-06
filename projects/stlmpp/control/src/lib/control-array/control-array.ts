@@ -7,6 +7,7 @@ import { skip, takeUntil } from 'rxjs/operators';
 import { Control, ControlUpdateOptions } from '../control/control';
 import { ControlType } from '../control/control-type';
 import { getUniqueId } from '../util';
+import { isNotNil } from 'st-utils';
 
 export type ControlArrayOptions<M = any> = AbstractControlOptions<M>;
 
@@ -17,13 +18,7 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     this.metadata = options?.metadata;
     this._originControls = [..._controls];
     for (const control of _controls) {
-      this._registerParent(control);
-      if (options?.updateOn) {
-        control.setUpdateOn(options.updateOn);
-      }
-      if (options?.disabled) {
-        control.disable(options.disabled);
-      }
+      this._registerControl(control);
     }
     this._setValue$();
   }
@@ -48,7 +43,7 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     this._parent = parent;
   }
 
-  private _setValue$(): void {
+  private _setValue$(): this {
     this._destroy$.next();
     if (this._controls.length) {
       combineLatest(this._controls.map(control => control.value$))
@@ -59,10 +54,19 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     } else {
       this._value$.next([]);
     }
+    return this;
   }
 
-  private _registerParent(control: C): void {
+  private _registerControl(control: C): this {
     control.parent = this;
+    if (this.options?.updateOn) {
+      control.setUpdateOn(this.options.updateOn);
+    }
+    const optionsDisabled = this.options?.disabled;
+    if (isNotNil(optionsDisabled)) {
+      control.disable(optionsDisabled);
+    }
+    return this;
   }
 
   *[Symbol.iterator](): Iterator<C> {
@@ -72,12 +76,13 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
   }
 
   /** @internal */
-  setUpdateOn(updateOn?: ControlUpdateOn): void {
+  setUpdateOn(updateOn?: ControlUpdateOn): this {
     if (updateOn) {
       for (const control of this._controls) {
         control.setUpdateOn(updateOn);
       }
     }
+    return this;
   }
 
   get value(): T[] {
@@ -128,43 +133,70 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
     return this._controls[index];
   }
 
-  push(control: C): void {
-    this._controls.push(control);
-    this._registerParent(control);
-    if (this.options?.updateOn) {
-      control.setUpdateOn(this.options.updateOn);
+  push(...controls: C[]): this {
+    this._controls.push(...controls);
+    for (const control of controls) {
+      this._registerControl(control);
     }
-    this._setValue$();
+    return this._setValue$();
   }
 
-  insert(index: number, control: C): void {
-    this._controls.splice(index, 0, control);
-    this._registerParent(control);
-    if (this.options?.updateOn) {
-      control.setUpdateOn(this.options.updateOn);
+  insert(index: number, ...controls: C[]): this {
+    this._controls.splice(index, 0, ...controls);
+    for (const control of controls) {
+      this._registerControl(control);
     }
-    this._setValue$();
+    return this._setValue$();
   }
 
-  removeAt(index: number): void {
-    this._controls.splice(index, 1);
-    this._setValue$();
+  removeAt(...indices: number[]): this {
+    let setValue = false;
+    for (const index of indices) {
+      if (this.get(index)) {
+        this._controls.splice(index, 1);
+        setValue = true;
+      }
+    }
+    if (setValue) {
+      this._setValue$();
+    }
+    return this;
+  }
+
+  move(fromIndex: number, toIndex: number): this {
+    fromIndex = Math.max(fromIndex, 0);
+    toIndex = Math.min(toIndex, this.length - 1);
+    if (fromIndex === toIndex) {
+      return this;
+    }
+    const [control] = this._controls.splice(fromIndex, 1);
+    this._controls.splice(toIndex, 0, control);
+    return this._setValue$();
+  }
+
+  replace(index: number, control: C): this {
+    if (this.get(index)) {
+      this._controls[index] = control;
+      this._setValue$();
+    }
+    return this;
   }
 
   get length(): number {
     return this._controls.length;
   }
 
-  setValue(values: T[], options?: ControlUpdateOptions): void {
+  setValue(values: T[], options?: ControlUpdateOptions): this {
     for (let index = 0, len = values.length; index < len; index++) {
       const control = this.get(index);
       if (control) {
-        this._controls[index].setValue(values[index] as any, options);
+        control.setValue(values[index], options);
       }
     }
+    return this;
   }
 
-  patchValue(values: PartialDeep<T[]> | T[], options?: ControlUpdateOptions): void {
+  patchValue(values: PartialDeep<T[]> | T[], options?: ControlUpdateOptions): this {
     for (let index = 0, len = values.length; index < len; index++) {
       const control = this.get(index);
       if (control) {
@@ -172,60 +204,67 @@ export class ControlArray<T = any, M = any, C extends Control | ControlGroup | C
         control.patchValue(value as any, options);
       }
     }
+    return this;
   }
 
-  disable(disabled = true): void {
+  disable(disabled = true): this {
     for (const control of this._controls) {
       control.disable(disabled);
     }
+    return this;
   }
 
-  enable(enabled = true): void {
-    this.disable(!enabled);
+  enable(enabled = true): this {
+    return this.disable(!enabled);
   }
 
-  reset(): void {
+  reset(): this {
     this._controls = [...this._originControls];
     for (const control of this._controls) {
       control.reset();
     }
-    this._setValue$();
+    return this._setValue$();
   }
 
-  clear(): void {
+  clear(): this {
     this._controls = [];
-    this._setValue$();
+    return this._setValue$();
   }
 
   /** @internal */
-  submit(): void {
+  submit(): this {
     for (const control of this._controls) {
       control.submit();
     }
+    return this;
   }
 
-  markAsDirty(dirty = true): void {
+  markAsDirty(dirty = true): this {
     for (const control of this._controls) {
       control.markAsDirty(dirty);
     }
+    return this;
   }
 
-  markAsTouched(touched = true): void {
+  markAsTouched(touched = true): this {
     for (const control of this._controls) {
       control.markAsTouched(touched);
     }
+    return this;
   }
 
-  markAsInvalid(invalid = true): void {
+  markAsInvalid(invalid = true): this {
     for (const control of this._controls) {
       control.markAsInvalid(invalid);
     }
+    return this;
   }
 
   /** @internal */
-  destroy(): void {
+  destroy(): this {
     this._destroy$.next();
     this._destroy$.complete();
+    return this;
   }
 }
 

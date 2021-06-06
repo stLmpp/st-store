@@ -230,6 +230,10 @@ describe('control', () => {
     expect(control.validators.length).toBe(1);
     control.removeValidators(['maxLength']);
     expect(control.validators.length).toBe(0);
+    control.setValidator(Validators.required);
+    expect(control.hasValidator('required')).toBeTrue();
+    control.removeValidator(Validators.required);
+    expect(control.hasValidator('required')).toBeFalse();
   });
 
   it('should get the pending state', async () => {
@@ -404,11 +408,6 @@ describe('control', () => {
     expect(sub).toHaveBeenCalledWith('11');
   });
 
-  it('should set async initial validator', () => {
-    const control = new Control('', [new AsyncValidator()]);
-    expect(control.validationCancel.asyncValidator).toBeDefined();
-  });
-
   it('should get all errors', () => {
     component.control.setValidators([Validators.email, Validators.minLength(3)]);
     fixture.detectChanges();
@@ -424,11 +423,11 @@ describe('control', () => {
   it('should check if has any error', () => {
     component.control.setValidator(Validators.required);
     fixture.detectChanges();
-    expect(component.control.hasErrors()).toBeTrue();
+    expect(component.control.hasAnyError()).toBeTrue();
     triggerEvent(input, 'input', 'A');
     triggerEvent(input, 'blur');
     fixture.detectChanges();
-    expect(component.control.hasErrors()).toBeFalse();
+    expect(component.control.hasAnyError()).toBeFalse();
   });
 
   it('should emit if has any error', () => {
@@ -441,6 +440,16 @@ describe('control', () => {
     triggerEvent(input, 'blur');
     fixture.detectChanges();
     expect(sub).toHaveBeenCalledWith(false);
+  });
+
+  it('should check if has errors', () => {
+    component.control.setValidators([Validators.required, Validators.maxLength(3)]);
+    fixture.detectChanges();
+    expect(component.control.hasErrors(['required'])).toBeTrue();
+    expect(component.control.hasErrors([Validators.required])).toBeTrue();
+    component.control.removeValidators(['required', 'maxLength']);
+    fixture.detectChanges();
+    expect(component.control.hasErrors(['required'])).toBeFalse();
   });
 
   it('should not emit changes if the value is the same as the previous', () => {
@@ -485,5 +494,29 @@ describe('control', () => {
     const control1 = new Control<string>('');
     const control2 = new Control<string>('');
     expect(control1.uniqueId).not.toBe(control2.uniqueId);
+  });
+
+  it('should return if has validator', () => {
+    const control = new Control('', [Validators.required]);
+    expect(control.hasValidator('required')).toBeTrue();
+    control.removeValidator('required');
+    expect(control.hasValidator(Validators.required)).toBeFalse();
+  });
+
+  it('should return if has validators', () => {
+    const control = new Control('', [Validators.required, Validators.maxLength(2)]);
+    expect(control.hasValidators(['required'])).toBeTrue();
+    expect(control.hasValidators(['maxLength'])).toBeTrue();
+    expect(control.hasValidators([Validators.required])).toBeTrue();
+    control.removeValidator('required');
+    expect(control.hasValidators([Validators.maxLength(2)])).toBeTrue();
+    expect(control.hasValidators(['required'])).toBeFalse();
+  });
+
+  it('should return if has any validator', () => {
+    const control = new Control('');
+    expect(control.hasAnyValidators()).toBeFalse();
+    control.setValidator(Validators.required);
+    expect(control.hasAnyValidators()).toBeTrue();
   });
 });

@@ -29,7 +29,7 @@ import { isControl } from './control';
     { provide: AbstractControlDirective, useExisting: ControlNameDirective },
   ],
 })
-export class ControlNameDirective<T = any> extends ControlDirective<T> implements OnInit {
+export class ControlNameDirective<T = any, M = any> extends ControlDirective<T, M> implements OnInit {
   constructor(
     elementRef: ElementRef,
     renderer2: Renderer2,

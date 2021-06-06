@@ -16,7 +16,7 @@ import { isControlGroup } from './control-group';
     { provide: AbstractControlDirective, useExisting: ControlGroupNameDirective },
   ],
 })
-export class ControlGroupNameDirective<T = any> extends ControlGroupDirective<T> implements OnInit {
+export class ControlGroupNameDirective<T = any, M = any> extends ControlGroupDirective<T, M> implements OnInit {
   constructor(@Host() @Optional() @SkipSelf() private controlParent?: ControlParent) {
     super();
   }

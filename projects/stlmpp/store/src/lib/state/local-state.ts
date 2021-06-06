@@ -9,6 +9,13 @@ export abstract class LocalState<T extends Record<string, any> = Record<string, 
   extends State<T>
   implements OnChanges, OnDestroy
 {
+  /**
+   * @template T
+   * @description calling super is required, because it will initialize the inputs
+   * @param {T} initialState
+   * @param {StateComponentConfig<T>} config
+   * @protected
+   */
   protected constructor(initialState: T, config: StateComponentConfig<T> = {}) {
     super(initialState, config);
     this._inputs = (config.inputs ?? []).map(keyOrConfig =>
@@ -18,6 +25,10 @@ export abstract class LocalState<T extends Record<string, any> = Record<string, 
 
   private readonly _inputs: StateComponentConfigInput<T>[];
 
+  /**
+   * @description used to synchronize the inputs of the Component/Directive, don't forget to call super
+   * @param {SimpleChangesCustom} changes
+   */
   ngOnChanges(changes: SimpleChangesCustom): void {
     if (!this._inputs.length) {
       return;
