@@ -31,7 +31,7 @@ describe('white space validator directive', () => {
   });
 
   it('should validate if value is white space', () => {
-    expect(component.modelDirective.isValid).toBeFalse();
+    expect(component.modelDirective.isValid).toBeTrue();
     component.model = '     ';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeFalse();
