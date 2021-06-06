@@ -1,6 +1,6 @@
 {
   "name": "@stlmpp/utils",
-  "version": "7.0.0-next.2",
+  "version": "7.0.0",
   "peerDependencies": {
     "@angular/common": ">= 12 < 13",
     "@angular/core": ">= 12 < 13"
