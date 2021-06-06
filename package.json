@@ -33,7 +33,9 @@
     "docs-store": "typedoc projects/stlmpp/store/src/public-api.ts --out projects/stlmpp/store/docs --tsconfig projects/stlmpp/store/tsconfig.lib.json",
     "docs-router": "typedoc projects/stlmpp/router/src/public-api.ts --out projects/stlmpp/router/docs --tsconfig projects/stlmpp/router/tsconfig.lib.json",
     "docs-control": "typedoc projects/stlmpp/control/src/public-api.ts --out projects/stlmpp/control/docs --tsconfig projects/stlmpp/control/tsconfig.lib.json",
-    "docs-all": "yarn docs-utils && yarn docs-store && yarn docs-router && yarn docs-control"
+    "docs-all": "yarn docs-utils && yarn docs-store && yarn docs-router && yarn docs-control",
+    "publish-all": "ts-node ./scripts/publish.ts",
+    "version-all": "ts-node ./scripts/version.ts"
   },
   "private": true,
   "dependencies": {
