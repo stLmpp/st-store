@@ -1,6 +1,6 @@
 {
   "name": "@stlmpp/control",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "peerDependencies": {
     "@angular/common": ">= 12 < 13",
     "@angular/core": ">= 12 < 13"
@@ -8,6 +8,6 @@
   "dependencies": {
     "date-fns": "~2.22.1",
     "tslib": "~2.2.0",
-    "st-utils": "~1.7.0"
+    "st-utils": "~1.8.0"
   }
 }
