@@ -1,6 +1,5 @@
 import {
   entityInitialState,
-  IdName,
   IdNameEntity,
   SimpleEntityQuery,
   SimpleEntityStore,

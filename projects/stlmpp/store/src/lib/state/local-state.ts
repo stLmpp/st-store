@@ -1,7 +1,13 @@
 import { Directive, OnChanges, OnDestroy } from '@angular/core';
-import { isKeyof, isObjectEmpty } from 'st-utils';
+import { isKeyof, isObject, isObjectEmpty } from 'st-utils';
 import { SimpleChangesCustom, StateComponentConfig, StateComponentConfigInput } from '../type';
 import { State } from './state';
+
+function toStateComponentConfigInput<T extends Record<string, any>>(
+  keyOrConfig: keyof T | StateComponentConfigInput<T>
+): StateComponentConfigInput<T> {
+  return isObject(keyOrConfig) ? keyOrConfig : { key: keyOrConfig, transformer: value => value };
+}
 
 /** @dynamic */
 @Directive()
@@ -18,12 +24,12 @@ export abstract class LocalState<T extends Record<string, any> = Record<string, 
    */
   protected constructor(initialState: T, config: StateComponentConfig<T> = {}) {
     super(initialState, config);
-    this._inputs = (config.inputs ?? []).map(keyOrConfig =>
-      isKeyof<T, keyof T>(keyOrConfig) ? { key: keyOrConfig, transformer: value => value } : keyOrConfig
-    );
+    if (config.inputs) {
+      this._inputs = config.inputs.map(toStateComponentConfigInput);
+    }
   }
 
-  private readonly _inputs: StateComponentConfigInput<T>[];
+  private readonly _inputs: StateComponentConfigInput<T>[] = [];
 
   /**
    * @description used to synchronize the inputs of the Component/Directive, don't forget to call super

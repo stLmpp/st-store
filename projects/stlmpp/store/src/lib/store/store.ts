@@ -1,9 +1,10 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { devCopy } from '../util';
+import { BehaviorSubject, isObservable, Observable } from 'rxjs';
+import { devCopy, isPromise, toObservable } from '../util';
 import { StoreOptions } from '../type';
 import { isFunction } from 'st-utils';
-import { StorePersistLocalStorageStrategy, StorePersistStrategy } from './store-persist';
+import { StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
+import { take, takeUntil } from 'rxjs/operators';
 
 /**
  * @description returns an key to persist
@@ -11,32 +12,8 @@ import { State } from '../state/state';
  * @param {keyof T} persist
  * @returns {string}
  */
-export function getPersistKey<T extends Record<any, any>>(name: string, persist: keyof T): string {
+export function getPersistKey<T extends Record<any, any>>(name: string, persist?: keyof T): string {
   return '__ST_STORE__' + name + '.' + (persist ?? '');
-}
-
-/**
- * @description merge the persisted value with the state
- * @param {keyof T | undefined} persistKey
- * @param {StorePersistStrategy<T> | undefined} persistStrategy
- * @param {string} name
- * @param {T} initialState
- * @returns {T}
- */
-function mergePersistedValue<T extends Record<any, any>>({
-  persistKey,
-  persistStrategy = new StorePersistLocalStorageStrategy(),
-  name,
-  initialState,
-}: StoreOptions<T>): T {
-  const key = getPersistKey(name, persistKey);
-  let value = persistStrategy.get(key);
-
-  if (value) {
-    value = persistStrategy.deserialize(value);
-    return persistStrategy.setStore(initialState, value, persistKey);
-  }
-  return initialState;
 }
 
 export class Store<T extends Record<any, any>, E = any> extends State<T> {
@@ -45,13 +22,14 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
    * @param {StoreOptions<T>} _options
    */
   constructor(private _options: StoreOptions<T>) {
-    super(mergePersistedValue(_options), { name: _options.name });
-    this._persistStrategy = this._options.persistStrategy ?? new StorePersistLocalStorageStrategy();
+    super(_options.initialState, { name: _options.name });
+    this._persistStrategy = this._options.persistStrategy;
+    this._mergePersistedValue();
   }
 
   private readonly _error$ = new BehaviorSubject<E | null>(null);
   private readonly _loading$ = new BehaviorSubject<boolean>(false);
-  private readonly _persistStrategy: StorePersistStrategy<T>;
+  private readonly _persistStrategy?: StorePersistStrategy<T>;
 
   private _timeout: any;
   private readonly _cache$ = new BehaviorSubject(false);
@@ -59,11 +37,41 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
   /** @internal */
   protected _useDevCopy = true;
 
+  private _mergePersistedValue(): void {
+    if (!this._persistStrategy) {
+      return;
+    }
+    const key = getPersistKey(this._options.name, this._options.persistKey);
+    const observableOrPromiseOrRaw = this._persistStrategy.get(key);
+    if (isObservable(observableOrPromiseOrRaw) || isPromise(observableOrPromiseOrRaw)) {
+      toObservable(observableOrPromiseOrRaw)
+        .pipe(take(1), takeUntil(this.destroy$))
+        .subscribe(value => {
+          this._mergePersistedValueToStore(value);
+        });
+    } else {
+      this._mergePersistedValueToStore(observableOrPromiseOrRaw);
+    }
+  }
+
+  private _mergePersistedValueToStore(value: any): void {
+    if (value) {
+      /** Only enters here on {@link Store#_mergePersistedValue}, which has a check for {@link Store#_persistStrategy} */
+      this.updateState(state =>
+        this._persistStrategy!.setStore(state, this._persistStrategy!.deserialize(value), this._options.persistKey)
+      );
+    }
+  }
+
   private _setPersist(state: T): this {
-    if (this._options.persistStrategy) {
-      const key = getPersistKey(this._options.name, this._options.persistKey);
-      const value = this._persistStrategy.getStore(state, this._options.persistKey);
-      this._persistStrategy.set(key, this._persistStrategy.serialize(value));
+    if (!this._persistStrategy) {
+      return this;
+    }
+    const key = getPersistKey(this._options.name, this._options.persistKey);
+    const value = this._persistStrategy.getStore(state, this._options.persistKey);
+    const observableOrPromiseOrRaw = this._persistStrategy.set(key, this._persistStrategy.serialize(value));
+    if (isObservable(observableOrPromiseOrRaw) || isPromise(observableOrPromiseOrRaw)) {
+      toObservable(observableOrPromiseOrRaw).pipe(take(1), takeUntil(this.destroy$)).subscribe();
     }
     return this;
   }

@@ -1,4 +1,5 @@
 import { isNil } from 'st-utils';
+import { Observable } from 'rxjs';
 
 /**
  * @template T
@@ -73,16 +74,19 @@ export interface StorePersistStrategy<T> {
   /**
    * @description get the value from the persisted location
    * @param {string} key
-   * @returns {string | null | undefined}
+   * @returns {string | Observable<string | null | undefined> | Promise<string | null | undefined> | null | undefined}
    */
-  get(key: string): string | null | undefined;
+  get(
+    key: string
+  ): string | null | undefined | Observable<string | null | undefined> | Promise<string | null | undefined>;
 
   /**
    * @description persist the value
    * @param {string} key
    * @param {string | undefined} value
+   * @returns {void | Promise<void> | Observable<void>}
    */
-  set(key: string, value: string | undefined): void;
+  set(key: string, value: string | undefined): void | Promise<void> | Observable<void>;
 
   /**
    * @description serialize the value to persist

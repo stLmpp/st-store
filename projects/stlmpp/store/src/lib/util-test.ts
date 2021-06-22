@@ -7,6 +7,7 @@ import { EntityStore } from './entity/entity-store';
 import { EntityQuery } from './entity/entity-query';
 import { EntityState } from './type';
 import { StorePersistStrategy } from './store/store-persist';
+import { Observable, of } from 'rxjs';
 
 export interface IdName {
   id: number;
@@ -49,6 +50,62 @@ export class StorePersistCustomStrategy implements StorePersistStrategy<IdName> 
 
   set(key: string, value: string | undefined): void {
     this.state[key] = value;
+  }
+
+  setStore(state: IdName, value: any, key?: keyof IdName): IdName {
+    return { ...state, id: value };
+  }
+}
+
+export class StorePersistCustomStrategyObservable implements StorePersistStrategy<IdName> {
+  state: Record<string, string | undefined> = {};
+  deserialize(value: string | undefined): any {
+    return value ? JSON.parse(value) : undefined;
+  }
+
+  get(key: string): Observable<string | undefined> {
+    return of(this.state[key]);
+  }
+
+  getStore(state: IdName, key?: keyof IdName): any {
+    return state.id;
+  }
+
+  serialize(value: any): string | undefined {
+    return value ? JSON.stringify(value) : undefined;
+  }
+
+  set(key: string, value: string | undefined): Observable<void> {
+    this.state[key] = value;
+    return of(void 0);
+  }
+
+  setStore(state: IdName, value: any, key?: keyof IdName): IdName {
+    return { ...state, id: value };
+  }
+}
+
+export class StorePersistCustomStrategyPromise implements StorePersistStrategy<IdName> {
+  state: Record<string, string | undefined> = {};
+  deserialize(value: string | undefined): any {
+    return value ? JSON.parse(value) : undefined;
+  }
+
+  get(key: string): Promise<string | undefined> {
+    return Promise.resolve(this.state[key]);
+  }
+
+  getStore(state: IdName, key?: keyof IdName): any {
+    return state.id;
+  }
+
+  serialize(value: any): string | undefined {
+    return value ? JSON.stringify(value) : undefined;
+  }
+
+  set(key: string, value: string | undefined): Promise<void> {
+    this.state[key] = value;
+    return Promise.resolve();
   }
 
   setStore(state: IdName, value: any, key?: keyof IdName): IdName {
