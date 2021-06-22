@@ -1,10 +1,9 @@
-import { Component, DebugElement, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, DebugElement } from '@angular/core';
 import { Control } from '../control/control';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
-import { ControlValueSelect } from './control-value-select';
 
 @Component({
   template: `

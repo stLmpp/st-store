@@ -6,6 +6,8 @@ import {
   SimpleStore,
   SimpleStoreCustomPersist,
   StorePersistCustomStrategy,
+  StorePersistCustomStrategyObservable,
+  StorePersistCustomStrategyPromise,
   wait,
 } from '../util-test';
 
@@ -107,5 +109,31 @@ describe('Store', () => {
     store.destroy();
     store.updateState({ id: 1 });
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should persist with observable', async () => {
+    const persistStrategy = new StorePersistCustomStrategyObservable();
+    const customName = 'simple-custom-persist-observable';
+    persistStrategy.state[getPersistKey(customName)] = '2';
+    const customStore = new Store<IdName>({
+      name: customName,
+      initialState: { name: 'name', id: 1 },
+      persistStrategy,
+    });
+    await wait(0);
+    expect(customStore.getState().id).toBe(2);
+  });
+
+  it('should persist with promise', async () => {
+    const persistStrategy = new StorePersistCustomStrategyPromise();
+    const customName = 'simple-custom-persist-promise';
+    persistStrategy.state[getPersistKey(customName)] = '2';
+    const customStore = new Store<IdName>({
+      name: customName,
+      initialState: { name: 'name', id: 1 },
+      persistStrategy,
+    });
+    await wait(0);
+    expect(customStore.getState().id).toBe(2);
   });
 });

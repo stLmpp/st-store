@@ -2,6 +2,7 @@ import { getFirstKey, IdGetterFn, isArray, isNumber, isObject, isObjectEmpty, is
 import { environment } from './environment';
 import { copy } from 'copy-anything';
 import { EntityIdType } from './type';
+import { from, isObservable, Observable } from 'rxjs';
 
 /**
  * @description Transform an array of objects with an id, to an object of entities,
@@ -96,4 +97,21 @@ export function predictIdType<T extends Record<any, any>>(
  */
 export function isEntityId(value: any): value is EntityIdType {
   return isNumber(value) || isString(value);
+}
+
+/**
+ * @description convert value to observable
+ * @param {Promise<T> | Observable<T> | T} value
+ * @returns {Observable<T>}
+ */
+export function toObservable<T>(value: T | Promise<T> | Observable<T>): Observable<T> {
+  if (isObservable(value)) {
+    return value;
+  } else {
+    return from(Promise.resolve(value));
+  }
+}
+
+export function isPromise<T>(value: any): value is Promise<T> {
+  return Object.prototype.toString.call(value) === '[object Promise]';
 }
