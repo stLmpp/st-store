@@ -31,7 +31,7 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
     }
   }
 
-  validate(control: Control<Nullable<boolean>>): boolean | null {
+  override validate(control: Control<Nullable<boolean>>): boolean | null {
     if (!this._requiredTrue) {
       return null;
     }

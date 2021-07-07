@@ -16,7 +16,7 @@ export abstract class AbstractControlValue<T = any, E = Element> extends Control
     this.renderer2.setProperty(this.elementRef.nativeElement, 'value', value ?? '');
   }
 
-  setDisabled(disabled: boolean): void {
+  override setDisabled(disabled: boolean): void {
     this.renderer2.setProperty(this.elementRef.nativeElement, 'disabled', disabled);
   }
 }

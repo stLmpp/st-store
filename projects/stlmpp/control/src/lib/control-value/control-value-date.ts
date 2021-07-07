@@ -122,13 +122,13 @@ export class ControlValueDate extends AbstractControlValue<string | Date | null,
     this.onChange$.next(toControl(value));
   }
 
-  setValue(value: string | Date | null): void {
+  override setValue(value: string | Date | null): void {
     const toValue = transformer[this.type].toValue;
     value = toValue(value);
     super.setValue(value);
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 }

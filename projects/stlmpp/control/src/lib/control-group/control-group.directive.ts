@@ -14,7 +14,7 @@ import { AbstractControlDirective } from '../abstract-control';
   ],
 })
 export class ControlGroupDirective<T extends Record<any, any> = Record<any, any>, M = any> extends ControlParent {
-  @Input('controlGroup') control!: ControlGroup<T, M>;
+  @Input('controlGroup') override control!: ControlGroup<T, M>;
 
   @HostBinding('class.is-submitted')
   get submitted(): boolean {

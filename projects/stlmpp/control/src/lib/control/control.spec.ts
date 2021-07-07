@@ -163,14 +163,14 @@ describe('control', () => {
   it('should send classes of validators', () => {
     class CustomValidator extends ControlValidator {
       name = 'custom';
-      classes = ['validator', 'validator2'];
+      override classes = ['validator', 'validator2'];
       validate(): null {
         return null;
       }
     }
     class CustomValidatorTwo extends ControlValidator {
       name = 'custom2';
-      classes = 'validator3';
+      override classes = 'validator3';
       validate(): null {
         return null;
       }

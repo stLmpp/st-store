@@ -18,7 +18,7 @@ class ComponentLocalState extends LocalState<ComponentState> {
   }
 
   @Input() id!: number;
-  @Input() name!: string;
+  @Input() override name!: string;
   @Input() flag!: boolean;
   @Input() other = '';
 

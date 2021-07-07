@@ -2,6 +2,7 @@ import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angula
 
 /**
  * @description Context of the template variable NgLet
+ * @template T
  */
 export class NgLetContext<T> {
   $implicit!: T;
@@ -20,6 +21,7 @@ export class NgLetContext<T> {
 
 /**
  * @description Directive used to create a template variable
+ * @template T
  */
 @Directive({ selector: '[ngLet]' })
 export class NgLetDirective<T> implements OnInit {

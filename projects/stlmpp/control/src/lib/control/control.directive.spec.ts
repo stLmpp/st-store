@@ -34,7 +34,7 @@ class WithoutSets extends ControlValue {
 })
 class WithStateChanged extends ControlValue {
   setValue(value: any): void {}
-  stateChanged(state: ControlState): void {}
+  override stateChanged(state: ControlState): void {}
 }
 
 @Component({
@@ -212,7 +212,7 @@ describe('control directive', () => {
   it('should change the attribute of validators (if equals)', () => {
     class NewRequiredValidator extends ControlValidator {
       name = 'newRequired';
-      attrs = { required: 'required' };
+      override attrs = { required: 'required' };
       validate(): null {
         return null;
       }
@@ -233,7 +233,7 @@ describe('control directive', () => {
   it('should remove classes if validator is removed', () => {
     class ClassValidator extends ControlValidator {
       name = 'classValidator';
-      classes = ['a'];
+      override classes = ['a'];
       validate(): null {
         return null;
       }

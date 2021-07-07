@@ -28,14 +28,14 @@ export class UrlValidatorDirective extends AbstractUrlValidator implements OnCha
     }
   }
 
-  validate(control: Control<Nullable<string>>): PatternValidationError | null {
+  override validate(control: Control<Nullable<string>>): PatternValidationError | null {
     if (!this._url) {
       return null;
     }
     return super.validate(control);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  override ngOnChanges(changes: SimpleChanges): void {
     const urlChange = changes.url;
     if (urlChange && !urlChange.isFirstChange()) {
       this.validationChange$.next();

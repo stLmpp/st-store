@@ -22,7 +22,7 @@ export class ControlValueRadioStandalone extends AbstractControlValue<any, HTMLI
     }
   }
 
-  setValue(value: any): void {
+  override setValue(value: any): void {
     const checked = this.compareWith(value, this.value);
     this.renderer2.setProperty(this.elementRef.nativeElement, 'checked', checked);
     this.renderer2.setAttribute(this.elementRef.nativeElement, 'aria-checked', '' + checked);

@@ -41,7 +41,8 @@ export abstract class AbstractGreaterValidator<T extends Nullable<Date | number>
 }
 
 export class GreaterValidator<T extends Nullable<Date | number>> extends AbstractGreaterValidator<T> {
-  constructor(public greater: NonNullable<T>) {
+  constructor(greater: NonNullable<T>) {
     super();
+    this.greater = greater;
   }
 }

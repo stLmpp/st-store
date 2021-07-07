@@ -21,7 +21,7 @@ export class WhiteSpaceValidatorDirective extends AbstractWhiteSpaceValidator im
     this._whiteSpace = coerceBooleanProperty(whiteSpace);
   }
 
-  validate(control: Control<Nullable<string>>): Observable<boolean | null> | boolean | null {
+  override validate(control: Control<Nullable<string>>): Observable<boolean | null> | boolean | null {
     if (!this._whiteSpace) {
       return null;
     }

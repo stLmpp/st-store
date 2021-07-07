@@ -1,5 +1,5 @@
 import { Directive, OnChanges, OnDestroy } from '@angular/core';
-import { isKeyof, isObject, isObjectEmpty } from 'st-utils';
+import { isObject, isObjectEmpty } from 'st-utils';
 import { SimpleChangesCustom, StateComponentConfig, StateComponentConfigInput } from '../type';
 import { State } from './state';
 

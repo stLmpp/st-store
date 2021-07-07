@@ -22,7 +22,8 @@
       "@stlmpp/store": ["dist/stlmpp/store"],
       "@stlmpp/store/*": ["dist/stlmpp/store/*"]
     },
-    "stripInternal": true
+    "stripInternal": true,
+    "noImplicitOverride": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

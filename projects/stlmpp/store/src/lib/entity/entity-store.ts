@@ -137,7 +137,7 @@ export class EntityStore<
    * @description update the state partially
    * @param {Partial<State> | ((oldState: State) => State) | State} state
    */
-  updateState(state: State | Partial<State> | ((oldState: State) => State)): this {
+  override updateState(state: State | Partial<State> | ((oldState: State) => State)): this {
     const callback = isFunction(state) ? state : (oldState: State) => ({ ...oldState, ...state });
     return super.updateState(oldState => {
       let newState = callback(oldState);

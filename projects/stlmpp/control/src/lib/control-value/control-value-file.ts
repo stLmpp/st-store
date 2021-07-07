@@ -18,13 +18,13 @@ export class ControlValueFile extends AbstractControlValue<FileList | null, HTML
     this.onChange$.next(target.files);
   }
 
-  setValue(value: FileList | null): void {
+  override setValue(value: FileList | null): void {
     if (isNil(value)) {
       this.renderer2.setProperty(this.elementRef.nativeElement, 'value', '');
     }
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 }

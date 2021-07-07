@@ -32,9 +32,9 @@ export abstract class AbstractPatternValidator
 
   protected regExp!: RegExp;
 
-  abstract readonly name: string;
+  abstract override readonly name: string;
 
-  attrs: ControlValidatorAttributes = {};
+  override attrs: ControlValidatorAttributes = {};
 
   validate({ value }: Control<Nullable<string>>): PatternValidationError | null {
     if (!value) {

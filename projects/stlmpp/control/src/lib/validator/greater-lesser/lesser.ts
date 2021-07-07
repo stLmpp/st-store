@@ -42,7 +42,8 @@ export abstract class AbstractLesserValidator<T extends Nullable<Date | number>>
 }
 
 export class LesserValidator<T extends Nullable<Date | number>> extends AbstractLesserValidator<T> {
-  constructor(public lesser: NonNullable<T>) {
+  constructor(lesser: NonNullable<T>) {
     super();
+    this.lesser = lesser;
   }
 }

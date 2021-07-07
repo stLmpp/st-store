@@ -48,7 +48,7 @@ export class ControlValueSelect extends AbstractControlValue<any, HTMLSelectElem
     this.onChange$.next(this.options.toArray()[index].value);
   }
 
-  setValue(value: any): void {
+  override setValue(value: any): void {
     if (!this.options && value) {
       this._valueAfterContentInit = value;
       this._setValueAfterContentInit = true;
@@ -57,7 +57,7 @@ export class ControlValueSelect extends AbstractControlValue<any, HTMLSelectElem
     }
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 

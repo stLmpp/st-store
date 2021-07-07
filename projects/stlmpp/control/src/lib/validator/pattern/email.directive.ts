@@ -27,7 +27,7 @@ export class EmailValidatorDirective extends AbstractEmailValidator implements O
     }
   }
 
-  validate(control: Control<Nullable<string>>): boolean | null {
+  override validate(control: Control<Nullable<string>>): boolean | null {
     if (!this._email) {
       return null;
     }

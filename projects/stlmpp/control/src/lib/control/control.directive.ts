@@ -52,7 +52,7 @@ export abstract class BaseControlDirective<T = any, M = any>
   private readonly _controlValues: ControlValue<T>[];
   protected readonly _destroy$ = new Subject<void>();
 
-  control!: Control<T, M>;
+  override control!: Control<T, M>;
 
   protected init(): void {
     this._destroy$.next();
@@ -177,5 +177,5 @@ export abstract class BaseControlDirective<T = any, M = any>
 
 @Directive({ selector: '[control]', providers: [{ provide: AbstractControlDirective, useExisting: ControlDirective }] })
 export class ControlDirective<T = any, M = any> extends BaseControlDirective<T, M> {
-  @Input() control!: Control<T>;
+  @Input() override control!: Control<T>;
 }

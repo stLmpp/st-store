@@ -172,7 +172,7 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
    * @param {T} state
    * @returns {this}
    */
-  setState(state: T): this {
+  override setState(state: T): this {
     if (this._useDevCopy) {
       state = devCopy(state);
     }
@@ -185,7 +185,7 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
    * @param {Partial<T> | ((oldState: T) => T) | T} state
    * @returns {this}
    */
-  updateState(state: T | Partial<T> | ((oldState: T) => T)): this {
+  override updateState(state: T | Partial<T> | ((oldState: T) => T)): this {
     const currentState = this.getState();
     const callback = isFunction(state) ? state : (oldState: T) => ({ ...oldState, ...state });
     const newState = this.preUpdate(callback(currentState));

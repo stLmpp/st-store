@@ -23,7 +23,7 @@ export abstract class AbstractMinLengthValidator<T extends Nullable<string | any
 
   readonly name = 'minLength';
 
-  attrs: ControlValidatorAttributes = {};
+  override attrs: ControlValidatorAttributes = {};
 
   validate({ value }: Control<T>): LengthValidationError | null {
     if (!value) {

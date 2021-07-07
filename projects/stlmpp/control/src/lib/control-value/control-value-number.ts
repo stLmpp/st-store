@@ -18,7 +18,7 @@ export class ControlValueNumber extends AbstractControlValue<number | null, HTML
     this.onChange$.next(value ? +value : null);
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 }

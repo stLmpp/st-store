@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { ContainsValidator } from '../contains/contains';
 
 class ContainsWithClass extends ContainsValidator {
-  classes = ['contains'];
+  override classes = ['contains'];
 }
 
 @Component({ template: `<input [control]="control" />` })

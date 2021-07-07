@@ -70,7 +70,7 @@ export class ControlValueSelectMultiple
     this.onChange$.next(selectOptions);
   }
 
-  setValue(value: any[]): void {
+  override setValue(value: any[]): void {
     if (!this.options && value?.length) {
       this._valueAfterContentInit = value;
       this._setValueAfterContentInit = true;
@@ -79,7 +79,7 @@ export class ControlValueSelectMultiple
     }
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 

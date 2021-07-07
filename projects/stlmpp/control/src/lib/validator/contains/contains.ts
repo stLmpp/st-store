@@ -28,7 +28,8 @@ export abstract class AbstractContainsValidators
 }
 
 export class ContainsValidator extends AbstractContainsValidators {
-  constructor(public contains: string) {
+  constructor(contains: string) {
     super();
+    this.contains = contains;
   }
 }

@@ -10,9 +10,9 @@ import { By } from '@angular/platform-browser';
 import { wait } from '../../util-tests';
 
 class AsyncValOne extends ControlValidator {
-  async = true;
-  attrs = { attr1: undefined };
-  classes = 'one';
+  override async = true;
+  override attrs = { attr1: undefined };
+  override classes = 'one';
   name = 'one';
 
   validate(control: Control<string>): Observable<any> | Observable<null> | any | null {
@@ -21,10 +21,11 @@ class AsyncValOne extends ControlValidator {
 }
 
 class AsyncValTwo extends AsyncValOne {
-  name = 'two';
-  classes = 'two';
-  attrs = { ...super.attrs, attr2: undefined };
-  validate(control: Control<string>): Observable<any> | Observable<null> | any | null {
+  override name = 'two';
+  override classes = 'two';
+  override attrs = { ...super.attrs, attr2: undefined };
+
+  override validate(control: Control<string>): Observable<any> | Observable<null> | any | null {
     return super.validate(control).pipe(
       delay(10),
       map(() => (!control.value?.includes('B') ? true : null))
@@ -33,7 +34,7 @@ class AsyncValTwo extends AsyncValOne {
 }
 
 class AsyncValNull extends ControlValidator {
-  async = true;
+  override async = true;
   name = 'null';
 
   validate(control: Control<string>): Observable<any> | Observable<null> | any | null {

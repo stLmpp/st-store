@@ -5,7 +5,7 @@ import { ControlValidator, ControlValidatorAttributes } from '../validator';
 export class AbstractRequiredValidator<T = any> extends ControlValidator<T, boolean> {
   readonly name = 'required';
 
-  attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
+  override attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
 
   validate({ value }: Control<T>): boolean | null {
     let isInvalid: boolean;

@@ -5,7 +5,7 @@ import { Nullable } from '../../util';
 export abstract class AbstractRequiredTrueValidator extends ControlValidator<Nullable<boolean>, boolean> {
   readonly name = 'requiredTrue';
 
-  attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
+  override attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
 
   validate({ value }: Control<Nullable<boolean>>): boolean | null {
     return value !== true || null;

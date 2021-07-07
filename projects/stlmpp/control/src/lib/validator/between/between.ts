@@ -46,8 +46,9 @@ export class BetweenValidator<T extends Nullable<Date | number>> extends Abstrac
   constructor(
     public start: NonNullable<T>,
     public end: NonNullable<T>,
-    public inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true]
+    inclusiveness: [includeStart: boolean, includeEnd: boolean] = [true, true]
   ) {
     super();
+    this.inclusiveness = inclusiveness;
   }
 }

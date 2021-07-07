@@ -11,6 +11,8 @@ import { ConditionalKeys } from 'type-fest';
 export const sumOperator = (): OperatorFunction<number[], number> => map<number[], number>(sum);
 /**
  * @description SumBy rxjs operator, return the sum of an array of objects based on a key {@link sumBy}
+ * @template T
+ * @template K
  * @param {K} key
  * @returns {OperatorFunction<T[], number>}
  */

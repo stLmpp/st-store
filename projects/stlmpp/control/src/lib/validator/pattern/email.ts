@@ -7,7 +7,7 @@ const EMAIL_REGEXP =
 
 export abstract class AbstractEmailValidator extends ControlValidator<Nullable<string>, boolean> {
   readonly name = 'email';
-  attrs: ControlValidatorAttributes = { email: undefined };
+  override attrs: ControlValidatorAttributes = { email: undefined };
 
   validate({ value }: Control<Nullable<string>>): boolean | null {
     return (value && !EMAIL_REGEXP.test(value)) || null;

@@ -28,7 +28,7 @@ export class ControlArrayNameDirective<T = any, M = any>
   private _controlArrayName!: string | number;
   private _initialized = false;
 
-  protected control!: ControlArray<T, M>;
+  protected override control!: ControlArray<T, M>;
 
   @Input()
   set controlArrayName(controlArrayName: string) {
@@ -69,7 +69,7 @@ export class ControlArrayNameDirective<T = any, M = any>
     this.init();
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     if (isControlArray(this.control)) {
       this.control.destroy();
     }

@@ -51,7 +51,7 @@ export class ControlNameDirective<T = any, M = any> extends ControlDirective<T, 
     this.init();
   }
 
-  init(): void {
+  override init(): void {
     if (!this._initialized) {
       return;
     }

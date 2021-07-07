@@ -18,8 +18,8 @@ export class ComposeValidator extends ControlValidator<any, Record<string, any>>
 
   private readonly _validators: ControlValidator[];
 
-  attrs: Record<string, string | number | boolean | undefined> = {};
-  classes: string[] = [];
+  override attrs: Record<string, string | number | boolean | undefined> = {};
+  override classes: string[] = [];
   readonly name = 'compose';
 
   validate(control: Control): Record<string, any> | null {

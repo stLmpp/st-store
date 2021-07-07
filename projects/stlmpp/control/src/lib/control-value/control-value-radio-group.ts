@@ -39,7 +39,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
   @ContentChildren(ControlValueRadio, { descendants: true }) allChildren!: QueryList<ControlValueRadio>;
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
-  id = uniqueID++;
+  override id = uniqueID++;
   children = new QueryList<ControlValueRadio>();
 
   private _disableChildren(disabled: boolean): void {
@@ -61,7 +61,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     this._lastValue = value;
   }
 
-  setDisabled(disabled: boolean): void {
+  override setDisabled(disabled: boolean): void {
     if (!this.allChildren && disabled) {
       this._markForDisabledAfterContentInit = true;
     } else {
@@ -81,7 +81,7 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     }
   }
 
-  focus(): void {
+  override focus(): void {
     this.children.first?.elementRef?.nativeElement?.focus();
   }
 

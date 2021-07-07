@@ -30,7 +30,7 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
     }
   }
 
-  validate(control: Control<T>): boolean | null {
+  override validate(control: Control<T>): boolean | null {
     if (!this._required) {
       return null;
     }

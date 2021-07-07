@@ -20,7 +20,7 @@ export class ControlValueDefault extends AbstractControlValue<string, HTMLInputE
     this.onChange$.next(value);
   }
 
-  focus(): void {
+  override focus(): void {
     this.elementRef.nativeElement.focus();
   }
 }

@@ -26,7 +26,7 @@ export abstract class AbstractMinValidator<T extends Nullable<Date | number>>
   private _min!: NonNullable<T>;
   private _type!: MaxMinType;
 
-  attrs: ControlValidatorAttributes = {};
+  override attrs: ControlValidatorAttributes = {};
 
   readonly name = 'min';
 

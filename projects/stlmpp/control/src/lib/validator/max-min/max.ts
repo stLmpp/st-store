@@ -41,7 +41,7 @@ export abstract class AbstractMaxValidator<T extends Nullable<Date | number>>
   private _max!: NonNullable<T>;
   private _type!: MaxMinType;
 
-  attrs: ControlValidatorAttributes = {};
+  override attrs: ControlValidatorAttributes = {};
 
   readonly name = 'max';
 

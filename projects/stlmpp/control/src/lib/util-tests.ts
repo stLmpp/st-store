@@ -28,7 +28,7 @@ export class AsyncValidator extends ControlValidator {
   }
 
   name = 'asyncValidator';
-  async = true;
+  override async = true;
   validate(): Observable<any> | Observable<null> | null {
     return of(null).pipe(
       delay(5),
