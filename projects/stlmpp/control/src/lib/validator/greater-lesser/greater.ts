@@ -17,7 +17,7 @@ export abstract class AbstractGreaterValidator<T extends Nullable<Date | number>
 {
   @Input() greater!: NonNullable<T>;
 
-  readonly name = 'greater';
+  readonly name: string = 'greater';
 
   validate({ value }: Control<T>): GreaterValidationError<T> | null {
     if (isNil(value)) {

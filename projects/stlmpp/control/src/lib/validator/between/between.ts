@@ -21,9 +21,9 @@ export abstract class AbstractBetweenValidator<T extends Nullable<Date | number>
   abstract start: NonNullable<T>;
   abstract end: NonNullable<T>;
 
-  readonly name = 'between';
+  readonly name: string = 'between';
 
-  validate({ value, metadata }: Control<T>): BetweenError<T> | null {
+  validate({ value }: Control<T>): BetweenError<T> | null {
     if (isNil(value)) {
       return null;
     }

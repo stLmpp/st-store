@@ -25,7 +25,7 @@ export abstract class AbstractMaxLengthValidator<T extends Nullable<string | any
   }
   private _maxLength!: number;
 
-  readonly name = 'maxLength';
+  readonly name: string = 'maxLength';
 
   override attrs: ControlValidatorAttributes = {};
 

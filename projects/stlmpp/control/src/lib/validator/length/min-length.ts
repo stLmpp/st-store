@@ -21,7 +21,7 @@ export abstract class AbstractMinLengthValidator<T extends Nullable<string | any
   }
   private _minLength!: number;
 
-  readonly name = 'minLength';
+  readonly name: string = 'minLength';
 
   override attrs: ControlValidatorAttributes = {};
 

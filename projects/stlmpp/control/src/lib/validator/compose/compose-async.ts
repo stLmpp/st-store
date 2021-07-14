@@ -25,7 +25,7 @@ export class ComposeAsyncValidator extends ControlValidator<any, Record<string, 
 
   override attrs: Record<string, string | number | boolean | undefined> = {};
   override classes: string[] = [];
-  readonly name = 'composeAsync';
+  readonly name: string = 'composeAsync';
   override readonly async = true;
 
   validate(control: Control): Observable<Record<string, any> | null> {

@@ -17,6 +17,7 @@ import { BetweenValidator } from './between/between';
 import { RequiredTrueValidator } from './required/required-true';
 import { Nullable } from '../util';
 import { WhiteSpaceValidator } from './white-space/white-space';
+import { SiblingNotEqualsValidator } from './other/sibling-not-equals';
 
 // @dynamic
 export class Validators {
@@ -56,6 +57,12 @@ export class Validators {
   ): SibblingEqualsValidator<T> {
     return new SibblingEqualsValidator<T>(sibblingName, compareWith);
   }
+  static siblingNotEquals<T = any>(
+    siblingName: string,
+    compareWith?: (valueA: T, valueB: T) => boolean
+  ): SiblingNotEqualsValidator {
+    return new SiblingNotEqualsValidator<T>(siblingName, compareWith);
+  }
   static get url(): UrlValidator {
     return new UrlValidator();
   }
@@ -93,6 +100,7 @@ export interface ValidatorsModel {
   composeAsync: Record<string, any>;
   contains: boolean;
   sibblingEquals: SibblingEqualsValidationError;
+  siblingNotEquals: SibblingEqualsValidationError;
   url: boolean;
   greater: GreaterValidationError<Nullable<Date | number>>;
   lesser: LesserValidationError<Nullable<Date | number>>;

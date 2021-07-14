@@ -57,5 +57,5 @@ export class PatternValidator extends AbstractPatternValidator {
     this.pattern = pattern;
   }
 
-  readonly name = 'pattern';
+  readonly name: string = 'pattern';
 }

@@ -3,7 +3,7 @@ import { Control } from '../../control/control';
 import { Nullable } from '../../util';
 
 export abstract class AbstractRequiredTrueValidator extends ControlValidator<Nullable<boolean>, boolean> {
-  readonly name = 'requiredTrue';
+  readonly name: string = 'requiredTrue';
 
   override attrs: ControlValidatorAttributes = { required: undefined, 'aria-required': true };
 
