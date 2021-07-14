@@ -1,6 +1,6 @@
-import { SibblingEqualsValidator } from './sibbling-equals';
+import { SiblingEqualsValidator } from './sibbling-equals';
 
-export class SiblingNotEqualsValidator<T = any> extends SibblingEqualsValidator<T> {
+export class SiblingNotEqualsValidator<T = any> extends SiblingEqualsValidator<T> {
   constructor(
     siblingName: string,
     compareWith: (valueA: T, valueB: T) => boolean = (valueA, valueB) => !Object.is(valueA, valueB)

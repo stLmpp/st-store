@@ -346,7 +346,7 @@ export class EntityStore<
   }
 
   /**
-   * @description middleware called before updading an entity
+   * @description middleware called before updating an entity
    * @param {T} entity
    * @returns {T}
    */
@@ -363,7 +363,7 @@ export class EntityStore<
   }
 
   /**
-   * @description middleware called after upserting entities
+   * @description middleware called after upsertting entities
    * @returns {this}
    */
   postUpsertEntity(): this {

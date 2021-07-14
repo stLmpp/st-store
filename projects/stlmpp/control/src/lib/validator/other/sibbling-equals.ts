@@ -1,34 +1,34 @@
 import { ControlValidator } from '../validator';
 import { Control, isControl } from '../../control/control';
 
-export interface SibblingEqualsValidationError {
-  sibbling: any;
+export interface SiblingEqualsValidationError {
+  sibling: any;
   value: any;
 }
 
-export class SibblingEqualsValidator<T = any> extends ControlValidator<T, SibblingEqualsValidationError> {
-  constructor(private sibblingName: string, private compareWith: (valueA: T, valueB: T) => boolean = Object.is) {
+export class SiblingEqualsValidator<T = any> extends ControlValidator<T, SiblingEqualsValidationError> {
+  constructor(private siblingName: string, private compareWith: (valueA: T, valueB: T) => boolean = Object.is) {
     super();
   }
 
-  readonly name: string = 'sibblingEquals';
+  readonly name: string = 'siblingEquals';
 
-  validate(control: Control<T>): SibblingEqualsValidationError | null {
+  validate(control: Control<T>): SiblingEqualsValidationError | null {
     const parent = control.parent;
     if (!parent) {
       return null;
     }
-    const sibbling = parent.get(this.sibblingName);
-    if (!sibbling || !isControl(sibbling)) {
+    const sibling = parent.get(this.siblingName);
+    if (!sibling || !isControl(sibling)) {
       return null;
     }
     const value = control.value;
-    const isEqual = this.compareWith(value, sibbling.value);
+    const isEqual = this.compareWith(value, sibling.value);
     if (isEqual) {
-      sibbling.removeError(this.name);
+      sibling.removeError(this.name);
     } else {
-      sibbling.addError(this.name, { sibbling: control.value, value: sibbling.value });
+      sibling.addError(this.name, { sibling: control.value, value: sibling.value });
     }
-    return !isEqual ? { sibbling: sibbling.value, value: control.value } : null;
+    return !isEqual ? { sibling: sibling.value, value: control.value } : null;
   }
 }

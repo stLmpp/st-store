@@ -7,7 +7,7 @@ import { StControlModule } from '../../st-control.module';
 
 @Component({ template: `<input [control]="control" />` })
 class WithoutParent {
-  control = new Control('', [Validators.siblingNotEquals('sibbling')]);
+  control = new Control('', [Validators.siblingNotEquals('sibling')]);
 }
 
 @Component({
@@ -15,22 +15,22 @@ class WithoutParent {
     <input controlName="control" />
   </div>`,
 })
-class WithoutSibbling {
+class WithoutSibling {
   controlGroup = new ControlGroup<{ control: string }>({
-    control: new Control('A', [Validators.siblingNotEquals('sibbling')]),
+    control: new Control('A', [Validators.siblingNotEquals('sibling')]),
   });
 }
 
 @Component({
   template: ` <div [controlGroup]="controlGroup">
     <input controlName="control" />
-    <div controlGroupName="sibbling"></div>
+    <div controlGroupName="sibling"></div>
   </div>`,
 })
-class SibblingNotControl {
-  controlGroup = new ControlGroup<{ control: string; sibbling: object }>({
-    control: new Control('A', [Validators.siblingNotEquals('sibbling')]),
-    sibbling: new ControlGroup({}),
+class SiblingNotControl {
+  controlGroup = new ControlGroup<{ control: string; sibling: object }>({
+    control: new Control('A', [Validators.siblingNotEquals('sibling')]),
+    sibling: new ControlGroup({}),
   });
 }
 
@@ -38,25 +38,25 @@ class SibblingNotControl {
   template: `
     <div [controlGroup]="controlGroup">
       <input controlName="control" />
-      <input controlName="sibbling" />
+      <input controlName="sibling" />
     </div>
   `,
 })
 class ControlComponent {
-  controlGroup = new ControlGroup<{ control: string; sibbling: string }>({
-    control: new Control('A', [Validators.siblingNotEquals('sibbling')]),
-    sibbling: new Control('B', [Validators.siblingNotEquals('control')]),
+  controlGroup = new ControlGroup<{ control: string; sibling: string }>({
+    control: new Control('A', [Validators.siblingNotEquals('sibling')]),
+    sibling: new Control('B', [Validators.siblingNotEquals('control')]),
   });
 }
 
-describe('sibbling equals validator', () => {
+describe('sibling equals validator', () => {
   let fixture: ComponentFixture<ControlComponent>;
   let component: ControlComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StControlModule],
-      declarations: [WithoutParent, WithoutSibbling, SibblingNotControl, ControlComponent],
+      declarations: [WithoutParent, WithoutSibling, SiblingNotControl, ControlComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
@@ -70,26 +70,26 @@ describe('sibbling equals validator', () => {
   });
 
   it('should return null if sibling does not exists', () => {
-    const fix = TestBed.createComponent(WithoutSibbling);
+    const fix = TestBed.createComponent(WithoutSibling);
     fix.detectChanges();
     expect(fix.componentInstance.controlGroup.get('control').getError('siblingNotEquals')).toBeUndefined();
   });
 
   it('should return null if sibling is not a control', () => {
-    const fix = TestBed.createComponent(SibblingNotControl);
+    const fix = TestBed.createComponent(SiblingNotControl);
     fix.detectChanges();
     expect(fix.componentInstance.controlGroup.get('control').getError('siblingNotEquals')).toBeUndefined();
   });
 
   it('should return error if siblings are different', () => {
     expect(component.controlGroup.get('control').getError('siblingNotEquals')).toBeUndefined();
-    expect(component.controlGroup.get('sibbling').getError('siblingNotEquals')).toBeUndefined();
+    expect(component.controlGroup.get('sibling').getError('siblingNotEquals')).toBeUndefined();
   });
 
   it('should return null if siblings are equal', () => {
     component.controlGroup.get('control').setValue('B');
     fixture.detectChanges();
-    expect(component.controlGroup.get('control').getError('siblingNotEquals')).toEqual({ value: 'B', sibbling: 'B' });
-    expect(component.controlGroup.get('sibbling').getError('siblingNotEquals')).toEqual({ value: 'B', sibbling: 'B' });
+    expect(component.controlGroup.get('control').getError('siblingNotEquals')).toEqual({ value: 'B', sibling: 'B' });
+    expect(component.controlGroup.get('sibling').getError('siblingNotEquals')).toEqual({ value: 'B', sibling: 'B' });
   });
 });

@@ -29,7 +29,7 @@ describe('min-length validator directive', () => {
 
   it('should validate if value is in range', () => {
     expect(component.modelDirective.isValid).toBeFalse();
-    component.model = 'testetesteteste';
+    component.model = 'test test test ';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

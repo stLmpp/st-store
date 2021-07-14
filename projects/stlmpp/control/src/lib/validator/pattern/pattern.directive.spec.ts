@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 @Component({ template: '<input type="text" [(model)]="model" [pattern]="pattern">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
-  model = 'teste';
+  model = 'test';
 
   pattern = '^GUI$';
 }
@@ -36,7 +36,7 @@ describe('pattern validator directive', () => {
   });
 
   it('should rerun the validator if the pattern changes', () => {
-    component.pattern = '^teste$';
+    component.pattern = '^test$';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

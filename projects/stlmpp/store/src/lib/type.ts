@@ -43,7 +43,7 @@ export interface EntityStoreOptions<State extends EntityState<T> = any, T extend
    */
   initialState?: Partial<Omit<State, 'entities' | 'activeKeys'>> & { entities?: T[] | Record<string, T> };
   /**
-   * @description initial active itens of a store
+   * @description initial active items of a store
    */
   initialActive?: EntityIdType[];
 }
@@ -98,7 +98,7 @@ export interface KeyValue<K, V> {
 
 export interface StMapMergeOptions {
   /**
-   * @description when using the {@link StMap#merge}, this option will be used to allow upserting itens.
+   * @description when using the {@link StMap#merge}, this option will be used to allow upsertting items.
    * <br> If set to true, works the same as {@link StMap#upsert}
    */
   upsert?: boolean;

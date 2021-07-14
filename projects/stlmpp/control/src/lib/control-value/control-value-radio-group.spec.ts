@@ -78,7 +78,7 @@ describe('control value radio group', () => {
     expect(component.control.value).toBe(2);
   });
 
-  it('should disable all childrens', () => {
+  it('should disable all children', () => {
     component.control.disable();
     fixture.detectChanges();
     expect(radio1.attributes.disabled).toBeDefined();
@@ -110,7 +110,7 @@ describe('control value radio group', () => {
     expect(radio1.nativeElement).toBe(document.activeElement);
   });
 
-  it('should not throw if initial focus with no childrens', () => {
+  it('should not throw if initial focus with no children', () => {
     expect(() => {
       const fix = TestBed.createComponent(ControlNoChildrenComponent);
       fix.detectChanges();

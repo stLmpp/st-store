@@ -51,7 +51,7 @@ describe('control builder', () => {
   describe('group', () => {
     it('should create group', () => {
       const group = controlBuilder.group<Group>({
-        control: ['TESTE', { validators: [Validators.required], updateOn: 'blur' }],
+        control: ['TEST', { validators: [Validators.required], updateOn: 'blur' }],
         control2: '',
         control3: { control: [0, { validators: [Validators.required] }] },
         array: controlBuilder.array<string>([]),
@@ -86,7 +86,7 @@ describe('control builder', () => {
       const array = controlBuilder.array<Group>(
         [
           {
-            control: ['TESTE', { validators: [Validators.required], updateOn: 'blur' }],
+            control: ['TEST', { validators: [Validators.required], updateOn: 'blur' }],
             control2: '',
             control3: { control: [0, { validators: [Validators.required] }] },
             array: controlBuilder.array<string>([]),

@@ -21,7 +21,7 @@ export class StateService {
   }
 
   /**
-   * @description creates a new instace of {@link State}
+   * @description creates a new instance of {@link State}
    * @param {T} initialState
    * @param {StateConfig} config
    * @returns {State<T>}

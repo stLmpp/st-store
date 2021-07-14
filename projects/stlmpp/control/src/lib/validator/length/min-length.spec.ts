@@ -38,7 +38,7 @@ describe('min length validator', () => {
 
   describe('string', () => {
     it('should return null if string length is greater or equal than minlength', () => {
-      expect(valString.validate(createFakeControl('AAAA'))).toBeNull();
+      expect(valString.validate(createFakeControl('TEST'))).toBeNull();
     });
 
     it('should return error if string length is lesser than minlength', () => {

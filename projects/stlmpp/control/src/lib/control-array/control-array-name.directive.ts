@@ -51,7 +51,7 @@ export class ControlArrayNameDirective<T = any, M = any>
       throw new ControlNameDoesNotMatch('controlArrayName', this._controlArrayName);
     }
     this.control = control;
-    this.initAllChilds();
+    this.initAllChildren();
   }
 
   *[Symbol.iterator](): Iterator<ControlType<T>> {

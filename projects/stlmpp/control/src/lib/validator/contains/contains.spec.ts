@@ -9,12 +9,12 @@ describe('contains validator', () => {
     valString = new ContainsValidator('A');
   });
 
-  it('should not validate is value is falsey', () => {
+  it('should not validate is value is falsy', () => {
     expect(valString.validate(createFakeControl<Nullable<string>>(''))).toBeNull();
   });
 
   it('should validate is value contains', () => {
-    expect(valString.validate(createFakeControl<Nullable<string>>('TESTEA'))).toBeNull();
+    expect(valString.validate(createFakeControl<Nullable<string>>('TEST A'))).toBeNull();
     expect(valString.validate(createFakeControl<Nullable<string>>('B'))).toBeTrue();
   });
 });

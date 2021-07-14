@@ -15,7 +15,7 @@ import { PatternValidator } from './pattern/pattern';
 import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
-import { SibblingEqualsValidator } from './other/sibbling-equals';
+import { SiblingEqualsValidator } from './other/sibbling-equals';
 import { WhiteSpaceValidator } from './white-space/white-space';
 
 describe('validators', () => {
@@ -50,8 +50,8 @@ describe('validators', () => {
   it('should return contains validator', () => {
     expect(Validators.contains('A')).toBeInstanceOf(ContainsValidator);
   });
-  it('should return sibblingEquals validator', () => {
-    expect(Validators.sibblingEquals('a')).toBeInstanceOf(SibblingEqualsValidator);
+  it('should return siblingEquals validator', () => {
+    expect(Validators.siblingEquals('a')).toBeInstanceOf(SiblingEqualsValidator);
   });
   it('should return url validator', () => {
     expect(Validators.url).toBeInstanceOf(UrlValidator);

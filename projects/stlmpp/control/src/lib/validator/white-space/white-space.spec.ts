@@ -7,7 +7,7 @@ describe('white space validator', () => {
     const validator = new WhiteSpaceValidator();
     expect(validator.validate(createFakeControl<Nullable<string>>(''))).toBeNull();
     expect(validator.validate(createFakeControl<Nullable<string>>('     '))).toBeTrue();
-    expect(validator.validate(createFakeControl<Nullable<string>>('TESTE'))).toBeNull();
+    expect(validator.validate(createFakeControl<Nullable<string>>('TEST'))).toBeNull();
     expect(validator.validate(createFakeControl<Nullable<string>>(null))).toBeNull();
   });
 });

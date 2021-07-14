@@ -54,7 +54,7 @@ export { MinLengthValidator } from './lib/validator/length/min-length';
 export { PatternValidationError, PatternValidator } from './lib/validator/pattern/pattern';
 export { RequiredValidator } from './lib/validator/required/required';
 export { RequiredTrueValidator } from './lib/validator/required/required-true';
-export { SibblingEqualsValidationError, SibblingEqualsValidator } from './lib/validator/other/sibbling-equals';
+export { SiblingEqualsValidationError, SiblingEqualsValidator } from './lib/validator/other/sibbling-equals';
 export { SiblingNotEqualsValidator } from './lib/validator/other/sibling-not-equals';
 export { UrlValidator } from './lib/validator/pattern/url';
 export { ControlValidator, ControlValidatorAttributes } from './lib/validator/validator';

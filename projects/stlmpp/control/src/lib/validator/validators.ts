@@ -9,7 +9,7 @@ import { ControlValidator } from './validator';
 import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
-import { SibblingEqualsValidationError, SibblingEqualsValidator } from './other/sibbling-equals';
+import { SiblingEqualsValidationError, SiblingEqualsValidator } from './other/sibbling-equals';
 import { UrlValidator } from './pattern/url';
 import { GreaterValidationError, GreaterValidator } from './greater-lesser/greater';
 import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';
@@ -51,11 +51,11 @@ export class Validators {
   static contains(value: NonNullable<string>): ContainsValidator {
     return new ContainsValidator(value);
   }
-  static sibblingEquals<T = any>(
-    sibblingName: string,
+  static siblingEquals<T = any>(
+    siblingName: string,
     compareWith?: (valueA: T, valueB: T) => boolean
-  ): SibblingEqualsValidator<T> {
-    return new SibblingEqualsValidator<T>(sibblingName, compareWith);
+  ): SiblingEqualsValidator<T> {
+    return new SiblingEqualsValidator<T>(siblingName, compareWith);
   }
   static siblingNotEquals<T = any>(
     siblingName: string,
@@ -99,8 +99,8 @@ export interface ValidatorsModel {
   compose: Record<string, any>;
   composeAsync: Record<string, any>;
   contains: boolean;
-  sibblingEquals: SibblingEqualsValidationError;
-  siblingNotEquals: SibblingEqualsValidationError;
+  siblingEquals: SiblingEqualsValidationError;
+  siblingNotEquals: SiblingEqualsValidationError;
   url: boolean;
   greater: GreaterValidationError<Nullable<Date | number>>;
   lesser: LesserValidationError<Nullable<Date | number>>;

@@ -9,7 +9,7 @@ import { StateService } from './state.service';
 export class State<T extends Record<string, any> = Record<string, any>> {
   /**
    * @template T
-   * @description creates a instace of state, to handle reactivity with observables (similar to react state)
+   * @description creates a instance of state, to handle reactivity with observables (similar to react state)
    * @param {T} initialState
    * @param {StateConfig} config
    * @param {StateService} stateService optional parameter, only injected when create from {@link StateService#create}
@@ -109,7 +109,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
    */
   getState(): T;
   /**
-   * @description returns a snpashot of a property of the state
+   * @description returns a snapshot of a property of the state
    * @param {K} key
    * @returns {T[K]}
    */
