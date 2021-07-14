@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SibblingEqualsValidator | @stlmpp/control</title>
+	<title>SiblingEqualsValidator | @stlmpp/control</title>
 	<meta name="description" content="Documentation for @stlmpp/control">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@stlmpp/control</a>
 				</li>
 				<li>
-					<a href="sibblingequalsvalidator.html">SibblingEqualsValidator</a>
+					<a href="siblingequalsvalidator.html">SiblingEqualsValidator</a>
 				</li>
 			</ul>
-			<h1>Class SibblingEqualsValidator&lt;T&gt;</h1>
+			<h1>Class SiblingEqualsValidator&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -77,10 +77,15 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="controlvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">ControlValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/sibblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SibblingEqualsValidationError</a><span class="tsd-signature-symbol">&gt;</span>
+						<a href="controlvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">ControlValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/siblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SiblingEqualsValidationError</a><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">SibblingEqualsValidator</span>
+								<span class="target">SiblingEqualsValidator</span>
+								<ul class="tsd-hierarchy">
+									<li>
+										<a href="siblingnotequalsvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">SiblingNotEqualsValidator</a>
+									</li>
+								</ul>
 							</li>
 						</ul>
 					</li>
@@ -93,23 +98,23 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite"><a href="sibblingequalsvalidator.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite"><a href="siblingequalsvalidator.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="sibblingequalsvalidator.html#async" class="tsd-kind-icon">async</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="sibblingequalsvalidator.html#attrs" class="tsd-kind-icon">attrs</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="sibblingequalsvalidator.html#classes" class="tsd-kind-icon">classes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="sibblingequalsvalidator.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="sibblingequalsvalidator.html#validationchange_" class="tsd-kind-icon">validation<wbr>Change$</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="siblingequalsvalidator.html#async" class="tsd-kind-icon">async</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="siblingequalsvalidator.html#attrs" class="tsd-kind-icon">attrs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="siblingequalsvalidator.html#classes" class="tsd-kind-icon">classes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="siblingequalsvalidator.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="siblingequalsvalidator.html#validationchange_" class="tsd-kind-icon">validation<wbr>Change$</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="sibblingequalsvalidator.html#validate" class="tsd-kind-icon">validate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="siblingequalsvalidator.html#validate" class="tsd-kind-icon">validate</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,14 +126,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Sibbling<wbr>Equals<wbr>Validator&lt;T&gt;<span class="tsd-signature-symbol">(</span>sibblingName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, compareWith<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>valueA<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, valueB<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="sibblingequalsvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">SibblingEqualsValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Sibling<wbr>Equals<wbr>Validator&lt;T&gt;<span class="tsd-signature-symbol">(</span>siblingName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, compareWith<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>valueA<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, valueB<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="siblingequalsvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">SiblingEqualsValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L9">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L9">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:9</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -140,7 +145,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sibblingName: <span class="tsd-signature-type">string</span></h5>
+									<h5>siblingName: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
 									<h5>compareWith: <span class="tsd-signature-symbol">(</span>valueA<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, valueB<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = ...</span></h5>
@@ -167,7 +172,7 @@
 									</ul>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="sibblingequalsvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">SibblingEqualsValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="siblingequalsvalidator.html" class="tsd-signature-type" data-tsd-kind="Class">SiblingEqualsValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -181,7 +186,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#async">async</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/validator.ts#L11">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/validator.ts#L11">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +197,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#attrs">attrs</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/validator.ts#L9">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/validator.ts#L9">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -203,18 +208,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#classes">classes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/validator.ts#L10">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/validator.ts#L10">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a name="name" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;sibblingEquals&quot;</span><span class="tsd-signature-symbol"> = &#x27;sibblingEquals&#x27;</span></div>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;siblingEquals&#x27;</span></div>
 					<aside class="tsd-sources">
 						<p>Overrides <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L14">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L14">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +230,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#validationchange_">validationChange$</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/validator.ts#L8">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/validator.ts#L8">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/validator.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -236,14 +241,14 @@
 					<a name="validate" class="tsd-anchor"></a>
 					<h3>validate</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span>control<span class="tsd-signature-symbol">: </span><a href="control.html" class="tsd-signature-type" data-tsd-kind="Class">Control</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/sibblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SibblingEqualsValidationError</a></li>
+						<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span>control<span class="tsd-signature-symbol">: </span><a href="control.html" class="tsd-signature-type" data-tsd-kind="Class">Control</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/siblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SiblingEqualsValidationError</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="controlvalidator.html">ControlValidator</a>.<a href="controlvalidator.html#validate">validate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/7fdd5d6/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L16">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/stLmpp/st-store/blob/abfd893/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts#L16">Desktop/Projects/st-store/projects/stlmpp/control/src/lib/validator/other/sibbling-equals.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -252,7 +257,7 @@
 									<h5>control: <a href="control.html" class="tsd-signature-type" data-tsd-kind="Class">Control</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/sibblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SibblingEqualsValidationError</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/siblingequalsvalidationerror.html" class="tsd-signature-type" data-tsd-kind="Interface">SiblingEqualsValidationError</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -271,28 +276,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-has-type-parameter">
-						<a href="sibblingequalsvalidator.html" class="tsd-kind-icon">Sibbling<wbr>Equals<wbr>Validator</a>
+						<a href="siblingequalsvalidator.html" class="tsd-kind-icon">Sibling<wbr>Equals<wbr>Validator</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
-								<a href="sibblingequalsvalidator.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="siblingequalsvalidator.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="sibblingequalsvalidator.html#async" class="tsd-kind-icon">async</a>
+								<a href="siblingequalsvalidator.html#async" class="tsd-kind-icon">async</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="sibblingequalsvalidator.html#attrs" class="tsd-kind-icon">attrs</a>
+								<a href="siblingequalsvalidator.html#attrs" class="tsd-kind-icon">attrs</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="sibblingequalsvalidator.html#classes" class="tsd-kind-icon">classes</a>
+								<a href="siblingequalsvalidator.html#classes" class="tsd-kind-icon">classes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-								<a href="sibblingequalsvalidator.html#name" class="tsd-kind-icon">name</a>
+								<a href="siblingequalsvalidator.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="sibblingequalsvalidator.html#validationchange_" class="tsd-kind-icon">validation<wbr>Change$</a>
+								<a href="siblingequalsvalidator.html#validationchange_" class="tsd-kind-icon">validation<wbr>Change$</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="sibblingequalsvalidator.html#validate" class="tsd-kind-icon">validate</a>
+								<a href="siblingequalsvalidator.html#validate" class="tsd-kind-icon">validate</a>
 							</li>
 						</ul>
 					</li>

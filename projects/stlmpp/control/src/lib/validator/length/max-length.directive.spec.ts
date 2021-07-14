@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 @Component({ template: '<input type="text" [(model)]="model" [maxLength]="maxLength">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
-  model = 'test';
+  model = 'test ';
   maxLength = 5;
 }
 
