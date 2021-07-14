@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 @Component({ template: '<input type="text" [(model)]="model" [maxLength]="maxLength">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
-  model = 'teste';
+  model = 'test ';
   maxLength = 5;
 }
 
@@ -29,7 +29,7 @@ describe('max-length validator directive', () => {
 
   it('should validate if value is in range', () => {
     expect(component.modelDirective.isValid).toBeTrue();
-    component.model = 'testetesteteste';
+    component.model = 'test test test';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeFalse();
   });

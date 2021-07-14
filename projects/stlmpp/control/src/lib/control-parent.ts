@@ -22,30 +22,30 @@ export abstract class ControlParent<T = any>
 {
   private readonly _destroy$ = new Subject<void>();
 
-  @ContentChildren(ControlChild, { descendants: true }) readonly allControlChilds!: QueryList<ControlChild>;
+  @ContentChildren(ControlChild, { descendants: true }) readonly allControlChildren!: QueryList<ControlChild>;
 
-  readonly controlChilds = new QueryList<ControlChild>();
+  readonly controlChildren = new QueryList<ControlChild>();
 
-  protected initAllChilds(): void {
-    for (const child of this.controlChilds) {
+  protected initAllChildren(): void {
+    for (const child of this.controlChildren) {
       child.init();
     }
   }
 
   ngAfterContentInit(): void {
-    this.controlChilds.reset(this.allControlChilds.toArray().filter(control => control.controlParent === this));
-    this.controlChilds.notifyOnChanges();
-    this.allControlChilds.changes
+    this.controlChildren.reset(this.allControlChildren.toArray().filter(control => control.controlParent === this));
+    this.controlChildren.notifyOnChanges();
+    this.allControlChildren.changes
       .pipe(takeUntil(this._destroy$))
-      .subscribe((controlChilds: QueryList<ControlChild>) => {
-        this.controlChilds.reset(controlChilds.toArray().filter(control => control.controlParent === this));
-        this.controlChilds.notifyOnChanges();
+      .subscribe((controlChildren: QueryList<ControlChild>) => {
+        this.controlChildren.reset(controlChildren.toArray().filter(control => control.controlParent === this));
+        this.controlChildren.notifyOnChanges();
       });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.control && !changes.control.isFirstChange()) {
-      this.initAllChilds();
+      this.initAllChildren();
     }
   }
 

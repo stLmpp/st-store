@@ -17,7 +17,7 @@ export abstract class AbstractLesserValidator<T extends Nullable<Date | number>>
 {
   @Input() lesser!: NonNullable<T>;
 
-  readonly name = 'lesser';
+  readonly name: string = 'lesser';
 
   validate(control: Control<T>): LesserValidationError<T> | null {
     const { value } = control;

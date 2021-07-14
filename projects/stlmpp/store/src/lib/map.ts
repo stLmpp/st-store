@@ -252,11 +252,11 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
   }
 
   private _upsertMany(newEntities: T[] | Partial<T>[]): this {
-    const [newEntites, newKeys] = toEntities(newEntities as T[], this._idGetter);
+    const [newNewEntities, newKeys] = toEntities(newEntities as T[], this._idGetter);
     const allKeys = new Set([...this._keys, ...newKeys]);
     this._state = [...allKeys].reduce((entities, key) => {
       const currentItem = this.get(key)!;
-      const newItem = newEntites[key];
+      const newItem = newNewEntities[key];
       return { ...entities, [key]: this.merger(currentItem, newItem) };
     }, {});
     this._keys = allKeys;
@@ -597,7 +597,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
   }
 
   /**
-   * @description search itens in the array based in a predicate. Can only be used with string values.
+   * @description search items in the array based in a predicate. Can only be used with string values.
    * @param {K[] | EntityFn<T, string> | K} keyOrKeysOrCallback
    * @param {string} term
    * @returns {StMap<T>}
@@ -740,7 +740,7 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
   }
 
   /**
-   * @description search itens in the array based in a predicate. Can only be used with string values.
+   * @description search items in the array based in a predicate. Can only be used with string values.
    * @param {K[] | EntityFn<T, string> | K} keyOrKeysOrCallback
    * @param {string} term
    * @returns {StMapView<T>}

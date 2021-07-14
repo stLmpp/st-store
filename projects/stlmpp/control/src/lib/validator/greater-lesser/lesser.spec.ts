@@ -10,7 +10,7 @@ describe('lesser validator', () => {
     valDate = new LesserValidator<Date>(new Date(2020, 1, 14));
   });
 
-  it('should not validated if value is falsey', () => {
+  it('should not validated if value is falsy', () => {
     expect(valNumber.validate(createFakeControl(null as any))).toBeNull();
   });
 

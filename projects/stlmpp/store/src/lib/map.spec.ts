@@ -5,7 +5,7 @@ import { EntityIdType } from './type';
 describe('StMap', () => {
   const data: IdName[] = [
     { id: 1, name: 'Guilherme' },
-    { id: 2, name: 'Teste' },
+    { id: 2, name: 'Test' },
   ];
   interface IdNameOther extends IdName {
     other: string;
@@ -34,7 +34,7 @@ describe('StMap', () => {
       expect(map).toBeDefined();
       expect(map.length).toBe(2);
       expect(map.state).toBeDefined();
-      expect(map.state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+      expect(map.state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Test' } });
       expect(map.keys).toBeDefined();
       expect(map.keys).toEqual(new Set([1, 2]));
       map.fromArray(undefined as any);
@@ -47,7 +47,7 @@ describe('StMap', () => {
       expect(map).toBeDefined();
       expect(map.length).toBe(2);
       expect(map.state).toBeDefined();
-      expect(map.state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+      expect(map.state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Test' } });
       expect(map.keys).toBeDefined();
       expect(map.keys).toEqual(new Set([1, 2]));
     });
@@ -55,7 +55,7 @@ describe('StMap', () => {
     it('should get state copy', () => {
       const state = map.state;
       expect(state).toBeDefined();
-      expect(state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+      expect(state).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Test' } });
     });
 
     it('should get the length', () => {
@@ -84,7 +84,7 @@ describe('StMap', () => {
       const entries = map.entries;
       const shouldBe: [number, { id: number; name: string }][] = [
         [1, { id: 1, name: 'Guilherme' }],
-        [2, { id: 2, name: 'Teste' }],
+        [2, { id: 2, name: 'Test' }],
       ];
       expect(entries).toBeDefined();
       expect(entries).toEqual(shouldBe);
@@ -114,12 +114,12 @@ describe('StMap', () => {
     });
 
     it('should map to another type', () => {
-      const mapped = map.map((entity, key) => ({ ...entity, name: '' + key, other: 'Teste' }));
+      const mapped = map.map((entity, key) => ({ ...entity, name: '' + key, other: 'Test' }));
       expect(mapped.length).toBe(2);
       expect(mapped.has(1)).toBeTrue();
       expect(mapped.has(2)).toBeTrue();
-      expect(mapped.get(1)).toEqual({ id: 1, name: '1', other: 'Teste' });
-      expect(mapped.get(2)).toEqual({ id: 2, name: '2', other: 'Teste' });
+      expect(mapped.get(1)).toEqual({ id: 1, name: '1', other: 'Test' });
+      expect(mapped.get(2)).toEqual({ id: 2, name: '2', other: 'Test' });
     });
 
     it('should find', () => {
@@ -165,7 +165,7 @@ describe('StMap', () => {
       const reduced2 = map.reduce((acc, [key, value]) => acc + value.id, 0);
       const reduced3 = map.reduce((acc, [key]) => [...acc, key], [] as EntityIdType[]);
       expect(reduced1).toBeDefined();
-      expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+      expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Test' } });
       expect(reduced2).toBeDefined();
       expect(reduced2).toBe(3);
       expect(reduced3).toBeDefined();
@@ -178,7 +178,7 @@ describe('StMap', () => {
       expect(map.has(1)).toBeTrue();
       expect(map.has(2)).toBeFalse();
       expect(popped).toBeDefined();
-      expect(popped).toEqual({ id: 2, name: 'Teste' });
+      expect(popped).toEqual({ id: 2, name: 'Test' });
       map.fromObject({});
       popped = map.pop();
       expect(popped).toBeUndefined();
@@ -363,13 +363,13 @@ describe('StMap', () => {
       expect(map.has(3)).toBeTrue();
       expect(map.get(3)).toEqual({ id: 1, name: '3' });
       map.upsert([
-        { id: 3, name: 'Teste3' },
+        { id: 3, name: 'Test3' },
         { id: 4, name: '4' },
       ]);
       expect(map.length).toBe(4);
       expect(map.has(4)).toBeTrue();
       expect(map.get(4)).toEqual({ id: 4, name: '4' });
-      expect(map.get(3)?.name).toBe('Teste3');
+      expect(map.get(3)?.name).toBe('Test3');
     });
 
     it('should remove (id)', () => {
@@ -387,7 +387,7 @@ describe('StMap', () => {
     });
 
     it('should remove (callback)', () => {
-      map.remove(entity => entity.name === 'Teste');
+      map.remove(entity => entity.name === 'Test');
       expect(map.get(2)).toBeUndefined();
       expect(map.has(2)).toBeFalse();
       expect(map.length).toBe(1);
@@ -428,7 +428,7 @@ describe('StMap', () => {
     });
 
     it('should find the key', () => {
-      expect(map.findKey(entity => entity.name === 'Teste')).toBe(2);
+      expect(map.findKey(entity => entity.name === 'Test')).toBe(2);
     });
 
     it('should return undefined if key is not found', () => {
@@ -523,7 +523,7 @@ describe('StMap', () => {
       const reduced2 = mapView.reduce((acc, [key, value]) => acc + value.id, 0);
       const reduced3 = mapView.reduce((acc, [key]) => [...acc, key], [] as EntityIdType[]);
       expect(reduced1).toBeDefined();
-      expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Teste' } });
+      expect(reduced1).toEqual({ 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Test' } });
       expect(reduced2).toBeDefined();
       expect(reduced2).toBe(3);
       expect(reduced3).toBeDefined();
@@ -531,7 +531,7 @@ describe('StMap', () => {
     });
 
     it('should find the key', () => {
-      expect(mapView.findKey(entity => entity.name === 'Teste')).toBe(2);
+      expect(mapView.findKey(entity => entity.name === 'Test')).toBe(2);
     });
 
     it('should return undefined if key is not found', () => {

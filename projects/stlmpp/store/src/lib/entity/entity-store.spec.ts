@@ -30,7 +30,7 @@ describe('Entity Store', () => {
 
   it('should use custom merge function', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'teste',
+      name: 'test',
       initialState: { entities: entityInitialState() },
       mergeFn: (a, b) => ({ ...b, ...a }),
     });
@@ -53,13 +53,13 @@ describe('Entity Store', () => {
   });
 
   it('should add (many)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     expect(store.getState().entities.length).toBe(3);
-    expect(store.getState().entities.values).toEqual([...entityInitialState(), ...newItens]);
+    expect(store.getState().entities.values).toEqual([...entityInitialState(), ...newItems]);
   });
 
   it('should remove (id)', () => {
@@ -83,7 +83,7 @@ describe('Entity Store', () => {
     expect(store.getState().entities.values).toEqual([newItems[1]]);
   });
 
-  it('shoud remove (callback)', () => {
+  it('should remove (callback)', () => {
     const newItem = { id: 2, name: '2' };
     store.add(newItem);
     expect(store.getState().entities.length).toBe(2);
@@ -161,22 +161,22 @@ describe('Entity Store', () => {
   });
 
   it('should set active (entity)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
-    store.setActive(newItens[0]);
+    store.add(newItems);
+    store.setActive(newItems[0]);
     expect(store.getState().activeKeys.size).toBe(1);
     expect(store.getState().activeKeys.has(2)).toBeTrue();
   });
 
   it('should set active (many id)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.setActive([1, 2]);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
@@ -206,11 +206,11 @@ describe('Entity Store', () => {
   });
 
   it('should add active (many id)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.addActive([1, 2]);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
@@ -218,23 +218,23 @@ describe('Entity Store', () => {
   });
 
   it('should add active (many entity)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
-    store.addActive([simpleInitialState(), newItens[0]]);
+    store.add(newItems);
+    store.addActive([simpleInitialState(), newItems[0]]);
     expect(store.getState().activeKeys.size).toBe(2);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().activeKeys.has(2)).toBeTrue();
   });
 
   it('should remove active (removeActive)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.addActive(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     store.removeActive(1);
@@ -246,11 +246,11 @@ describe('Entity Store', () => {
   });
 
   it('should remove active (remove)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.addActive([1, 2]);
     expect(store.getState().activeKeys.size).toBe(2);
     store.remove(1);
@@ -260,27 +260,27 @@ describe('Entity Store', () => {
   });
 
   it('should toggle the active', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.toggleActive(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     store.toggleActive(1);
     expect(store.getState().activeKeys.has(1)).toBeFalse();
-    store.toggleActive(newItens[0]);
+    store.toggleActive(newItems[0]);
     expect(store.getState().activeKeys.has(2)).toBeTrue();
-    store.toggleActive(newItens[0]);
+    store.toggleActive(newItems[0]);
     expect(store.getState().activeKeys.has(2)).toBeFalse();
   });
 
   it('should remove the entities (removeActiveEntities)', () => {
-    const newItens = [
+    const newItems = [
       { id: 2, name: '2' },
       { id: 3, name: '3' },
     ];
-    store.add(newItens);
+    store.add(newItems);
     store.addActive(1);
     expect(store.getState().activeKeys.has(1)).toBeTrue();
     expect(store.getState().entities.has(1)).toBeTrue();
@@ -356,7 +356,7 @@ describe('Entity Store', () => {
   });
 
   it('should not have cache', () => {
-    const newStore = new EntityStore({ name: 'teste' });
+    const newStore = new EntityStore({ name: 'test' });
     newStore.setHasCache(true);
     expect(store.hasCache()).toBeFalse();
   });
@@ -393,13 +393,13 @@ describe('Entity Store', () => {
   });
 
   it('should create store without initialState', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'teste', idGetter: 'id' });
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'test', idGetter: 'id' });
     expect(newStore.getState().entities.length).toBe(0);
   });
 
   it('should create with object initialState', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'teste',
+      name: 'test',
       idGetter: 'id',
       initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
     });
@@ -410,7 +410,7 @@ describe('Entity Store', () => {
 
   it('should create with initial active', () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'teste',
+      name: 'test',
       idGetter: 'id',
       initialState: { entities: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } } },
       initialActive: [1, 2],
@@ -421,7 +421,7 @@ describe('Entity Store', () => {
 
   it(`should not set initial active that doesn't exists`, () => {
     const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'teste',
+      name: 'test',
       idGetter: 'id',
       initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
       initialActive: [1, 2],
@@ -431,7 +431,7 @@ describe('Entity Store', () => {
   });
 
   it('should not set initial state', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'teste-teste', initialState: {} });
+    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'test-test', initialState: {} });
     expect(newStore.getState().entities.length).toBe(0);
   });
 

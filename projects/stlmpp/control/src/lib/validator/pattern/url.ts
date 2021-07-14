@@ -6,7 +6,7 @@ export class AbstractUrlValidator extends AbstractPatternValidator {
     this.pattern = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
   }
 
-  readonly name = 'url';
+  readonly name: string = 'url';
 }
 
 export class UrlValidator extends AbstractUrlValidator {}

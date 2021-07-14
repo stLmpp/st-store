@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 @Component({ template: '<input [(model)]="model" [contains]="contains">' })
 class ModelComponent {
   @ViewChild(ModelDirective) modelDirective!: ModelDirective;
-  model = 'teste';
+  model = 'test';
   contains = 'a';
 }
 

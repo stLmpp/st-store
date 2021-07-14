@@ -20,7 +20,7 @@ function isActivationEnd(event: Event): event is ActivationEnd {
   return event instanceof ActivationEnd;
 }
 
-function filterActvationEnd(): OperatorFunction<Event, ActivationEnd> {
+function filterActivationEnd(): OperatorFunction<Event, ActivationEnd> {
   return filter(isActivationEnd);
 }
 
@@ -44,7 +44,7 @@ export class RouterQuery implements OnDestroy {
   private _data$ = new BehaviorSubject<Data>({});
 
   private _listenToRouteChanges(): void {
-    this.router.events.pipe(takeUntil(this._destroy$), filterActvationEnd(), auditTime(0)).subscribe(event => {
+    this.router.events.pipe(takeUntil(this._destroy$), filterActivationEnd(), auditTime(0)).subscribe(event => {
       let state = event.snapshot;
       this._lastSnapshot = state;
       const params: Params = {};

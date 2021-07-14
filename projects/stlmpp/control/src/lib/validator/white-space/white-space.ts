@@ -4,7 +4,7 @@ import { Control } from '../../control/control';
 import { Nullable } from '../../util';
 
 export class AbstractWhiteSpaceValidator extends ControlValidator<Nullable<string>, boolean> {
-  readonly name = 'whiteSpace';
+  readonly name: string = 'whiteSpace';
   validate({ value }: Control<Nullable<string>>): Observable<boolean | null> | boolean | null {
     if (!value) {
       return null;

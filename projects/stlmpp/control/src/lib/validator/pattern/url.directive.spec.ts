@@ -38,7 +38,7 @@ describe('url validator directive', () => {
     component.url = false;
     fixture.detectChanges();
     expect(input.attributes.url).toBeUndefined();
-    component.model = 'testas';
+    component.model = 'test as';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

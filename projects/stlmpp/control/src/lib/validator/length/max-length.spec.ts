@@ -42,7 +42,7 @@ describe('max length validator', () => {
     });
 
     it('should return error if string length is greater than maxlength', () => {
-      expect(valString.validate(createFakeControl('AAAA'))).toEqual({ required: 3, actual: 4 });
+      expect(valString.validate(createFakeControl('TEST'))).toEqual({ required: 3, actual: 4 });
     });
   });
 

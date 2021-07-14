@@ -17,7 +17,7 @@ class ModelComponent {
   @ViewChild('input1') input1Directive!: ModelDirective;
   @ViewChild('input2') input2Directive!: ModelDirective;
   @ViewChild('input3') input3Directive!: ModelDirective;
-  model = 'teste';
+  model = 'test';
   updateOn: ControlUpdateOn = 'blur';
   metadata = 'metadata';
 }
@@ -43,7 +43,7 @@ describe('StModel Directive', () => {
   });
 
   it('should initialize input with value', () => {
-    expect(input1.nativeElement.value).toBe('teste');
+    expect(input1.nativeElement.value).toBe('test');
   });
 
   it('should add validators', () => {
@@ -52,39 +52,39 @@ describe('StModel Directive', () => {
   });
 
   it('should update the view with the value from the controller', () => {
-    component.model = 'teste2';
+    component.model = 'test2';
     fixture.detectChanges();
-    expect(input1.nativeElement.value).toBe('teste2');
+    expect(input1.nativeElement.value).toBe('test2');
   });
 
   it('should update the controller with the value from the view', () => {
-    triggerEvent(input1, 'input', 'teste3');
+    triggerEvent(input1, 'input', 'test3');
     triggerEvent(input1, 'blur');
     fixture.detectChanges();
-    expect(component.model).toBe('teste3');
+    expect(component.model).toBe('test3');
   });
 
   it('should set updateOn option', () => {
-    triggerEvent(input3, 'input', 'teste3');
+    triggerEvent(input3, 'input', 'test3');
     fixture.detectChanges();
-    expect(component.model).toBe('teste');
+    expect(component.model).toBe('test');
     triggerEvent(input3, 'blur');
     fixture.detectChanges();
-    expect(component.model).toBe('teste3');
+    expect(component.model).toBe('test3');
   });
 
   it('should be able to change updateOn', () => {
     component.updateOn = 'change';
     fixture.detectChanges();
-    triggerEvent(input3, 'input', 'teste3');
+    triggerEvent(input3, 'input', 'test3');
     fixture.detectChanges();
-    expect(component.model).toBe('teste3');
+    expect(component.model).toBe('test3');
   });
 
   it('should store metadata', () => {
     expect(component.input1Directive.control.metadata).toBe(component.metadata);
-    component.metadata = 'teste';
+    component.metadata = 'test';
     fixture.detectChanges();
-    expect(component.input1Directive.control.metadata).toBe('teste');
+    expect(component.input1Directive.control.metadata).toBe('test');
   });
 });

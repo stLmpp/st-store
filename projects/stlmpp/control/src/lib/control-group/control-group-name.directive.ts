@@ -45,7 +45,7 @@ export class ControlGroupNameDirective<T = any, M = any> extends ControlGroupDir
       throw new ControlNameDoesNotMatch('controlGroupName', this._controlGroupName);
     }
     this.control = control;
-    this.initAllChilds();
+    this.initAllChildren();
   }
 
   ngOnInit(): void {

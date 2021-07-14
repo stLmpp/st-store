@@ -120,7 +120,7 @@ describe('control array', () => {
     expect(indices[1]).toBeInstanceOf(Control);
   });
 
-  it('should set updateOn of all childs', () => {
+  it('should set updateOn of all children', () => {
     component.array.setUpdateOn('submit');
     fixture.detectChanges();
     expect(component.array.get(0)?.updateOn).toBe('submit');
@@ -157,7 +157,7 @@ describe('control array', () => {
     expect(array.dirty).toBeTrue();
   });
 
-  it('should get the touched/untouced state', () => {
+  it('should get the touched/untouched state', () => {
     const array = component.array;
     expect(array.untouched).toBeTrue();
     triggerEvent(fixture.debugElement.query(By.css('.input-0')), 'blur');

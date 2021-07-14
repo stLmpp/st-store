@@ -281,7 +281,7 @@ describe('control', () => {
     expect(control.value).toBe('2');
   });
 
-  it('should set the value without emiting the change', () => {
+  it('should set the value without emitting the change', () => {
     const sub = jasmine.createSpy('sub');
     const control = component.control;
     control.valueChanges$.subscribe(sub);
@@ -355,9 +355,9 @@ describe('control', () => {
     const control: Control<string> = (component.control = new Control('', [Validators.required]));
     fixture.detectChanges();
     control.setValidators([Validators.email]);
-    triggerEvent(input, 'input', 'teste2');
+    triggerEvent(input, 'input', 'test2');
     fixture.detectChanges();
-    expect(control.value).toBe('teste2');
+    expect(control.value).toBe('test2');
     expect(control.hasError('required')).toBeFalse();
     expect(control.hasError('email')).toBeTrue();
     expect(control.validators.length).toBe(2);
@@ -453,30 +453,30 @@ describe('control', () => {
   });
 
   it('should not emit changes if the value is the same as the previous', () => {
-    const subvalue = jasmine.createSpy('value$');
-    const subchanges = jasmine.createSpy('valueChanges$');
-    component.control.value$.subscribe(subvalue);
-    component.control.valueChanges$.subscribe(subchanges);
+    const subValue = jasmine.createSpy('value$');
+    const subChanges = jasmine.createSpy('valueChanges$');
+    component.control.value$.subscribe(subValue);
+    component.control.valueChanges$.subscribe(subChanges);
     triggerEvent(input, 'input', 'A');
     triggerEvent(input, 'blur');
     fixture.detectChanges();
-    expect(subvalue).toHaveBeenCalledTimes(2);
-    expect(subvalue).toHaveBeenCalledWith('A');
-    expect(subchanges).toHaveBeenCalledTimes(1);
+    expect(subValue).toHaveBeenCalledTimes(2);
+    expect(subValue).toHaveBeenCalledWith('A');
+    expect(subChanges).toHaveBeenCalledTimes(1);
     triggerEvent(input, 'input', 'B');
     triggerEvent(input, 'blur');
     fixture.detectChanges();
-    expect(subvalue).toHaveBeenCalledTimes(3);
-    expect(subvalue).toHaveBeenCalledWith('B');
-    expect(subchanges).toHaveBeenCalledTimes(2);
-    expect(subchanges).toHaveBeenCalledWith('B');
+    expect(subValue).toHaveBeenCalledTimes(3);
+    expect(subValue).toHaveBeenCalledWith('B');
+    expect(subChanges).toHaveBeenCalledTimes(2);
+    expect(subChanges).toHaveBeenCalledWith('B');
     triggerEvent(input, 'input', 'B');
     triggerEvent(input, 'blur');
     fixture.detectChanges();
-    expect(subvalue).toHaveBeenCalledTimes(3);
-    expect(subvalue).toHaveBeenCalledWith('B');
-    expect(subchanges).toHaveBeenCalledTimes(2);
-    expect(subchanges).toHaveBeenCalledWith('B');
+    expect(subValue).toHaveBeenCalledTimes(3);
+    expect(subValue).toHaveBeenCalledWith('B');
+    expect(subChanges).toHaveBeenCalledTimes(2);
+    expect(subChanges).toHaveBeenCalledWith('B');
   });
 
   it('should work without a control directive', () => {
@@ -484,9 +484,9 @@ describe('control', () => {
     expect(control.invalid).toBeTrue();
     expect(control.value).toBe('');
     expect(control.getError('required')).toEqual(true);
-    control.setValue('TESTE');
+    control.setValue('TEST');
     expect(control.invalid).toBeFalse();
-    expect(control.value).toBe('TESTE');
+    expect(control.value).toBe('TEST');
     expect(control.getError('required')).toBeUndefined();
   });
 

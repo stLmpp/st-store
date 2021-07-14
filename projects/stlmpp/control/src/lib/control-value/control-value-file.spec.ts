@@ -39,7 +39,7 @@ describe('control value file', () => {
   });
 
   it('should not do anything is value is different and than null or undefined', () => {
-    component.control.setValue('TESTE' as any);
+    component.control.setValue('TEST' as any);
     fixture.detectChanges();
     expect(input.nativeElement.value).toBe('');
   });

@@ -28,7 +28,7 @@ export abstract class AbstractMinValidator<T extends Nullable<Date | number>>
 
   override attrs: ControlValidatorAttributes = {};
 
-  readonly name = 'min';
+  readonly name: string = 'min';
 
   validate({ value }: Control<T>): MaxMinValidationError<T> | null {
     if (isNil(value)) {

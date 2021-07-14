@@ -257,7 +257,7 @@ describe('control value date', () => {
     });
 
     it('should set the value of the control to null if invalid date', () => {
-      input.triggerEventHandler('input', { target: { value: 'ASDBASD' } });
+      input.triggerEventHandler('input', { target: { value: 'TEST' } });
       fixture.detectChanges();
       expect(component.controlDatetime.value).toBeNull();
     });

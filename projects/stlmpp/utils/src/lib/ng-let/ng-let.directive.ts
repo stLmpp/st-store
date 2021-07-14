@@ -30,7 +30,7 @@ export class NgLetDirective<T> implements OnInit {
   readonly context = new NgLetContext<T>();
 
   /**
-   * @description This input can be any value, including falsey ones
+   * @description This input can be any value, including falsy ones
    * @param {T} value
    */
   @Input()

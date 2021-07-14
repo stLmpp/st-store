@@ -40,11 +40,11 @@ describe('pattern validator', () => {
     expect(isRegExp(val.regExp)).toBeTrue();
   });
 
-  it('should not validate if value is falsey', () => {
+  it('should not validate if value is falsy', () => {
     expect(validator.validate(createFakeControl<Nullable<string>>(''))).toBeNull();
   });
 
-  it('should return null if value matchs the pattern', () => {
+  it('should return null if value matches the pattern', () => {
     expect(validator.validate(createFakeControl<Nullable<string>>('GUI'))).toBeNull();
   });
 

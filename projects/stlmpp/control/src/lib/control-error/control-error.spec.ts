@@ -93,7 +93,7 @@ describe('control error', () => {
     expect(maxLength.nativeElement.innerText).toBe('9 - 8');
   });
 
-  it('should update max-length messsage', () => {
+  it('should update max-length message', () => {
     triggerEvent(inputControl, 'input', '123456789');
     triggerEvent(inputControl, 'blur');
     fixControl.detectChanges();
@@ -155,7 +155,7 @@ describe('control error', () => {
     expect(fix.componentInstance.controlErrorDirective._control).toBeInstanceOf(Control);
   });
 
-  it('should clear errors when control is reseted', () => {
+  it('should clear errors when control is reset', () => {
     compControl.showWhen = 'touched';
     fixControl.detectChanges();
     compControl.control.markAsTouched();
