@@ -15,7 +15,7 @@ import { PatternValidator } from './pattern/pattern';
 import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
-import { SiblingEqualsValidator } from './other/sibbling-equals';
+import { SiblingEqualsValidator } from './other/sibling-equals';
 import { WhiteSpaceValidator } from './white-space/white-space';
 
 describe('validators', () => {

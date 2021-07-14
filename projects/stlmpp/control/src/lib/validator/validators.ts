@@ -9,7 +9,7 @@ import { ControlValidator } from './validator';
 import { ComposeValidator } from './compose/compose';
 import { ComposeAsyncValidator } from './compose/compose-async';
 import { ContainsValidator } from './contains/contains';
-import { SiblingEqualsValidationError, SiblingEqualsValidator } from './other/sibbling-equals';
+import { SiblingEqualsValidationError, SiblingEqualsValidator } from './other/sibling-equals';
 import { UrlValidator } from './pattern/url';
 import { GreaterValidationError, GreaterValidator } from './greater-lesser/greater';
 import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';

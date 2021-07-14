@@ -1,4 +1,4 @@
-import { SiblingEqualsValidator } from './sibbling-equals';
+import { SiblingEqualsValidator } from './sibling-equals';
 
 export class SiblingNotEqualsValidator<T = any> extends SiblingEqualsValidator<T> {
   constructor(
