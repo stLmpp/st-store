@@ -1,10 +1,10 @@
 import { BehaviorSubject, isObservable, Observable } from 'rxjs';
 import { devCopy, isPromise, toObservable } from '../util';
 import { StoreOptions } from '../type';
-import { isFunction } from 'st-utils';
+import { isFunction, noop } from 'st-utils';
 import { StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
-import { take, takeUntil } from 'rxjs/operators';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
 
 /**
  * @description returns an key to persist
@@ -30,6 +30,7 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
   private readonly _error$ = new BehaviorSubject<E | null>(null);
   private readonly _loading$ = new BehaviorSubject<boolean>(false);
   private readonly _persistStrategy?: StorePersistStrategy<T>;
+  private readonly _hasMergedPersistedValue$ = new BehaviorSubject<boolean>(false);
 
   private _timeout: any;
   private readonly _cache$ = new BehaviorSubject(false);
@@ -61,6 +62,8 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
         this._persistStrategy!.setStore(state, this._persistStrategy!.deserialize(value), this._options.persistKey)
       );
     }
+    this._hasMergedPersistedValue$.next(true);
+    this._hasMergedPersistedValue$.complete();
   }
 
   private _setPersist(state: T): this {
@@ -80,6 +83,17 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
   protected updateInitialState(initialState: T): this {
     this._options = { ...this._options, initialState };
     return this;
+  }
+
+  /**
+   * @description Emits only when the persisted value is merged in the store
+   * @returns {Observable<void>}
+   */
+  waitForPersistedValue(): Observable<void> {
+    return this._hasMergedPersistedValue$.pipe(
+      filter(hasMergedPersistedValue => hasMergedPersistedValue),
+      map(noop)
+    );
   }
 
   /**
