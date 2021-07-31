@@ -1,4 +1,4 @@
-import { BehaviorSubject, filter, isObservable, map, Observable, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, isObservable, map, Observable, take, takeUntil } from 'rxjs';
 import { devCopy, isPromise, toObservable } from '../util';
 import { StoreOptions } from '../type';
 import { isFunction, noop } from 'st-utils';
@@ -90,6 +90,7 @@ export class Store<T extends Record<any, any>, E = any> extends State<T> {
    */
   waitForPersistedValue(): Observable<void> {
     return this._hasMergedPersistedValue$.pipe(
+      distinctUntilChanged(),
       filter(hasMergedPersistedValue => hasMergedPersistedValue),
       map(noop)
     );
