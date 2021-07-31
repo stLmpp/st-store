@@ -6,8 +6,8 @@
     "@angular/core": ">= 12 < 13"
   },
   "dependencies": {
-    "date-fns": "~2.22.1",
+    "date-fns": "~2.23.0",
     "tslib": "~2.3.0",
-    "st-utils": "~1.8.0"
+    "st-utils": "~2.0.0"
   }
 }
