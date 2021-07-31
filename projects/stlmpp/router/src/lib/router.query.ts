@@ -10,8 +10,18 @@ import {
   Params,
   Router,
 } from '@angular/router';
-import { BehaviorSubject, Observable, OperatorFunction, Subject } from 'rxjs';
-import { auditTime, distinctUntilChanged, filter, map, pluck, takeUntil } from 'rxjs/operators';
+import {
+  auditTime,
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  map,
+  Observable,
+  OperatorFunction,
+  pluck,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { isNil, isObjectEqualShallow, isString } from 'st-utils';
 
 type ParamType = 'queryParamMap' | 'paramMap';

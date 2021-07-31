@@ -5,8 +5,7 @@ import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
 import { Control } from '../control/control';
 import { ControlValue } from './control-value';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({ template: '<input type="number" [control]="control">' })
 class ControlComponent {

@@ -8,9 +8,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControlDirective } from './abstract-control';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ControlChild } from './control-child';
-import { takeUntil } from 'rxjs/operators';
 import { Control } from './control/control';
 import { ControlArray } from './control-array/control-array';
 import { ControlGroup } from './control-group/control-group';

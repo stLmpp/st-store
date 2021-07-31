@@ -1,10 +1,9 @@
-import { BehaviorSubject, isObservable, Observable } from 'rxjs';
+import { BehaviorSubject, filter, isObservable, map, Observable, take, takeUntil } from 'rxjs';
 import { devCopy, isPromise, toObservable } from '../util';
 import { StoreOptions } from '../type';
 import { isFunction, noop } from 'st-utils';
 import { StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
-import { filter, map, take, takeUntil } from 'rxjs/operators';
 
 /**
  * @description returns an key to persist

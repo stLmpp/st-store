@@ -1,7 +1,6 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
-import { combineLatest, isObservable, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { combineLatest, isObservable, map, Observable, of } from 'rxjs';
 import { coerceArray, isNil } from 'st-utils';
 
 function toObservable(value: any): Observable<any> {

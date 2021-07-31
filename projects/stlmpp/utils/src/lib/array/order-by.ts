@@ -1,5 +1,4 @@
-import { map } from 'rxjs/operators';
-import { MonoTypeOperatorFunction } from 'rxjs';
+import { map, MonoTypeOperatorFunction } from 'rxjs';
 import { Pipe, PipeTransform } from '@angular/core';
 import { orderBy, OrderByDirection, OrderByType } from 'st-utils';
 

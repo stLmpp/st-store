@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { BaseControlDirective } from '../control/control.directive';
 import { Control } from '../control/control';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs';
 import { AbstractControlDirective, AbstractControlOptions } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValidator } from '../validator/validator';

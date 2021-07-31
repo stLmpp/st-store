@@ -1,5 +1,5 @@
 import { Control } from './control';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 import { Component, DebugElement, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';

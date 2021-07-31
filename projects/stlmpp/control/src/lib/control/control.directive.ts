@@ -20,9 +20,8 @@ import { AbstractControlDirective } from '../abstract-control';
 import { ControlValue } from '../control-value/control-value';
 import { ControlValueNotFound } from '../error';
 import { coerceArray, isNotNil } from 'st-utils';
-import { Subject } from 'rxjs';
+import { auditTime, filter, Subject, takeUntil } from 'rxjs';
 import { Control } from './control';
-import { auditTime, filter, takeUntil } from 'rxjs/operators';
 import { isEmptyValue } from '../util';
 
 @Directive()

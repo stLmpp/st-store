@@ -12,8 +12,7 @@ import {
 import { ControlParent } from '../control-parent';
 import { isNil, isNumber, isString } from 'st-utils';
 import { ControlNameNotFound, ControlParentNotFound } from '../error';
-import { Subject } from 'rxjs';
-import { filter, map, pairwise, startWith, takeUntil } from 'rxjs/operators';
+import { filter, map, pairwise, startWith, Subject, takeUntil } from 'rxjs';
 import { ValidatorsKeys, ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { Control, isControl } from '../control/control';

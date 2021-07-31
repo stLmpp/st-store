@@ -1,7 +1,6 @@
 import { EntityStore } from '../entity/entity-store';
 import { Store } from '../store/store';
-import { defer, Observable, OperatorFunction } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { defer, finalize, Observable, OperatorFunction } from 'rxjs';
 
 /**
  * @description set the loading state while the observable is being resolved

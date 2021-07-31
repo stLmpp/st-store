@@ -1,5 +1,4 @@
-import { OperatorFunction } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, OperatorFunction } from 'rxjs';
 
 /**
  * @description distinct until keys changed, check every key specified in the args, to see if they changed

@@ -1,6 +1,5 @@
 import { EntityStore } from './entity-store';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, Observable, switchMap } from 'rxjs';
 import { isArray, isFunction, isObjectEqualShallow, isSet } from 'st-utils';
 import {
   DistinctUntilChangedFn,

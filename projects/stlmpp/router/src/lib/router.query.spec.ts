@@ -6,7 +6,7 @@ import { StRouterModule } from './st-router.module';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { isFunction } from 'st-utils';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 
 function wrapRouterInNgZone(router: Router, ngZone: NgZone): Router {
   return new Proxy(router, {

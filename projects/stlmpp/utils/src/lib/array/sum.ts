@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { OperatorFunction } from 'rxjs';
+import { map, OperatorFunction } from 'rxjs';
 import { sum, sumBy } from 'st-utils';
 import { ConditionalKeys } from 'type-fest';
 

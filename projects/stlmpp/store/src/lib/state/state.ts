@@ -1,6 +1,16 @@
 import { StateConfig } from '../type';
-import { BehaviorSubject, Observable, queueScheduler, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, observeOn, pluck, takeUntil } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  map,
+  Observable,
+  observeOn,
+  pluck,
+  queueScheduler,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { isArray, isFunction, isObject } from 'st-utils';
 import { devCopy } from '../util';
 import { distinctUntilKeysChanged } from '../operators/distinct-until-keys-changed';
