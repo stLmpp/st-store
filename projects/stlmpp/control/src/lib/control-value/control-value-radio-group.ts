@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { ControlValue } from './control-value';
 import { isNotNil } from 'st-utils';
-import { Subject } from 'rxjs';
-import { startWith, takeUntil } from 'rxjs/operators';
+import { startWith, Subject, takeUntil } from 'rxjs';
 import { ControlValueRadioParent } from './control-value-radio-parent';
 import { ControlValueRadio } from './control-value-radio';
 

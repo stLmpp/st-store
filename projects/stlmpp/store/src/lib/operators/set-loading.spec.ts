@@ -1,7 +1,6 @@
 import { SimpleStore } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { delay, of, tap } from 'rxjs';
 import { setLoading } from './set-loading';
 
 describe('set loading', () => {

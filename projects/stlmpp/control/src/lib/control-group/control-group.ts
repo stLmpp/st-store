@@ -1,5 +1,4 @@
-import { combineLatest, Observable } from 'rxjs';
-import { map, skip } from 'rxjs/operators';
+import { combineLatest, map, Observable, skip } from 'rxjs';
 import { isNotNil } from 'st-utils';
 import { PartialDeep } from 'type-fest';
 import { ControlUpdateOn } from '../control-update-on';

@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
-import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { delay, map, Observable, of } from 'rxjs';
 import { DebugElement } from '@angular/core';
 import { isUndefined } from 'st-utils';
 import { Control } from './control/control';

@@ -136,4 +136,19 @@ describe('Store', () => {
     await wait(0);
     expect(customStore.getState().id).toBe(2);
   });
+
+  it('should wait for the persisted value to be merged', done => {
+    const persistStrategy = new StorePersistCustomStrategyPromise();
+    const customName = 'simple-custom-persist-promise';
+    persistStrategy.state[getPersistKey(customName)] = '2';
+    const customStore = new Store<IdName>({
+      name: customName,
+      initialState: { name: 'name', id: 1 },
+      persistStrategy,
+    });
+    customStore.waitForPersistedValue().subscribe(() => {
+      expect(customStore.getState().id).toBe(2);
+      done();
+    });
+  });
 });

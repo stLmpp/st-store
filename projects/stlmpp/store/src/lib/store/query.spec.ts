@@ -1,6 +1,6 @@
 import { simpleInitialState, SimpleQuery, SimpleStore } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { take } from 'rxjs/operators';
+import { take } from 'rxjs';
 
 describe('Query', () => {
   let query: SimpleQuery;

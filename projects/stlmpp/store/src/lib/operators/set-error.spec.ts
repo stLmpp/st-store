@@ -1,7 +1,6 @@
 import { SimpleStore } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, of } from 'rxjs';
 import { setError } from './set-error';
 
 describe('set error', () => {

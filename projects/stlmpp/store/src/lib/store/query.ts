@@ -1,6 +1,5 @@
 import { Store } from './store';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
+import { distinctUntilChanged, map, Observable, pluck } from 'rxjs';
 import { Entries, KeyValue, QueryOptions } from '../type';
 import { isFunction } from 'st-utils';
 

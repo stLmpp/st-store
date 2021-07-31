@@ -7,7 +7,7 @@ import {
   wait,
 } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs';
 import { EntityStore } from './entity-store';
 import { EntityState } from '../type';
 import { EntityQuery } from './entity-query';

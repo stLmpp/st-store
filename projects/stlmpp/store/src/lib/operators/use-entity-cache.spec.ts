@@ -1,8 +1,7 @@
 import { IdNameEntity, SimpleEntityStore, simpleInitialState } from '../util-test';
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { catchError, map, of, throwError } from 'rxjs';
 import { useEntityCache } from './use-entity-cache';
-import { catchError, map } from 'rxjs/operators';
 
 describe('use entity cache', () => {
   let entityStore: SimpleEntityStore;

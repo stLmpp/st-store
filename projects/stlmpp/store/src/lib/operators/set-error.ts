@@ -1,7 +1,6 @@
 import { EntityStore } from '../entity/entity-store';
 import { Store } from '../store/store';
-import { OperatorFunction, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, OperatorFunction, throwError } from 'rxjs';
 
 /**
  * @description when an error occurs, set it to the store
