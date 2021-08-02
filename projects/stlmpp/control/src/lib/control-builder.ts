@@ -22,7 +22,7 @@ export type ControlBuilderGroupItem<T> = [T] extends [Control<infer C>]
   ? ControlBuilderGroup<T>
   : ControlBuilderTuple<T> | T | Control<T>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ControlBuilder {
   control<T>(value: T, options?: ControlValidator<T> | ControlValidator<T>[] | ControlOptions<T>): Control;
   control<T>(tuple: ControlBuilderTuple<T>): Control;

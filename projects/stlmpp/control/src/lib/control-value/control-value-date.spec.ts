@@ -4,6 +4,7 @@ import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { triggerEvent } from '../util-tests';
 import { Control } from '../control/control';
+import { StControlModelModule } from '../st-control-model.module';
 
 @Component({
   template: `
@@ -45,7 +46,7 @@ describe('control value date', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModule, StControlModelModule],
       declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);

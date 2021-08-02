@@ -1,9 +1,9 @@
 import { Component, DebugElement, ViewChild } from '@angular/core';
 import { ModelDirective } from '../../model/model.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
 import { WhiteSpaceValidatorDirective } from './white-space.directive';
+import { StControlModelModule } from '../../st-control-model.module';
 
 @Component({ template: '<input type="text" [(model)]="model" [whiteSpace]="whiteSpace">' })
 class ModelComponent {
@@ -21,7 +21,7 @@ describe('white space validator directive', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModelModule],
       declarations: [ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ModelComponent);
