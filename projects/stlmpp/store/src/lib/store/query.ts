@@ -3,13 +3,13 @@ import { distinctUntilChanged, map, Observable, pluck } from 'rxjs';
 import { Entries, KeyValue, QueryOptions } from '../type';
 import { isFunction } from 'st-utils';
 
-export class Query<T extends Record<any, any>, E = any> {
+export abstract class Query<T extends Record<any, any>, E = any> {
   /**
    * @template T
    * @param {Store<T, E>} store the store that the query will be based on
    * @param {QueryOptions} options optional options
    */
-  constructor(store: Store<T, E>, options?: QueryOptions) {
+  protected constructor(store: Store<T, E>, options?: QueryOptions) {
     this._options = { distinctUntilChanged: true, ...options };
     this._store = store;
     this.state$ = this._store.selectState();

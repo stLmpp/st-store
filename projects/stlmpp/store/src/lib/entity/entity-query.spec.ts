@@ -291,13 +291,21 @@ describe('Entity Query', () => {
   });
 
   it('should use a different distinct until changed function', () => {
-    const st = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'should use a different distinct until changed function',
-    });
-    const qr = new EntityQuery<EntityState<IdNameEntity>>(st, {
-      distinctUntilChangedEntity: true,
-      distinctUntilChangedEntityFn: (a, b) => a?.id === b?.id,
-    });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({ name: 'should use a different distinct until changed function' });
+      }
+    }
+    const st = new CustomStore();
+    class CustomQuery extends EntityQuery<EntityState<IdNameEntity>> {
+      constructor(customStore: CustomStore) {
+        super(customStore, {
+          distinctUntilChangedEntity: true,
+          distinctUntilChangedEntityFn: (a, b) => a?.id === b?.id,
+        });
+      }
+    }
+    const qr = new CustomQuery(st);
     st.setEntities([
       { id: 1, name: '1' },
       { id: 2, name: '2' },

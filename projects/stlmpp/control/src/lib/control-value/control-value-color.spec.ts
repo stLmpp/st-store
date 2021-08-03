@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { wait } from '../util-tests';
+import { StControlModelModule } from '../st-control-model.module';
 
 @Component({ template: '<input type="color" [control]="control">' })
 class ControlComponent {
@@ -22,7 +23,7 @@ describe('control value color', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModule, StControlModelModule],
       declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);

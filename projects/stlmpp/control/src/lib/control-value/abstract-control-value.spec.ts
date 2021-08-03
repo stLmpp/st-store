@@ -6,6 +6,7 @@ import { triggerEvent } from '../util-tests';
 import { Control } from '../control/control';
 import { ControlValue } from './control-value';
 import { Subject, takeUntil } from 'rxjs';
+import { StControlModelModule } from '../st-control-model.module';
 
 @Component({ template: '<input type="number" [control]="control">' })
 class ControlComponent {
@@ -57,7 +58,7 @@ describe('abstract control value', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModule, StControlModelModule],
       declarations: [ControlComponent, CustomInputComponent, CustomComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);

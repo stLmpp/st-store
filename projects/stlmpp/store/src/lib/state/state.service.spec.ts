@@ -1,6 +1,5 @@
 import { StateService } from './state.service';
 import { TestBed } from '@angular/core/testing';
-import { StStoreModule } from '../st-store.module';
 import { IdName } from '../util-test';
 import { State } from './state';
 
@@ -8,9 +7,7 @@ describe('state service', () => {
   let stateService: StateService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [StStoreModule.forRoot()],
-    });
+    TestBed.configureTestingModule({});
     stateService = TestBed.inject(StateService);
   });
 

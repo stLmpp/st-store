@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { ControlValueFile } from './control-value-file';
+import { StControlModelModule } from '../st-control-model.module';
 
 @Component({ template: `<input type="file" [control]="control" />` })
 class ControlComponent {
@@ -23,7 +24,7 @@ describe('control value file', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModule, StControlModelModule],
       declarations: [ControlComponent, ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);

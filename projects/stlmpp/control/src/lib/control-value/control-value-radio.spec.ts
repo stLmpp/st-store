@@ -5,6 +5,7 @@ import { StControlModule } from '../st-control.module';
 import { By } from '@angular/platform-browser';
 import { ControlValueRadio } from './control-value-radio';
 import { triggerEvent } from '../util-tests';
+import { StControlModelModule } from '../st-control-model.module';
 
 @Component({
   template: `
@@ -33,7 +34,7 @@ describe('control value radio', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModule, StControlModelModule],
       declarations: [ControlComponent, ControlWithoutRadioGroup],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);

@@ -15,12 +15,12 @@ export function getPersistKey<T extends Record<any, any>>(name: string, persist?
   return '__ST_STORE__' + name + '.' + (persist ?? '');
 }
 
-export class Store<T extends Record<any, any>, E = any> extends State<T> {
+export abstract class Store<T extends Record<any, any>, E = any> extends State<T> {
   /**
    * @template T
    * @param {StoreOptions<T>} _options
    */
-  constructor(private _options: StoreOptions<T>) {
+  protected constructor(private _options: StoreOptions<T>) {
     super(_options.initialState, { name: _options.name });
     this._persistStrategy = this._options.persistStrategy;
     this._mergePersistedValue();

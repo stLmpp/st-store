@@ -1,8 +1,8 @@
 import { Component, DebugElement, ViewChild } from '@angular/core';
 import { ModelDirective } from '../../model/model.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { StControlModule } from '../../st-control.module';
 import { By } from '@angular/platform-browser';
+import { StControlModelModule } from '../../st-control-model.module';
 
 @Component({ template: '<input type="email" [(model)]="model" [required]="required">' })
 class ModelComponent {
@@ -18,7 +18,7 @@ describe('required validator directive', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule],
+      imports: [StControlModelModule],
       declarations: [ModelComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ModelComponent);

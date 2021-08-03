@@ -47,7 +47,7 @@ export class ModelDirective<T = any, M = any> extends BaseControlDirective<T, M>
 
   private readonly _controlValidators: ControlValidator<T>[] = [];
   private _modelUpdateOn: ControlUpdateOn = 'change';
-  private _modeMetadata?: M;
+  private _modelMetadata?: M;
 
   @Input()
   set model(value: T) {
@@ -69,14 +69,14 @@ export class ModelDirective<T = any, M = any> extends BaseControlDirective<T, M>
     if (this.control) {
       this.control.metadata = metadata;
     }
-    this._modeMetadata = metadata;
+    this._modelMetadata = metadata;
   }
 
   ngOnInit(): void {
     this.control = new Control<T>(this._model, {
       updateOn: this._modelUpdateOn,
       validators: this._controlValidators,
-      metadata: this._modeMetadata,
+      metadata: this._modelMetadata,
     });
     this.init();
     this.control.valueChanges$.pipe(takeUntil(this._destroy$)).subscribe(value => {

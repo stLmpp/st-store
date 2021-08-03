@@ -1,5 +1,4 @@
 import { getFirstKey, IdGetterFn, isArray, isNumber, isObject, isObjectEmpty, isString } from 'st-utils';
-import { environment } from './environment';
 import { copy } from 'copy-anything';
 import { EntityIdType } from './type';
 import { from, isObservable, Observable } from 'rxjs';
@@ -33,14 +32,7 @@ export function toEntities<T extends Record<any, any>>(
  */
 export function devCopy<T>(value: T): T {
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
-    if (environment.isDev) {
-      if (environment.copyData) {
-        value = copy(value);
-      }
-      if (environment.freezeData) {
-        value = deepFreeze(value);
-      }
-    }
+    return deepFreeze(copy(value));
   }
   return value;
 }

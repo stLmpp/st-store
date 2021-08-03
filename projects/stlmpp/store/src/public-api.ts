@@ -37,7 +37,6 @@ export { EntityStore } from './lib/entity/entity-store';
 export { EntityQuery } from './lib/entity/entity-query';
 export { Store } from './lib/store/store';
 export { Query } from './lib/store/query';
-export { StStoreModule, StStoreModuleConfig } from './lib/st-store.module';
 export { StorePersistLocalStorageStrategy, StorePersistStrategy } from './lib/store/store-persist';
 export { setLoading } from './lib/operators/set-loading';
 export { setError } from './lib/operators/set-error';
