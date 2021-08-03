@@ -62,7 +62,6 @@ export abstract class Store<T extends Record<any, any>, E = any> extends State<T
       );
     }
     this._hasMergedPersistedValue$.next(true);
-    this._hasMergedPersistedValue$.complete();
   }
 
   private _setPersist(state: T): this {
