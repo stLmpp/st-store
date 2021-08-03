@@ -37,7 +37,7 @@ function filterActivationEnd(): OperatorFunction<Event, ActivationEnd> {
 /**
  * @description RouterQuery can be used to get the latest router params and data, even in the lowest level components
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RouterQuery implements OnDestroy {
   constructor(activatedRoute: ActivatedRoute, private router: Router) {
     this._listenToRouteChanges();
@@ -46,12 +46,13 @@ export class RouterQuery implements OnDestroy {
 
   private _lastSnapshot: ActivatedRouteSnapshot;
 
-  private _destroy$ = new Subject<void>();
+  private readonly _destroy$ = new Subject<void>();
 
   // Not using State or Store here, because I don't want to emit everything when one separate thing changes
-  private _params$ = new BehaviorSubject<Params>({});
-  private _queryParams$ = new BehaviorSubject<Params>({});
-  private _data$ = new BehaviorSubject<Data>({});
+  private readonly _params$ = new BehaviorSubject<Params>({});
+  private readonly _queryParams$ = new BehaviorSubject<Params>({});
+  private readonly _data$ = new BehaviorSubject<Data>({});
+  private readonly _fragment$ = new BehaviorSubject<string | null>(null);
 
   private _listenToRouteChanges(): void {
     this.router.events.pipe(takeUntil(this._destroy$), filterActivationEnd(), auditTime(0)).subscribe(event => {
@@ -60,6 +61,7 @@ export class RouterQuery implements OnDestroy {
       const params: Params = {};
       const queryParams: Params = {};
       let data: Data = {};
+      let fragment: string | null = null;
       const fill = (): void => {
         for (const key of state.paramMap.keys) {
           params[key] = state.paramMap.get(key);
@@ -68,6 +70,7 @@ export class RouterQuery implements OnDestroy {
           queryParams[key] = state.queryParamMap.get(key);
         }
         data = { ...data, ...state.data };
+        fragment = state.fragment;
       };
       while (state.firstChild) {
         fill();
@@ -77,6 +80,7 @@ export class RouterQuery implements OnDestroy {
       this._params$.next(params);
       this._queryParams$.next(queryParams);
       this._data$.next(data);
+      this._fragment$.next(fragment);
     });
   }
 
@@ -284,6 +288,14 @@ export class RouterQuery implements OnDestroy {
         map(data => params.reduce((acc, param) => (!isNil(data[param]) ? { ...acc, [param]: data[param] } : acc), {}))
       );
     }
+  }
+
+  selectFragment(): Observable<string | null> {
+    return this._fragment$.asObservable();
+  }
+
+  getFragment(): string | null {
+    return this._fragment$.value;
   }
 
   ngOnDestroy(): void {

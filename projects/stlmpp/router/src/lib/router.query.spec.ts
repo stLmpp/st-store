@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { RouterQuery } from './router.query';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent, HomeComponent, routes, UserComponent, UserDetailComponent, UsersComponent } from './util-test';
-import { StRouterModule } from './st-router.module';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { isFunction } from 'st-utils';
@@ -40,7 +39,7 @@ describe('Router Query', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes(routes), StRouterModule.forRoot()],
+      imports: [RouterTestingModule.withRoutes(routes)],
     }).compileComponents();
     routerQuery = TestBed.inject(RouterQuery);
     ngZone = TestBed.inject(NgZone);
@@ -316,6 +315,28 @@ describe('Router Query', () => {
         .subscribe(data => {
           expect(data).toEqual({ data1: 1, data2: [1, 2, 3] });
         });
+    });
+  });
+
+  describe('fragment', () => {
+    it('should select the fragment', async () => {
+      router.initialNavigation();
+      const spy = jasmine.createSpy();
+      routerQuery.selectFragment().subscribe(spy);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(null);
+      await router.navigate([''], { fragment: 'test' });
+      await wait(0);
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith('test');
+    });
+
+    it('should get the fragment', async () => {
+      router.initialNavigation();
+      expect(routerQuery.getFragment()).toBeNull();
+      await router.navigate([''], { fragment: 'test' });
+      await wait(0);
+      expect(routerQuery.getFragment()).toBe('test');
     });
   });
 
