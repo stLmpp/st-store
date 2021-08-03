@@ -1,5 +1,4 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { ControlBuilder } from './control-builder';
+import { NgModule } from '@angular/core';
 import { FormSubmitDirective } from './form-submit.directive';
 import { ControlNameDirective } from './control/control-name.directive';
 import { ControlDirective } from './control/control.directive';
@@ -36,11 +35,4 @@ import { StControlValueModule } from './st-control-value.module';
     FormSubmitDirective,
   ],
 })
-export class StControlModule {
-  static forRoot(): ModuleWithProviders<StControlModule> {
-    return {
-      ngModule: StControlModule,
-      providers: [ControlBuilder],
-    };
-  }
-}
+export class StControlModule {}
