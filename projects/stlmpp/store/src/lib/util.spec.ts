@@ -1,5 +1,4 @@
 import { deepFreeze, devCopy, predictIdType } from './util';
-import { environment } from './environment';
 import { IdGetter, parseIdGetter } from 'st-utils';
 
 describe('Utils', () => {
@@ -45,35 +44,17 @@ describe('Utils', () => {
   });
 
   describe('devCopy', () => {
-    beforeEach(() => {
-      environment.reset();
-    });
-
-    afterAll(() => {
-      environment.reset();
-    });
-
-    it('should not dev copy', () => {
-      environment.isDev = false;
-      const obj = { a: 1 };
-      const objCopy = devCopy(obj);
-      objCopy.a = 2;
-      expect(obj.a).toBe(2);
-    });
-
-    it('should dev copy but not copy', () => {
-      environment.copyData = false;
-      const obj = { a: 2 };
-      devCopy(obj);
-      expect(() => (obj.a = 3)).toThrow();
-    });
-
-    it('should dev copy but not freeze', () => {
-      environment.freezeData = false;
+    it('should dev copy', () => {
       const obj = { a: 1 };
       const objCopy = devCopy(obj);
       objCopy.a = 2;
       expect(obj.a).toBe(1);
+    });
+
+    it('should freeze', () => {
+      const obj = { a: 2 };
+      devCopy(obj);
+      expect(() => (obj.a = 3)).toThrow();
     });
   });
 });

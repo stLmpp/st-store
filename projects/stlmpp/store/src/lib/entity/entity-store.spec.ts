@@ -2,23 +2,17 @@ import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState
 import { TestBed } from '@angular/core/testing';
 import { EntityStore } from './entity-store';
 import { EntityState } from '../type';
-import { environment } from '../environment';
 import { StStoreModule } from '../st-store.module';
 
 describe('Entity Store', () => {
   let store: SimpleEntityStore;
 
   beforeEach(() => {
-    environment.reset();
     TestBed.configureTestingModule({
       imports: [StStoreModule.forRoot()],
       providers: [SimpleEntityStore],
     });
     store = TestBed.inject(SimpleEntityStore);
-  });
-
-  afterAll(() => {
-    environment.reset();
   });
 
   it('should create the store', () => {
@@ -436,22 +430,11 @@ describe('Entity Store', () => {
   });
 
   it('should dev copy', () => {
-    environment.isDev = true;
     const newStore = new SimpleEntityStore();
     newStore.updateState({ loadingNames: true });
     const entity = newStore.getState().entities.get(1)!;
     expect(Object.isFrozen(entity)).toBeTrue();
     expect(() => (entity.name = '1')).toThrow();
-  });
-
-  it('should not dev copy', () => {
-    environment.isDev = false;
-    const newStore = new SimpleEntityStore();
-    const oldEntity = newStore.getState().entities.get(1)!;
-    newStore.updateState({ loadingNames: true });
-    const newEntity = newStore.getState().entities.get(1)!;
-    expect(oldEntity === newEntity).toBeTrue();
-    expect(Object.isFrozen(newEntity)).toBeFalse();
   });
 
   it('should set loading', () => {

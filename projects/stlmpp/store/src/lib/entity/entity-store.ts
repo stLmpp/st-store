@@ -11,7 +11,6 @@ import {
 import { StMap } from '../map';
 import { IdGetterFn, isArray, isFunction, isNil, parseIdGetter } from 'st-utils';
 import { devCopy, isEntityId } from '../util';
-import { environment } from '../environment';
 import { Store } from '../store/store';
 
 function createSet(values: EntityIdType[] = []): Set<EntityIdType> {
@@ -142,13 +141,11 @@ export class EntityStore<
     return super.updateState(oldState => {
       let newState = callback(oldState);
       if (typeof ngDevMode === 'undefined' || ngDevMode) {
-        if (environment.isDev) {
-          newState = {
-            ...newState,
-            entities: newState.entities.map(entity => devCopy(entity)),
-            activeKeys: createSet([...newState.activeKeys]),
-          };
-        }
+        newState = {
+          ...newState,
+          entities: newState.entities.map(entity => devCopy(entity)),
+          activeKeys: createSet([...newState.activeKeys]),
+        };
       }
       return newState;
     });
