@@ -115,11 +115,16 @@ describe('Store', () => {
     const persistStrategy = new StorePersistCustomStrategyObservable();
     const customName = 'simple-custom-persist-observable';
     persistStrategy.state[getPersistKey(customName)] = '2';
-    const customStore = new Store<IdName>({
-      name: customName,
-      initialState: { name: 'name', id: 1 },
-      persistStrategy,
-    });
+    class CustomStore extends Store<IdName> {
+      constructor() {
+        super({
+          name: customName,
+          initialState: { name: 'name', id: 1 },
+          persistStrategy,
+        });
+      }
+    }
+    const customStore = new CustomStore();
     await wait(0);
     expect(customStore.getState().id).toBe(2);
   });
@@ -128,11 +133,12 @@ describe('Store', () => {
     const persistStrategy = new StorePersistCustomStrategyPromise();
     const customName = 'simple-custom-persist-promise';
     persistStrategy.state[getPersistKey(customName)] = '2';
-    const customStore = new Store<IdName>({
-      name: customName,
-      initialState: { name: 'name', id: 1 },
-      persistStrategy,
-    });
+    class CustomStore extends Store<IdName> {
+      constructor() {
+        super({ name: customName, initialState: { name: 'name', id: 1 }, persistStrategy });
+      }
+    }
+    const customStore = new CustomStore();
     await wait(0);
     expect(customStore.getState().id).toBe(2);
   });
@@ -141,11 +147,16 @@ describe('Store', () => {
     const persistStrategy = new StorePersistCustomStrategyPromise();
     const customName = 'simple-custom-persist-promise';
     persistStrategy.state[getPersistKey(customName)] = '2';
-    const customStore = new Store<IdName>({
-      name: customName,
-      initialState: { name: 'name', id: 1 },
-      persistStrategy,
-    });
+    class CustomStore extends Store<IdName> {
+      constructor() {
+        super({
+          name: customName,
+          initialState: { name: 'name', id: 1 },
+          persistStrategy,
+        });
+      }
+    }
+    const customStore = new CustomStore();
     customStore.waitForPersistedValue().subscribe(() => {
       expect(customStore.getState().id).toBe(2);
       done();

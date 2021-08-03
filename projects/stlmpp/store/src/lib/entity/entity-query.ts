@@ -14,7 +14,7 @@ import { Query } from '../store/query';
 import { StMap, StMapView } from '../map';
 import { TrackByFunction } from '@angular/core';
 
-export class EntityQuery<
+export abstract class EntityQuery<
   State extends EntityState<T>,
   E = any,
   T extends Record<any, any> = EntityType<State>
@@ -24,7 +24,7 @@ export class EntityQuery<
    * @param {EntityStore<State, E, T>} store the store that this query will be based on
    * @param {EntityQueryOptions<T>} options optional options
    */
-  constructor(store: EntityStore<State, E, T>, private options?: EntityQueryOptions<T>) {
+  protected constructor(store: EntityStore<State, E, T>, private options?: EntityQueryOptions<T>) {
     super(store, { distinctUntilChanged: false });
     this._distinctUntilChangedFn = options?.distinctUntilChangedEntityFn ?? isObjectEqualShallow;
     this._distinctUntilChangedEntity = options?.distinctUntilChangedEntity ?? false;

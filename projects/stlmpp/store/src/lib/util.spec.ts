@@ -44,16 +44,9 @@ describe('Utils', () => {
   });
 
   describe('devCopy', () => {
-    it('should dev copy', () => {
-      const obj = { a: 1 };
-      const objCopy = devCopy(obj);
-      objCopy.a = 2;
-      expect(obj.a).toBe(1);
-    });
-
     it('should freeze', () => {
-      const obj = { a: 2 };
-      devCopy(obj);
+      let obj = { a: 2 };
+      obj = devCopy(obj);
       expect(() => (obj.a = 3)).toThrow();
     });
   });

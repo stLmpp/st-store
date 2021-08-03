@@ -2,14 +2,12 @@ import { entityInitialState, IdNameEntity, SimpleEntityStore, simpleInitialState
 import { TestBed } from '@angular/core/testing';
 import { EntityStore } from './entity-store';
 import { EntityState } from '../type';
-import { StStoreModule } from '../st-store.module';
 
 describe('Entity Store', () => {
   let store: SimpleEntityStore;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [StStoreModule.forRoot()],
       providers: [SimpleEntityStore],
     });
     store = TestBed.inject(SimpleEntityStore);
@@ -23,11 +21,16 @@ describe('Entity Store', () => {
   });
 
   it('should use custom merge function', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'test',
-      initialState: { entities: entityInitialState() },
-      mergeFn: (a, b) => ({ ...b, ...a }),
-    });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({
+          name: 'test',
+          initialState: { entities: entityInitialState() },
+          mergeFn: (a, b) => ({ ...b, ...a }),
+        });
+      }
+    }
+    const newStore = new CustomStore();
     newStore.updateEntity(1, { name: '2' });
     expect(newStore.getState().entities.get(1)?.name).toBe('Guilherme');
   });
@@ -350,7 +353,12 @@ describe('Entity Store', () => {
   });
 
   it('should not have cache', () => {
-    const newStore = new EntityStore({ name: 'test' });
+    class CustomStore extends EntityStore {
+      constructor() {
+        super({ name: 'test' });
+      }
+    }
+    const newStore = new CustomStore();
     newStore.setHasCache(true);
     expect(store.hasCache()).toBeFalse();
   });
@@ -387,45 +395,70 @@ describe('Entity Store', () => {
   });
 
   it('should create store without initialState', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'test', idGetter: 'id' });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({ name: 'test', idGetter: 'id' });
+      }
+    }
+    const newStore = new CustomStore();
     expect(newStore.getState().entities.length).toBe(0);
   });
 
   it('should create with object initialState', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'test',
-      idGetter: 'id',
-      initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
-    });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({
+          name: 'test',
+          idGetter: 'id',
+          initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
+        });
+      }
+    }
+    const newStore = new CustomStore();
     expect(newStore.getState().entities.length).toBe(1);
     expect(newStore.getState().entities.has(1)).toBeTrue();
     expect(newStore.getState().entities.get(1)).toBeDefined();
   });
 
   it('should create with initial active', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'test',
-      idGetter: 'id',
-      initialState: { entities: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } } },
-      initialActive: [1, 2],
-    });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({
+          name: 'test',
+          idGetter: 'id',
+          initialState: { entities: { 1: { id: 1, name: 'Guilherme' }, 2: { id: 2, name: 'Guilherme2' } } },
+          initialActive: [1, 2],
+        });
+      }
+    }
+    const newStore = new CustomStore();
     expect(newStore.getState().activeKeys.has(1)).toBeTrue();
     expect(newStore.getState().activeKeys.has(2)).toBeTrue();
   });
 
   it(`should not set initial active that doesn't exists`, () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({
-      name: 'test',
-      idGetter: 'id',
-      initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
-      initialActive: [1, 2],
-    });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({
+          name: 'test',
+          idGetter: 'id',
+          initialState: { entities: { 1: { id: 1, name: 'Guilherme' } } },
+          initialActive: [1, 2],
+        });
+      }
+    }
+    const newStore = new CustomStore();
     expect(newStore.getState().activeKeys.has(1)).toBeTrue();
     expect(newStore.getState().activeKeys.has(2)).toBeFalse();
   });
 
   it('should not set initial state', () => {
-    const newStore = new EntityStore<EntityState<IdNameEntity>>({ name: 'test-test', initialState: {} });
+    class CustomStore extends EntityStore<EntityState<IdNameEntity>> {
+      constructor() {
+        super({ name: 'test-test', initialState: {} });
+      }
+    }
+    const newStore = new CustomStore();
     expect(newStore.getState().entities.length).toBe(0);
   });
 

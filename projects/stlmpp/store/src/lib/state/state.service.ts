@@ -6,7 +6,7 @@ import { State } from './state';
 /**
  * @description service used to create and manage states
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StateService {
   private _states = new Map<string, State<any>>();
 

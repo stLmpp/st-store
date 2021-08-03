@@ -17,7 +17,7 @@ function createSet(values: EntityIdType[] = []): Set<EntityIdType> {
   return new Set<EntityIdType>(values);
 }
 
-export class EntityStore<
+export abstract class EntityStore<
   State extends EntityState<T> = any,
   E = any,
   T extends Record<any, any> = EntityType<State>
@@ -27,7 +27,7 @@ export class EntityStore<
    * @description calling super is required because name is required
    * @param {EntityStoreOptions<State, T>} options
    */
-  constructor(private options: EntityStoreOptions<State, T>) {
+  protected constructor(private options: EntityStoreOptions<State, T>) {
     super({ ...options, initialState: {} as any });
     this._useDevCopy = false;
     this.idGetter = parseIdGetter(options.idGetter ?? ('id' as any));
