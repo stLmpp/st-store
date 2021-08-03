@@ -10,6 +10,7 @@ import {
   StorePersistCustomStrategyPromise,
   wait,
 } from '../util-test';
+import { firstValueFrom } from 'rxjs';
 
 describe('Store', () => {
   let store: SimpleStore;
@@ -161,5 +162,27 @@ describe('Store', () => {
       expect(customStore.getState().id).toBe(2);
       done();
     });
+  });
+
+  it('should emit again when subscribed to waitForPersistedValue', async () => {
+    const persistStrategy = new StorePersistCustomStrategyPromise();
+    const customName = 'simple-custom-persist-promise';
+    persistStrategy.state[getPersistKey(customName)] = '2';
+    class CustomStore extends Store<IdName> {
+      constructor() {
+        super({
+          name: customName,
+          initialState: { name: 'name', id: 1 },
+          persistStrategy,
+        });
+      }
+    }
+    const customStore = new CustomStore();
+    await firstValueFrom(customStore.waitForPersistedValue());
+    expect(customStore.getState().id).toBe(2);
+    await wait(0);
+    const spy = jasmine.createSpy();
+    customStore.waitForPersistedValue().subscribe(spy);
+    expect(spy).toHaveBeenCalled();
   });
 });
