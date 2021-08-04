@@ -20,7 +20,7 @@ describe('control builder', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [StControlModule.forRoot()],
+      imports: [StControlModule],
     });
     controlBuilder = TestBed.inject(ControlBuilder);
   });

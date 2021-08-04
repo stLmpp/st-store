@@ -17,7 +17,7 @@
     "build-router:prod": "ng build @stlmpp/router --configuration production",
     "build-control:prod": "ng build @stlmpp/control --configuration production",
     "build-all": "yarn build-utils && yarn build-store && yarn build-router && yarn build-control",
-    "build-all:prod": "yarn build-utils:prod && yarn build-store:prod && yarn build-router:prod && yarn build-control:prod",
+    "build-all:prod": "yarn build-utils:prod && yarn build-store:prod && yarn build-router:prod && yarn build-control:prod && ts-node ./scripts/after-build.ts",
     "coverage-store": "ng test @stlmpp/store --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
     "coverage-utils": "ng test @stlmpp/utils --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
     "coverage-router": "ng test @stlmpp/router --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI",
