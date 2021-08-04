@@ -103,7 +103,7 @@ describe('control directive', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule.forRoot()],
+      imports: [StControlModule],
       declarations: [
         ControlComponent,
         WithoutControlValue,

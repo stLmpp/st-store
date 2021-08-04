@@ -28,7 +28,7 @@ describe('control', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StControlModule.forRoot()],
+      imports: [StControlModule],
       declarations: [ControlComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(ControlComponent);
