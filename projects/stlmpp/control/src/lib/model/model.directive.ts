@@ -48,13 +48,16 @@ export class ModelDirective<T = any, M = any> extends BaseControlDirective<T, M>
   private readonly _controlValidators: ControlValidator<T>[] = [];
   private _modelUpdateOn: ControlUpdateOn = 'change';
   private _modelMetadata?: M;
+  private _model!: T;
 
   @Input()
+  get model(): T {
+    return this._model;
+  }
   set model(value: T) {
     this.control?.setValue(value, { emitChange: false });
     this._model = value;
   }
-  private _model!: T;
 
   @Output() readonly modelChange = new EventEmitter<T>();
 
@@ -82,6 +85,7 @@ export class ModelDirective<T = any, M = any> extends BaseControlDirective<T, M>
     this.control.valueChanges$.pipe(takeUntil(this._destroy$)).subscribe(value => {
       this.modelChange.next(value);
       this._model = value;
+      this.changeDetectorRef.markForCheck();
     });
   }
 }

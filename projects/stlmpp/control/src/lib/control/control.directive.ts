@@ -32,7 +32,7 @@ export abstract class BaseControlDirective<T = any, M = any>
   constructor(
     private elementRef: ElementRef,
     private renderer2: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef,
+    protected changeDetectorRef: ChangeDetectorRef,
     private keyValueDiffers: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
     @Self() @Optional() @Inject(ControlValue) controlValues?: ControlValue<T> | ControlValue<T>[]
