@@ -11,6 +11,7 @@ import { StControlModelModule } from '../st-control-model.module';
     <input class="input1" [(model)]="model" required #input1="model" [modelMetadata]="metadata" />
     <input class="input2" [(model)]="model" #input2="model" />
     <input class="input3" [(model)]="model" #input3="model" [modelUpdateOn]="updateOn" />
+    <div class="input2-text">{{ input2.model }}</div>
   `,
 })
 class ModelComponent {
@@ -86,5 +87,11 @@ describe('StModel Directive', () => {
     component.metadata = 'test';
     fixture.detectChanges();
     expect(component.input1Directive.control.metadata).toBe('test');
+  });
+
+  it('should be able to access property model', () => {
+    triggerEvent(input2, 'input', 'test');
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('.input2-text')).nativeElement.innerText).toBe('test');
   });
 });
