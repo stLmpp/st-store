@@ -6,7 +6,7 @@
     "@angular/core": ">= 12 < 13"
   },
   "dependencies": {
-    "tslib": "~2.3.0",
+    "tslib": "~2.3.1",
     "st-utils": "~2.1.0"
   }
 }
