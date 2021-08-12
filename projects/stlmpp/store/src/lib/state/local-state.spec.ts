@@ -13,7 +13,7 @@ class ComponentLocalState extends LocalState<ComponentState> {
   constructor() {
     super(
       { id: 1, name: '1', flag: false },
-      { inputs: ['name', 'id', { key: 'flag', transformer: coerceBooleanProperty }] }
+      { inputs: ['name', 'id', { key: 'flag', transformer: coerceBooleanProperty as any }] }
     );
   }
 
