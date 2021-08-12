@@ -1,14 +1,14 @@
 {
   "name": "@stlmpp/store",
-  "version": "8.1.0",
+  "version": "8.2.0",
   "peerDependencies": {
     "@angular/common": ">= 12 < 13",
     "@angular/core": ">= 12 < 13"
   },
   "dependencies": {
     "copy-anything": "~2.0.3",
-    "tslib": "~2.3.0",
-    "st-utils": "~2.0.0",
+    "tslib": "~2.3.1",
+    "st-utils": "~2.1.0",
     "type-fest": "~2.0.0"
   }
 }

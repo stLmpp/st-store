@@ -14,6 +14,7 @@ export { trackByFactory } from './lib/array/track-by';
 export { sumByOperator, SumByPipe, sumOperator, SumPipe } from './lib/array/sum';
 export { AnyPipe } from './lib/array/any.pipe';
 export { JoinPipe } from './lib/array/join.pipe';
+export { SearchPipe } from './lib/array/search.pipe';
 
 // Number
 export { StUtilsNumberModule } from './lib/number/number.module';
