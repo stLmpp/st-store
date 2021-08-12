@@ -8,7 +8,7 @@
   "dependencies": {
     "copy-anything": "~2.0.3",
     "tslib": "~2.3.0",
-    "st-utils": "~2.0.0",
+    "st-utils": "~2.1.0",
     "type-fest": "~2.0.0"
   }
 }
