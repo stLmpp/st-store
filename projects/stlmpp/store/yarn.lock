@@ -19,10 +19,10 @@ is-what@^3.12.0:
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.12.0.tgz#f4405ce4bd6dd420d3ced51a026fb90e03705e55"
   integrity sha512-2ilQz5/f/o9V7WRWJQmpFYNmQFZ9iM+OXRonZKcYgTkCzjb949Vi4h282PD1UfmgHk666rcWonbRJ++KI41VGw==
 
-st-utils@~2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-2.1.0.tgz#9f76530ad4d61b49c32c2a557fac1e899fa60c4f"
-  integrity sha512-UanpRJ3oIWYbW1FcLoyWOlUbe7zoo4f1+vFkBG7OI3vKd8teF6Je3787zMtmBIpGZye/UrKMlOsrQT7aVo6xqA==
+st-utils@~2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/st-utils/-/st-utils-2.1.1.tgz#b51c10496179cf292481b0a0a4b8df8b69483913"
+  integrity sha512-LLbHcAr0xR74RVDKB2bJPSCoq6K76dcyu0EHuymp0HcVgqLWsTnlVaRdW0Y7uVQqlYif4duLYkOZCmBD0naUtQ==
   dependencies:
     fast-sort "~3.0.2"
     type-fest "~2.0.0"
