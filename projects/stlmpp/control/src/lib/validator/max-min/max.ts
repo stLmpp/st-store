@@ -3,11 +3,10 @@ import { Control } from '../../control/control';
 import { isDate, isNil, isString } from 'st-utils';
 import { format, isAfter, parseISO } from 'date-fns';
 import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Nullable } from '../../util';
 
 export type MaxMinType = 'date' | 'number';
 
-export interface MaxMinValidationError<T extends Nullable<Date | number>> {
+export interface MaxMinValidationError<T extends Date | number | null | undefined> {
   actual: T;
   required: NonNullable<T>;
 }
@@ -22,7 +21,7 @@ export function getTypeAndValue(maxMin: string | Date | number): [MaxMinType, Da
 }
 
 @Directive()
-export abstract class AbstractMaxValidator<T extends Nullable<Date | number>>
+export abstract class AbstractMaxValidator<T extends Date | number | null | undefined>
   extends ControlValidator<T, MaxMinValidationError<T>>
   implements OnChanges
 {
@@ -68,7 +67,7 @@ export abstract class AbstractMaxValidator<T extends Nullable<Date | number>>
   }
 }
 
-export class MaxValidator<T extends Nullable<Date | number>> extends AbstractMaxValidator<T> {
+export class MaxValidator<T extends Date | number | null | undefined> extends AbstractMaxValidator<T> {
   constructor(max: string | NonNullable<T>) {
     super();
     this.max = max;

@@ -2,16 +2,15 @@ import { ControlValidator, ControlValidatorAttributes } from '../validator';
 import { Control } from '../../control/control';
 import { isRegExp } from 'st-utils';
 import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Nullable } from '../../util';
 
 export interface PatternValidationError {
   expected: string;
-  actual: Nullable<string>;
+  actual: string | null | undefined;
 }
 
 @Directive()
 export abstract class AbstractPatternValidator
-  extends ControlValidator<Nullable<string>, PatternValidationError>
+  extends ControlValidator<string | null | undefined, PatternValidationError>
   implements OnChanges
 {
   @HostBinding('attr.pattern')
@@ -36,7 +35,7 @@ export abstract class AbstractPatternValidator
 
   override attrs: ControlValidatorAttributes = {};
 
-  validate({ value }: Control<Nullable<string>>): PatternValidationError | null {
+  validate({ value }: Control<string | null | undefined>): PatternValidationError | null {
     if (!value) {
       return null;
     }

@@ -4,7 +4,6 @@ import { ControlValidator } from '../validator';
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { Observable } from 'rxjs';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][whiteSpace]:not([control]):not([controlName])',
@@ -21,7 +20,7 @@ export class WhiteSpaceValidatorDirective extends AbstractWhiteSpaceValidator im
     this._whiteSpace = coerceBooleanProperty(whiteSpace);
   }
 
-  override validate(control: Control<Nullable<string>>): Observable<boolean | null> | boolean | null {
+  override validate(control: Control<string | null | undefined>): Observable<boolean | null> | boolean | null {
     if (!this._whiteSpace) {
       return null;
     }

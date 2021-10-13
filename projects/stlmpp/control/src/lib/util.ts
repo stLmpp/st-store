@@ -11,4 +11,3 @@ export function getUniqueId(): number {
 }
 
 export type Entries<T = any, K extends keyof T = keyof T> = [K, T[K]][];
-export type Nullable<T> = T | null | undefined;

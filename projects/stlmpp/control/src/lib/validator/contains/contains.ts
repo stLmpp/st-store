@@ -1,18 +1,17 @@
 import { ControlValidator } from '../validator';
 import { Control } from '../../control/control';
 import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Nullable } from '../../util';
 
 @Directive()
 export abstract class AbstractContainsValidators
-  extends ControlValidator<Nullable<string>, boolean>
+  extends ControlValidator<string | null | undefined, boolean>
   implements OnChanges
 {
   @Input() contains!: string;
 
   readonly name: string = 'contains';
 
-  validate({ value }: Control<Nullable<string>>): boolean | null {
+  validate({ value }: Control<string | null | undefined>): boolean | null {
     if (!value) {
       return null;
     }

@@ -3,7 +3,6 @@ import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angula
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][email]:not([control]):not([controlName])',
@@ -27,7 +26,7 @@ export class EmailValidatorDirective extends AbstractEmailValidator implements O
     }
   }
 
-  override validate(control: Control<Nullable<string>>): boolean | null {
+  override validate(control: Control<string | null | undefined>): boolean | null {
     if (!this._email) {
       return null;
     }

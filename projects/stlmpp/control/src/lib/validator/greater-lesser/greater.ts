@@ -3,15 +3,14 @@ import { Control } from '../../control/control';
 import { isDate, isNil } from 'st-utils';
 import { isBefore, isEqual } from 'date-fns';
 import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Nullable } from '../../util';
 
-export interface GreaterValidationError<T extends Nullable<Date | number>> {
+export interface GreaterValidationError<T extends Date | number | null | undefined> {
   expectedGreaterThan: NonNullable<T>;
   actual: T;
 }
 
 @Directive()
-export abstract class AbstractGreaterValidator<T extends Nullable<Date | number>>
+export abstract class AbstractGreaterValidator<T extends Date | number | null | undefined>
   extends ControlValidator<T, GreaterValidationError<T>>
   implements OnChanges
 {
@@ -40,7 +39,7 @@ export abstract class AbstractGreaterValidator<T extends Nullable<Date | number>
   }
 }
 
-export class GreaterValidator<T extends Nullable<Date | number>> extends AbstractGreaterValidator<T> {
+export class GreaterValidator<T extends Date | number | null | undefined> extends AbstractGreaterValidator<T> {
   constructor(greater: NonNullable<T>) {
     super();
     this.greater = greater;

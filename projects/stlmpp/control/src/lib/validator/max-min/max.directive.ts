@@ -1,10 +1,9 @@
 import { Directive } from '@angular/core';
 import { AbstractMaxValidator } from './max';
 import { ControlValidator } from '../validator';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][max]:not([control]):not([controlName])',
   providers: [{ provide: ControlValidator, useExisting: MaxValidatorDirective, multi: true }],
 })
-export class MaxValidatorDirective<T extends Nullable<Date | number>> extends AbstractMaxValidator<T> {}
+export class MaxValidatorDirective<T extends Date | number | null | undefined> extends AbstractMaxValidator<T> {}

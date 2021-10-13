@@ -2,13 +2,12 @@ import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ControlValidator } from '../validator';
 import { AbstractBetweenValidator } from './between';
 import { isArray, isObject } from 'st-utils';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: `[model][between]:not([control]):not([controlName])`,
   providers: [{ provide: ControlValidator, useExisting: BetweenValidatorDirective, multi: true }],
 })
-export class BetweenValidatorDirective<T extends Nullable<Date | number>>
+export class BetweenValidatorDirective<T extends Date | number | null | undefined>
   extends AbstractBetweenValidator<T>
   implements OnChanges
 {

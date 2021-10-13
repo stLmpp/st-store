@@ -3,7 +3,6 @@ import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angula
 import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { ControlValidator } from '../validator';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][requiredTrue]:not([control]):not([controlName])',
@@ -31,7 +30,7 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
     }
   }
 
-  override validate(control: Control<Nullable<boolean>>): boolean | null {
+  override validate(control: Control<boolean | null | undefined>): boolean | null {
     if (!this._requiredTrue) {
       return null;
     }

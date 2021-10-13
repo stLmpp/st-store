@@ -4,7 +4,6 @@ import { BooleanInput, coerceBooleanProperty } from 'st-utils';
 import { Control } from '../../control/control';
 import { PatternValidationError } from './pattern';
 import { ControlValidator } from '../validator';
-import { Nullable } from '../../util';
 
 @Directive({
   selector: '[model][url]:not([control]):not([controlName])',
@@ -28,7 +27,7 @@ export class UrlValidatorDirective extends AbstractUrlValidator implements OnCha
     }
   }
 
-  override validate(control: Control<Nullable<string>>): PatternValidationError | null {
+  override validate(control: Control<string | null | undefined>): PatternValidationError | null {
     if (!this._url) {
       return null;
     }

@@ -15,7 +15,6 @@ import { GreaterValidationError, GreaterValidator } from './greater-lesser/great
 import { LesserValidationError, LesserValidator } from './greater-lesser/lesser';
 import { BetweenValidator } from './between/between';
 import { RequiredTrueValidator } from './required/required-true';
-import { Nullable } from '../util';
 import { WhiteSpaceValidator } from './white-space/white-space';
 import { SiblingNotEqualsValidator } from './other/sibling-not-equals';
 
@@ -24,16 +23,16 @@ export class Validators {
   static get required(): RequiredValidator {
     return new RequiredValidator();
   }
-  static maxLength<T extends Nullable<string | any[]>>(maxLength: number): MaxLengthValidator<T> {
+  static maxLength<T extends string | any[] | null | undefined>(maxLength: number): MaxLengthValidator<T> {
     return new MaxLengthValidator<T>(maxLength);
   }
-  static minLength<T extends Nullable<string | any[]>>(minLength: number): MinLengthValidator<T> {
+  static minLength<T extends string | any[] | null | undefined>(minLength: number): MinLengthValidator<T> {
     return new MinLengthValidator<T>(minLength);
   }
-  static max<T extends Nullable<number | Date>>(max: NonNullable<T> | string): MaxValidator<T> {
+  static max<T extends Date | number | null | undefined>(max: NonNullable<T> | string): MaxValidator<T> {
     return new MaxValidator<T>(max);
   }
-  static min<T extends Nullable<number | Date>>(min: NonNullable<T> | string): MinValidator<T> {
+  static min<T extends Date | number | null | undefined>(min: NonNullable<T> | string): MinValidator<T> {
     return new MinValidator<T>(min);
   }
   static get email(): EmailValidator {
@@ -48,7 +47,7 @@ export class Validators {
   static composeAsync(...validators: ControlValidator[]): ComposeAsyncValidator {
     return new ComposeAsyncValidator(validators);
   }
-  static contains(value: NonNullable<string>): ContainsValidator {
+  static contains(value: Nonstring | null | undefined): ContainsValidator {
     return new ContainsValidator(value);
   }
   static siblingEquals<T = any>(
@@ -66,13 +65,13 @@ export class Validators {
   static get url(): UrlValidator {
     return new UrlValidator();
   }
-  static greater<T extends Nullable<Date | number>>(greater: NonNullable<T>): GreaterValidator<T> {
+  static greater<T extends Date | number | null | undefined>(greater: NonNullable<T>): GreaterValidator<T> {
     return new GreaterValidator<T>(greater);
   }
-  static lesser<T extends Nullable<Date | number>>(lesser: NonNullable<T>): LesserValidator<T> {
+  static lesser<T extends Date | number | null | undefined>(lesser: NonNullable<T>): LesserValidator<T> {
     return new LesserValidator<T>(lesser);
   }
-  static between<T extends Nullable<Date | number>>(
+  static between<T extends Date | number | null | undefined>(
     start: NonNullable<T>,
     end: NonNullable<T>,
     inclusiveness?: [boolean, boolean]
@@ -92,8 +91,8 @@ export interface ValidatorsModel {
   required: boolean;
   maxLength: LengthValidationError;
   minLength: LengthValidationError;
-  max: MaxMinValidationError<Nullable<Date | number>>;
-  min: MaxMinValidationError<Nullable<Date | number>>;
+  max: MaxMinValidationError<Date | number | null | undefined>;
+  min: MaxMinValidationError<Date | number | null | undefined>;
   email: boolean;
   pattern: PatternValidationError;
   compose: Record<string, any>;
@@ -102,8 +101,8 @@ export interface ValidatorsModel {
   siblingEquals: SiblingEqualsValidationError;
   siblingNotEquals: SiblingEqualsValidationError;
   url: boolean;
-  greater: GreaterValidationError<Nullable<Date | number>>;
-  lesser: LesserValidationError<Nullable<Date | number>>;
+  greater: GreaterValidationError<Date | number | null | undefined>;
+  lesser: LesserValidationError<Date | number | null | undefined>;
   requiredTrue: boolean;
   whiteSpace: boolean;
 }

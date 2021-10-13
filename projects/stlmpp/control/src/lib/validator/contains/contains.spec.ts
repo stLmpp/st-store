@@ -1,6 +1,5 @@
 import { ContainsValidator } from './contains';
 import { createFakeControl } from '../../util-tests';
-import { Nullable } from '../../util';
 
 describe('contains validator', () => {
   let valString: ContainsValidator;
@@ -10,11 +9,11 @@ describe('contains validator', () => {
   });
 
   it('should not validate is value is falsy', () => {
-    expect(valString.validate(createFakeControl<Nullable<string>>(''))).toBeNull();
+    expect(valString.validate(createFakeControl<string | null | undefined>(''))).toBeNull();
   });
 
   it('should validate is value contains', () => {
-    expect(valString.validate(createFakeControl<Nullable<string>>('TEST A'))).toBeNull();
-    expect(valString.validate(createFakeControl<Nullable<string>>('B'))).toBeTrue();
+    expect(valString.validate(createFakeControl<string | null | undefined>('TEST A'))).toBeNull();
+    expect(valString.validate(createFakeControl<string | null | undefined>('B'))).toBeTrue();
   });
 });

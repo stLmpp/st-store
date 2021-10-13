@@ -4,10 +4,9 @@ import { isNil, isString } from 'st-utils';
 import { isBefore, parseISO } from 'date-fns';
 import { Control } from '../../control/control';
 import { Directive, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Nullable } from '../../util';
 
 @Directive()
-export abstract class AbstractMinValidator<T extends Nullable<Date | number>>
+export abstract class AbstractMinValidator<T extends Date | number | null | undefined>
   extends ControlValidator<T, MaxMinValidationError<T>>
   implements OnChanges
 {
@@ -53,7 +52,7 @@ export abstract class AbstractMinValidator<T extends Nullable<Date | number>>
   }
 }
 
-export class MinValidator<T extends Nullable<Date | number>> extends AbstractMinValidator<T> {
+export class MinValidator<T extends Date | number | null | undefined> extends AbstractMinValidator<T> {
   constructor(min: NonNullable<T> | string) {
     super();
     this.min = min;
