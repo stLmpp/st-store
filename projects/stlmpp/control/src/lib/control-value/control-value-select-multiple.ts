@@ -24,11 +24,12 @@ export class ControlValueSelectMultiple
     super(renderer2, elementRef);
   }
 
-  private _indices = new Set<number>();
+  private readonly _indices = new Set<number>();
   private _valueAfterContentInit: any;
   private _setValueAfterContentInit = false;
 
-  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
+  @ContentChildren(ControlValueSelectOption, { descendants: true })
+  readonly options!: QueryList<ControlValueSelectOption>;
 
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
@@ -58,13 +59,12 @@ export class ControlValueSelectMultiple
   onChange($event: Event): void {
     const target = $event.target as HTMLSelectElement;
     const selectOptions: ControlValueSelectOption[] = [];
-    for (let index = 0, len = target.selectedOptions.length; index < len; index++) {
-      const element = target.selectedOptions.item(index);
-      if (element) {
-        const option = this.options.find(({ elementRef: { nativeElement } }) => nativeElement === element);
-        if (option) {
-          selectOptions.push(option.value);
-        }
+    for (let index = 0; index < target.selectedOptions.length; index++) {
+      // There's no way it will return null here
+      const element = target.selectedOptions.item(index)!;
+      const option = this.options.find(({ elementRef: { nativeElement } }) => nativeElement === element);
+      if (option) {
+        selectOptions.push(option.value);
       }
     }
     this.onChange$.next(selectOptions);

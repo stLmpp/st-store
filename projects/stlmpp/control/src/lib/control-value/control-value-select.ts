@@ -25,7 +25,8 @@ export class ControlValueSelect extends AbstractControlValue<any, HTMLSelectElem
   private _valueAfterContentInit: any;
   private _setValueAfterContentInit = false;
 
-  @ContentChildren(ControlValueSelectOption, { descendants: true }) options!: QueryList<ControlValueSelectOption>;
+  @ContentChildren(ControlValueSelectOption, { descendants: true })
+  readonly options!: QueryList<ControlValueSelectOption>;
 
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
@@ -45,7 +46,8 @@ export class ControlValueSelect extends AbstractControlValue<any, HTMLSelectElem
   @HostListener('change', ['$event'])
   onChange($event: Event): void {
     const index = ($event.target as HTMLSelectElement).selectedIndex;
-    this.onChange$.next(this.options.toArray()[index].value);
+    const option = this.options.get(index)?.value;
+    this.onChange$.next(option);
   }
 
   override setValue(value: any): void {

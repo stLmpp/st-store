@@ -17,7 +17,7 @@ import { ValidatorsKeys, ValidatorsModel } from '../validator/validators';
 import { ControlErrorCase } from './control-error-case';
 import { Control, isControl } from '../control/control';
 
-export type ControlErrorShowWhen = 'dirty' | 'touched' | null;
+export type ControlErrorShowWhen = keyof Pick<Control, 'dirty' | 'touched'> | null;
 
 @Directive({ selector: '[controlError]', exportAs: 'controlError' })
 export class ControlError implements OnInit, OnChanges, OnDestroy {
@@ -32,10 +32,8 @@ export class ControlError implements OnInit, OnChanges, OnDestroy {
   @Input() showWhen: ControlErrorShowWhen = 'touched';
 
   private _validateShowWhen(error: ControlErrorCase<ValidatorsModel[ValidatorsKeys]>): boolean {
-    return (
-      (isNil(error.errorShowWhen) && isNil(this.showWhen)) ||
-      this._control[(error.errorShowWhen ?? this.showWhen) as 'dirty' | 'touched']
-    );
+    const showWhen = error.errorShowWhen ?? this.showWhen;
+    return isNil(showWhen) || this._control[showWhen];
   }
 
   private _init(): void {

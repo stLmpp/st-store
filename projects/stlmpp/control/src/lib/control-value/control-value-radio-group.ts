@@ -30,25 +30,26 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
     super();
   }
 
-  private _destroy$ = new Subject<void>();
+  private readonly _destroy$ = new Subject<void>();
+  private readonly _children = new QueryList<ControlValueRadio>();
   private _markForDisabledAfterContentInit = false;
   private _markForValueAfterContentInit = false;
   private _lastValue: any;
 
-  @ContentChildren(ControlValueRadio, { descendants: true }) allChildren!: QueryList<ControlValueRadio>;
+  @ContentChildren(ControlValueRadio, { descendants: true }) readonly allChildren!: QueryList<ControlValueRadio>;
+
   @Input() compareWith: (valueA: any, valueB: any) => boolean = Object.is;
 
-  override id = uniqueID++;
-  children = new QueryList<ControlValueRadio>();
+  override readonly id = uniqueID++;
 
   private _disableChildren(disabled: boolean): void {
-    for (const child of this.children) {
+    for (const child of this._children) {
       this.renderer2.setProperty(child.elementRef.nativeElement, 'disabled', disabled);
     }
   }
 
   private _setValue(value: any): void {
-    for (const radio of this.children) {
+    for (const radio of this._children) {
       const checked = this.compareWith(value, radio.value);
       this.renderer2.setProperty(radio.elementRef.nativeElement, 'checked', checked);
       this.renderer2.setAttribute(radio.elementRef.nativeElement, 'aria-checked', '' + checked);
@@ -81,16 +82,16 @@ export class ControlValueRadioGroup extends ControlValueRadioParent implements A
   }
 
   override focus(): void {
-    this.children.first?.elementRef?.nativeElement?.focus();
+    this._children.first?.elementRef?.nativeElement?.focus();
   }
 
   ngAfterContentInit(): void {
     this.allChildren.changes
       .pipe(takeUntil(this._destroy$), startWith(this.allChildren))
       .subscribe((children: QueryList<ControlValueRadio>) => {
-        this.children.reset(children.filter(child => child.controlValueRadioParent === this));
+        this._children.reset(children.filter(child => child.controlValueRadioParent === this));
         this._setValue(this._lastValue);
-        this.children.notifyOnChanges();
+        this._children.notifyOnChanges();
       });
     if (this._markForDisabledAfterContentInit) {
       this._disableChildren(true);
