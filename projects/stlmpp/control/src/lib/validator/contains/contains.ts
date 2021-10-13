@@ -9,7 +9,7 @@ export abstract class AbstractContainsValidators
 {
   @Input() contains!: string;
 
-  readonly name: string = 'contains';
+  readonly name = 'contains';
 
   validate({ value }: Control<string | null | undefined>): boolean | null {
     if (!value) {

@@ -47,7 +47,7 @@ export class Validators {
   static composeAsync(...validators: ControlValidator[]): ComposeAsyncValidator {
     return new ComposeAsyncValidator(validators);
   }
-  static contains(value: Nonstring | null | undefined): ContainsValidator {
+  static contains(value: string): ContainsValidator {
     return new ContainsValidator(value);
   }
   static siblingEquals<T = any>(
