@@ -5,7 +5,7 @@ import { AbstractControlDirective } from '../abstract-control';
   selector: `
     [control],[controlName],
     :not(ng-container):not(ng-template)[controlGroup],:not(ng-container):not(ng-template)[controlGroupName],
-    not(ng-container):not(ng-template)[controlArrayName],
+    :not(ng-container):not(ng-template)[controlArrayName],
     [model]
   `,
 })
