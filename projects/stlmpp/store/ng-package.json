@@ -2,11 +2,7 @@
   "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../../dist/stlmpp/store",
   "lib": {
-    "entryFile": "src/public-api.ts",
-    "umdModuleIds": {
-      "copy-anything": "copy-anything",
-      "st-utils": "st-utils"
-    }
+    "entryFile": "src/public-api.ts"
   },
   "allowedNonPeerDependencies": ["."]
 }
