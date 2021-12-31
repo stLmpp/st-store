@@ -185,13 +185,13 @@ describe('control group', () => {
     controlGroup.get('id').setValidator(new AsyncValidator());
     fixture.detectChanges();
     expect(controlGroup.pending).toBeTrue();
-    await wait(15);
+    await wait(30);
     expect(controlGroup.pending).toBeFalse();
     const input = fixture.debugElement.query(By.css('input'));
     triggerEvent(input, 'input', '2');
     fixture.detectChanges();
     expect(controlGroup.pending).toBeTrue();
-    await wait(15);
+    await wait(30);
     expect(controlGroup.pending).toBeFalse();
   });
 
