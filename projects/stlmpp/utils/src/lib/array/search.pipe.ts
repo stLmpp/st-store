@@ -8,9 +8,6 @@ export class SearchPipe implements PipeTransform {
     keyOrKeysOrCallback: K | K[] | ((item: T) => T[K]),
     term: string | null | undefined
   ): T[] {
-    if (!array) {
-      return [];
-    }
-    return arraySearch(array, keyOrKeysOrCallback, term);
+    return arraySearch(array ?? [], keyOrKeysOrCallback, term);
   }
 }

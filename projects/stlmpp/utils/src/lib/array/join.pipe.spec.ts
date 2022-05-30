@@ -35,4 +35,9 @@ describe('join pipe', () => {
   it('should use the custom char to join', () => {
     expect(pipe.transform(array1, '.', '.')).toBe('1.2.3');
   });
+
+  it('should return null when null or undefined', () => {
+    expect(pipe.transform(null)).toBe(null);
+    expect(pipe.transform(undefined)).toBe(null);
+  });
 });

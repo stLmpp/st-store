@@ -32,4 +32,9 @@ describe('group by', () => {
     expect(grouped[1][1][0]).toEqual({ id: 3, name: 'Other' });
     expect(grouped[1][1][1]).toEqual({ id: 4, name: 'Other' });
   });
+
+  it('should return empty array when null or undefined', () => {
+    expect(groupByPipe.transform(null, '')).toEqual([]);
+    expect(groupByPipe.transform(undefined, '')).toEqual([]);
+  });
 });

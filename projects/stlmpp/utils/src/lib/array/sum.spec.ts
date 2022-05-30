@@ -28,6 +28,11 @@ describe('sum', () => {
         .pipe(sumOperator())
         .subscribe(sum => expect(sum).toBe(0));
     });
+
+    it('should return 0 when null or undefined', () => {
+      expect(sumPipe.transform(null)).toBe(0);
+      expect(sumPipe.transform(undefined)).toBe(0);
+    });
   });
 
   describe('sum by', () => {
@@ -73,6 +78,11 @@ describe('sum', () => {
       of(array)
         .pipe(sumByOperator('value'))
         .subscribe(sum => expect(sum).toBe(3));
+    });
+
+    it('should return 0 when null or undefined', () => {
+      expect(sumByPipe.transform(null, '')).toBe(0);
+      expect(sumByPipe.transform(undefined, '')).toBe(0);
     });
   });
 });

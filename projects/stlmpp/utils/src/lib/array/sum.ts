@@ -26,8 +26,8 @@ export class SumPipe implements PipeTransform {
    * @param {number[]} value
    * @returns {number}
    */
-  transform(value: number[]): number {
-    return sum(value);
+  transform(value: number[] | null | undefined): number {
+    return sum(value ?? []);
   }
 }
 
@@ -35,14 +35,15 @@ export class SumPipe implements PipeTransform {
 export class SumByPipe implements PipeTransform {
   /**
    * @description SumBy pipe, return the sum of an array of objects based on a key {@link sumBy}
+   * @template T, K
    * @param {T[]} value
    * @param {K} key
    * @returns {number}
    */
   transform<T extends Record<any, any>, K extends ConditionalKeys<T, number | null | undefined>>(
-    value: T[],
+    value: T[] | null | undefined,
     key: K
   ): number {
-    return sumBy<T, K>(value, key);
+    return sumBy<T, K>(value ?? [], key);
   }
 }
