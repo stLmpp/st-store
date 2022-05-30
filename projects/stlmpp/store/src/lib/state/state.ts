@@ -19,7 +19,7 @@ import { StateService } from './state.service';
 export class State<T extends Record<string, any> = Record<string, any>> {
   /**
    * @template T
-   * @description creates a instance of state, to handle reactivity with observables (similar to react state)
+   * @description creates an instance of state, to handle reactivity with observables (similar to react state)
    * @param {T} initialState
    * @param {StateConfig} config
    * @param {StateService} stateService optional parameter, only injected when create from {@link StateService#create}
@@ -63,6 +63,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
 
   /**
    * @description update the state with a partial/full value or callback function
+   * @template T, K
    * @param {Partial<T> | ((state: T) => T) | K} keyOrPartialOrCallback
    * @param {T[K] | ((state: T[K]) => T[K])} partialOrCallback
    * @returns {this}
@@ -90,12 +91,14 @@ export class State<T extends Record<string, any> = Record<string, any>> {
   selectState(): Observable<T>;
   /**
    * @description returns an observable with a property from the state
+   * @template T, K
    * @param {K} key
    * @returns {Observable<T[K]>}
    */
   selectState<K extends keyof T>(key: K): Observable<T[K]>;
   /**
    * @description returns an observable with multiple properties based in the keys param
+   * @template T, K
    * @param {K[]} keys
    * @returns {Observable<Pick<T, K>>}
    */
@@ -120,6 +123,7 @@ export class State<T extends Record<string, any> = Record<string, any>> {
   getState(): T;
   /**
    * @description returns a snapshot of a property of the state
+   * @template T, K
    * @param {K} key
    * @returns {T[K]}
    */

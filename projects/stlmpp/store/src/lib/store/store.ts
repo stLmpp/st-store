@@ -6,7 +6,8 @@ import { StorePersistStrategy } from './store-persist';
 import { State } from '../state/state';
 
 /**
- * @description returns an key to persist
+ * @description returns a key to persist
+ * @template T
  * @param {string} name
  * @param {keyof T} persist
  * @returns {string}
@@ -96,7 +97,7 @@ export abstract class Store<T extends Record<any, any>, E = any> extends State<T
   }
 
   /**
-   * @description returns if the store has cache
+   * @description returns if the store is cached
    * @returns {boolean}
    */
   hasCache(): boolean {
@@ -153,7 +154,7 @@ export abstract class Store<T extends Record<any, any>, E = any> extends State<T
   }
 
   /**
-   * @description returns an snapshot of the loading state
+   * @description returns a snapshot of the loading state
    * @returns {boolean}
    */
   getLoading(): boolean {

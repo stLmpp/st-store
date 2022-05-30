@@ -119,13 +119,14 @@ export abstract class EntityQuery<
    */
   selectEntity(id: EntityIdType): Observable<T | undefined>;
   /**
-   * @description select a entity based on an predicate
+   * @description select an entity based on a predicate
    * @param {EntityPredicate<T>} callback
    * @returns {Observable<T | undefined>}
    */
   selectEntity(callback: EntityPredicate<T>): Observable<T | undefined>;
   /**
    * @description select one property of an entity
+   * @template T, KEY
    * @param {EntityIdType | EntityPredicate<T>} idOrCallback
    * @param {KEY} property
    * @returns {Observable<T[KEY] | undefined>}
@@ -164,6 +165,7 @@ export abstract class EntityQuery<
   getEntity(key: EntityIdType): T | undefined;
   /**
    * @description returns a snapshot of a property of an entity
+   * @template T, KEY
    * @param {EntityIdType} key
    * @param {KEY} property
    * @returns {T[KEY] | undefined}

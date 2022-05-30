@@ -2,6 +2,7 @@ import { distinctUntilChanged, OperatorFunction } from 'rxjs';
 
 /**
  * @description distinct until keys changed, check every key specified in the args, to see if they changed
+ * @template T, K
  * @param {K[]} keys
  * @returns {OperatorFunction<T, T>}
  */

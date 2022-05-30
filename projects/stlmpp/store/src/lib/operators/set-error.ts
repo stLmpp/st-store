@@ -1,13 +1,14 @@
 import { EntityStore } from '../entity/entity-store';
 import { Store } from '../store/store';
-import { catchError, OperatorFunction, throwError } from 'rxjs';
+import { catchError, MonoTypeOperatorFunction, throwError } from 'rxjs';
 
 /**
  * @description when an error occurs, set it to the store
+ * @template T
  * @param {EntityStore | Store} store
- * @returns {OperatorFunction<T, T>}
+ * @returns {MonoTypeOperatorFunction<T>}
  */
-export function setError<T>(store: EntityStore | Store<any>): OperatorFunction<T, T> {
+export function setError<T>(store: EntityStore | Store<any>): MonoTypeOperatorFunction<T> {
   return catchError(err => {
     store.setError(err);
     return throwError(() => err);

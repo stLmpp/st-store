@@ -199,7 +199,7 @@ export abstract class EntityStore<
   }
 
   /**
-   * @description update one or more entities in the store based on a id or predicate
+   * @description update one or more entities in the store based on an id or predicate
    * @param {EntityIdType | EntityPredicate<T>} idOrPredicate
    * @param {EntityPartialUpdate<T>} partialOrCallback
    */

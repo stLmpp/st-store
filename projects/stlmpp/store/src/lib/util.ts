@@ -6,6 +6,7 @@ import { from, isObservable, Observable } from 'rxjs';
 /**
  * @description Transform an array of objects with an id, to an object of entities,
  * <br> and returns the object and an {@link Set} of ids
+ * @template T
  * @param {T[]} entities
  * @param {IdGetterFn<T>} idGetter
  * @returns {[Record<string, T>, Set<EntityIdType>]}
@@ -27,6 +28,7 @@ export function toEntities<T extends Record<any, any>>(
 
 /**
  * @description Deep copy and deep freeze an object in development mode
+ * @template T
  * @param {T} value
  * @returns {T}
  */
@@ -39,6 +41,7 @@ export function devCopy<T>(value: T): T {
 
 /**
  * @description Deep freeze an object
+ * @template T
  * @param {T} object
  * @returns {T}
  */
@@ -65,6 +68,7 @@ export function deepFreeze<T>(object: T): T {
 
 /**
  * @description tries to predict if the id is a number or string
+ * @template T
  * @param {Record<string, T>} object
  * @param {IdGetterFn<T>} idGetter
  * @returns {(key: EntityIdType) => EntityIdType}
@@ -93,6 +97,7 @@ export function isEntityId(value: any): value is EntityIdType {
 
 /**
  * @description convert value to observable
+ * @template T
  * @param {Promise<T> | Observable<T> | T} value
  * @returns {Observable<T>}
  */

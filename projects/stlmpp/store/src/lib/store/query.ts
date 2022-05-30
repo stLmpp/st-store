@@ -82,13 +82,15 @@ export abstract class Query<T extends Record<any, any>, E = any> {
    */
   select(): Observable<T>;
   /**
-   * @description returns an observable of an property of the state.
+   * @description returns an observable of a property of the state.
+   * @template T, K
    * @param {K} key
    * @returns {Observable<T[K]>}
    */
   select<K extends keyof T>(key: K): Observable<T[K]>;
   /**
    * @description returns an observable of the state based on a predicate
+   * @template T, R
    * @param {(state: T) => R} callback
    * @returns {Observable<R>}
    */
@@ -110,6 +112,7 @@ export abstract class Query<T extends Record<any, any>, E = any> {
 
   /**
    * @description returns an observable of the state as {@link KeyValue} based on the keys
+   * @template T, K
    * @param {K[]} pick
    * @returns {Observable<KeyValue<K, T[K]>[]>}
    */

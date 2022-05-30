@@ -40,7 +40,7 @@ describe('state', () => {
     setTimeout(() => {
       expect(asyncState.getState('name')).toBe('2');
       done();
-    });
+    }, 50);
   });
 
   it('should select state', () => {

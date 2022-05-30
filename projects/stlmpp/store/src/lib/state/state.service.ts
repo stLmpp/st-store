@@ -22,6 +22,7 @@ export class StateService {
 
   /**
    * @description creates a new instance of {@link State}
+   * @template T
    * @param {T} initialState
    * @param {StateConfig} config
    * @returns {State<T>}
@@ -35,6 +36,7 @@ export class StateService {
 
   /**
    * @description gets a state instance {@link State}
+   * @template T
    * @param {string} name
    * @returns {State<T> | undefined}
    */
