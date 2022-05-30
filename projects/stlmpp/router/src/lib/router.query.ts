@@ -210,7 +210,7 @@ export class RouterQuery implements OnDestroy {
    */
   getQueryParams(): Params;
   /**
-   * @description Returns a snapshot of a specific query param param (can return null, if not found)
+   * @description Returns a snapshot of a specific query param (can return null, if not found)
    * @param {string} param
    * @returns {string | null}
    */
@@ -267,6 +267,7 @@ export class RouterQuery implements OnDestroy {
   selectData(): Observable<Data>;
   /**
    * @description Returns an observable with a specific data (can return observable of undefined if not found)
+   * @template R
    * @param {string} param
    * @returns {Observable<R | undefined>}
    */

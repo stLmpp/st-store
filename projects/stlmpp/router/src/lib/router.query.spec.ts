@@ -326,7 +326,7 @@ describe('Router Query', () => {
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(null);
       await router.navigate([''], { fragment: 'test' });
-      await wait(0);
+      await wait(50);
       expect(spy).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenCalledWith('test');
     });
@@ -335,7 +335,7 @@ describe('Router Query', () => {
       router.initialNavigation();
       expect(routerQuery.getFragment()).toBeNull();
       await router.navigate([''], { fragment: 'test' });
-      await wait(0);
+      await wait(50);
       expect(routerQuery.getFragment()).toBe('test');
     });
   });
