@@ -19,7 +19,7 @@ export class UrlValidatorDirective extends AbstractUrlValidator implements OnCha
   }
 
   @Input()
-  set url(url: boolean) {
+  set url(url: BooleanInput) {
     this._url = coerceBooleanProperty(url);
     if (this._url) {
       this.attrs = { pattern: this.regExp.source };
@@ -42,6 +42,4 @@ export class UrlValidatorDirective extends AbstractUrlValidator implements OnCha
     }
     super.ngOnChanges(changes);
   }
-
-  static ngAcceptInputType_url: BooleanInput;
 }

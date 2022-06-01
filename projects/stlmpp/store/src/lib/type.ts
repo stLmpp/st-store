@@ -136,7 +136,7 @@ export type SimpleChangesCustom<T extends Record<any, any> = any> = { [K in keyo
 
 export interface StateComponentConfigInput<T extends Record<any, any>, K extends keyof T = keyof T> {
   key: K;
-  transformer: (value: T[K]) => any;
+  transformer: (value: any) => T[K];
 }
 
 export interface StateConfig {

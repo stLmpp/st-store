@@ -18,7 +18,7 @@ export class EmailValidatorDirective extends AbstractEmailValidator implements O
   }
 
   @Input()
-  set email(email: boolean) {
+  set email(email: BooleanInput) {
     this._email = coerceBooleanProperty(email);
     if (this._email) {
       this.attrs = { email: undefined };
@@ -40,6 +40,4 @@ export class EmailValidatorDirective extends AbstractEmailValidator implements O
       this.validationChange$.next();
     }
   }
-
-  static ngAcceptInputType_email: BooleanInput;
 }
