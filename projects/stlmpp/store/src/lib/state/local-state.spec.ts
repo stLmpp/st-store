@@ -13,7 +13,7 @@ class ComponentLocalState extends LocalState<ComponentState> {
   constructor() {
     super(
       { id: 1, name: '1', flag: false },
-      { inputs: ['name', 'id', { key: 'flag', transformer: coerceBooleanProperty as any }] }
+      { inputs: ['name', 'id', { key: 'flag', transformer: coerceBooleanProperty }] }
     );
   }
 
@@ -22,6 +22,7 @@ class ComponentLocalState extends LocalState<ComponentState> {
   @Input() flag!: boolean;
   @Input() other = '';
 
+  // TODO remove this and think in a better solution to sync the inputs
   static ngAcceptInputType_flag: BooleanInput;
 }
 

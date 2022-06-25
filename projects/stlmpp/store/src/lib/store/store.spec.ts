@@ -81,12 +81,12 @@ describe('Store', () => {
   });
 
   it('should persist value', () => {
-    expect(storeCustomPersist.getState().id).toBe(2);
-    storeCustomPersist.updateState({ id: 1 });
+    expect(storeCustomPersist.getState().id).toBe(1);
+    storeCustomPersist.updateState({ id: 2 });
     // @ts-ignore
     const key = getPersistKey(storeCustomPersist._options.name, storeCustomPersist._options.persistKey);
     // @ts-ignore
-    expect(storeCustomPersist._persistStrategy.get(key)).toBe('1');
+    expect(storeCustomPersist._persistStrategy.get(key)).toBe('2');
     storeCustomPersist.updateState({ id: undefined });
     // @ts-ignore
     expect(storeCustomPersist._persistStrategy.get(key)).toBeUndefined();

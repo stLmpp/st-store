@@ -33,4 +33,9 @@ describe('SearchPipe', () => {
       { id: 3, name: 'Yet, this is number three' },
     ]);
   });
+
+  it('should not search when null or undefined', () => {
+    expect(pipe.transform(null, [], '')).toEqual([]);
+    expect(pipe.transform(undefined, [], '')).toEqual([]);
+  });
 });

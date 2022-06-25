@@ -4,6 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class AnyPipe implements PipeTransform {
   /**
    * @description Check if a value exists in a list
+   * @template T
    * @param {T} value
    * @param {Iterable<T>} possibleValues
    * @returns {boolean}

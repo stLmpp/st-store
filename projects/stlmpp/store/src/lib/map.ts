@@ -296,6 +296,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description creates a new {@link StMap} with transformed data based on the predicate. Similar to {@link Array#map}
+   * @template T, R
    * @param {EntityUpdateWithId<T, R>} callback
    * @returns {StMap<R>}
    */
@@ -375,6 +376,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description reduces the map to something else. Similar to {@link Array#reduce}
+   * @template T, R
    * @param {(accumulator: R, item: [EntityIdType, T]) => R} callback
    * @param {R} initialValue
    * @returns {R}
@@ -598,6 +600,7 @@ export class StMap<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description search items in the array based in a predicate. Can only be used with string values.
+   * @template T, K
    * @param {K[] | EntityFn<T, string> | K} keyOrKeysOrCallback
    * @param {string} term
    * @returns {StMap<T>}
@@ -641,6 +644,7 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description creates a new {@link StMapView} with transformed data based on the predicate. Similar to {@link Array#map}
+   * @template T, R
    * @param {EntityUpdateWithId<T, R>} callback
    * @returns {StMapView<R>}
    */
@@ -720,6 +724,7 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description reduces the map to something else. Similar to {@link Array#reduce}
+   * @template T, R
    * @param {(accumulator: R, item: [EntityIdType, T]) => R} callback
    * @param {R} initialValue
    * @returns {R}
@@ -741,6 +746,7 @@ export class StMapView<T extends Record<any, any>> extends StMapBase<T> {
 
   /**
    * @description search items in the array based in a predicate. Can only be used with string values.
+   * @template T, K
    * @param {K[] | EntityFn<T, string> | K} keyOrKeysOrCallback
    * @param {string} term
    * @returns {StMapView<T>}

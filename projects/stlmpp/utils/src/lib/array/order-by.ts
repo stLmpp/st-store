@@ -4,6 +4,7 @@ import { orderBy, OrderByDirection, OrderByType } from 'st-utils';
 
 /**
  * @description OrderBy rxjs operator, uses a map with the {@link orderBy} function
+ * @template T
  * @param {OrderByType<T>} keyOrCommand
  * @param {OrderByDirection} order
  * @returns {MonoTypeOperatorFunction<T[]>}
@@ -19,6 +20,7 @@ export function orderByOperator<T>(
 export class OrderByPipe implements PipeTransform {
   /**
    * @description OrderBy pipe, uses the {@link orderBy} function
+   * @template T
    * @param {T[]} value
    * @param {OrderByType<T>} keyOrCommand
    * @param {OrderByDirection} order

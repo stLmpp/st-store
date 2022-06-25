@@ -4,6 +4,7 @@ import { MonoTypeOperatorFunction, Observable } from 'rxjs';
 
 /**
  * @description same as {@link useCache}, but for one specific entity
+ * @template T
  * @param {EntityIdType} id
  * @param {EntityStore<EntityState>} store
  * @returns {MonoTypeOperatorFunction<T>}

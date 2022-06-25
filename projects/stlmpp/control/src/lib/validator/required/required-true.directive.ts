@@ -22,7 +22,7 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
   get requiredTrue(): boolean {
     return this._requiredTrue;
   }
-  set requiredTrue(requiredTrue: boolean) {
+  set requiredTrue(requiredTrue: BooleanInput) {
     this._requiredTrue = coerceBooleanProperty(requiredTrue);
     if (this._requiredTrue) {
       this.attrs = { required: undefined, 'aria-required': true };
@@ -44,6 +44,4 @@ export class RequiredTrueValidatorDirective extends AbstractRequiredTrueValidato
       this.validationChange$.next();
     }
   }
-
-  static ngAcceptInputType_requiredTrue: BooleanInput;
 }

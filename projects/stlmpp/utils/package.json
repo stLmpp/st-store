@@ -1,13 +1,13 @@
 {
   "name": "@stlmpp/utils",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "peerDependencies": {
     "@angular/common": ">= 13 < 14",
     "@angular/core": ">= 13 < 14"
   },
   "dependencies": {
-    "tslib": "~2.3.1",
-    "st-utils": "~2.4.1",
-    "type-fest": "~2.8.0"
+    "tslib": "~2.4.0",
+    "st-utils": "~2.5.1",
+    "type-fest": "~2.13.0"
   }
 }

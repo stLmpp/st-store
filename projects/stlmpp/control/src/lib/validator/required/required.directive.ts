@@ -21,7 +21,7 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
   get required(): boolean {
     return this._required;
   }
-  set required(required: boolean) {
+  set required(required: BooleanInput) {
     this._required = coerceBooleanProperty(required);
     if (this._required) {
       this.attrs = { required: undefined, 'aria-required': true };
@@ -43,6 +43,4 @@ export class RequiredValidatorDirective<T = any> extends AbstractRequiredValidat
       this.validationChange$.next();
     }
   }
-
-  static ngAcceptInputType_required: BooleanInput;
 }

@@ -136,12 +136,12 @@ export type SimpleChangesCustom<T extends Record<any, any> = any> = { [K in keyo
 
 export interface StateComponentConfigInput<T extends Record<any, any>, K extends keyof T = keyof T> {
   key: K;
-  transformer: (value: T[K]) => any;
+  transformer: (value: any) => T[K];
 }
 
 export interface StateConfig {
   /**
-   * @description use an scheduler to update the state
+   * @description use a scheduler to update the state
    * @default {@link https://rxjs.dev/api/index/const/queueScheduler}
    */
   scheduler?: SchedulerLike;
@@ -150,7 +150,7 @@ export interface StateConfig {
    */
   name?: string;
   /**
-   * @description if set to true, it will deep copy and deep freeze your state in development mode
+   * @description if set to true, it will deeply copy and freeze your state in development mode
    */
   useDevCopy?: boolean;
 }

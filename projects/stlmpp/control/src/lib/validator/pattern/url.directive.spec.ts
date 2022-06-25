@@ -29,7 +29,7 @@ describe('url validator directive', () => {
 
   it('should validate if value is an url', () => {
     expect(component.modelDirective.isValid).toBeFalse();
-    component.model = 'http://www.google.com/';
+    component.model = 'https://www.google.com/';
     fixture.detectChanges();
     expect(component.modelDirective.isValid).toBeTrue();
   });

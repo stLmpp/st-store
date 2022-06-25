@@ -17,7 +17,7 @@ export class WhiteSpaceValidatorDirective extends AbstractWhiteSpaceValidator im
   get whiteSpace(): boolean {
     return this._whiteSpace;
   }
-  set whiteSpace(whiteSpace: boolean) {
+  set whiteSpace(whiteSpace: BooleanInput) {
     this._whiteSpace = coerceBooleanProperty(whiteSpace);
   }
 
@@ -34,6 +34,4 @@ export class WhiteSpaceValidatorDirective extends AbstractWhiteSpaceValidator im
       this.validationChange$.next();
     }
   }
-
-  static ngAcceptInputType_whiteSpace: BooleanInput;
 }
