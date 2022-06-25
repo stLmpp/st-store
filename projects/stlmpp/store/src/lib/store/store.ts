@@ -13,7 +13,7 @@ import { State } from '../state/state';
  * @returns {string}
  */
 export function getPersistKey<T extends Record<any, any>>(name: string, persist?: keyof T): string {
-  return '__ST_STORE__' + name + '.' + (persist ?? '');
+  return '__ST_STORE__' + name + '.' + (String(persist) ?? '');
 }
 
 export abstract class Store<T extends Record<any, any>, E = any> extends State<T> {
